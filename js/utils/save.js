@@ -216,7 +216,6 @@ function load() {
 	updateTemp();
 	updateTabFormats();
 	loadVue();
-	convert(player, OmegaNum)
 }
 function loadOptions() {
 	let get2 = localStorage.getItem(modInfo.id+"_options");
