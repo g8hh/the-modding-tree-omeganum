@@ -14,6 +14,8 @@ const TMT_VERSION = {
 	tmtName: "Fixed Reality"
 }
 
+document.title = modInfo.name
+
 function getResetGain(layer, useType = null) {
 	let type = useType
 	if (!useType){ 
@@ -221,9 +223,9 @@ function doReset(layer, force=false) {
 		}
 	
 		tmp[layer].baseAmount = OmegaNumZero // quick fix
-	}
 
-	if (run(layers[layer].resetsNothing, layers[layer])) return
+		if (run(layers[layer].resetsNothing, layers[layer])) return
+	}
 
 
 	for (layerResetting in layers) {
@@ -335,7 +337,7 @@ function autobuyUpgrades(layer){
 
 function gameLoop(diff) {
 	if (isEndgame() || gameEnded){
-		gameEnded = 1
+		app.gameEnded = gameEnded = true
 		clearParticles()
 	}
 
@@ -406,6 +408,7 @@ function hardReset() {
 }
 
 var ticking = false
+var frame = 0
 
 var interval = setInterval(function() {
 	if (player===undefined||tmp===undefined) return;
@@ -439,6 +442,7 @@ var interval = setInterval(function() {
 	adjustPopupTime(trueDiff)
 	updateParticles(trueDiff)
 	ticking = false
+	frame += 1;
 }, 50)
 
 setInterval(function() {needCanvasUpdate = true}, 500)

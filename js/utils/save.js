@@ -20,6 +20,7 @@ function startPlayerBase() {
 		hasNaN: false,
 
 		points: modInfo.initialStartPoints,
+		isWarned: false,
 		subtabs: {},
 		lastSafeTab: (readData(layoutInfo.showTree) ? "none" : layoutInfo.startTab)
 	};
@@ -65,9 +66,9 @@ function getStartLayerData(layer) {
 	if (layerdata.unlocked === undefined)
 		layerdata.unlocked = true;
 	if (layerdata.total === undefined)
-		layerdata.total = new ExpantaNum(0);
+		layerdata.total = new OmegaNum(0);
 	if (layerdata.best === undefined)
-		layerdata.best = new ExpantaNum(0);
+		layerdata.best = new OmegaNum(0);
 	if (layerdata.resetTime === undefined)
 		layerdata.resetTime = 0;
         if (layerdata.forceTooltip === undefined)
@@ -233,17 +234,17 @@ function setupModInfo() {
 function fixNaNs() {
 	NaNcheck(player);
 }
-function NaNcheck(data) {
+function NaNcheck(data, name = "player") {
 	for (item in data) {
 		if (data[item] == null) {
 		}
 		else if (Array.isArray(data[item])) {
-			NaNcheck(data[item]);
+			NaNcheck(data[item], name + "." + item);
 		}
 		
-		else if (data[item] !== data[item] || checkDecimalNaN(data[item])) {
-			if (!NaNalert) {
-				confirm("Invalid value found in player, named '" + item + "'. Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
+		else if (data[item] !== data[item] || checkOmegaNumNaN(data[item])) {
+			if (!NaNalert && !name.endsWith("-tab") && !name.endsWith("blank")) {
+				alert(`NaN lol\nat ${name}.${item}`)
 				clearInterval(interval);
 				NaNalert = true;
 				return
@@ -252,7 +253,7 @@ function NaNcheck(data) {
 		else if (data[item] instanceof ExpantaNum) { // Convert to ExpantaNum
 		}
 		else if ((!!data[item]) && (data[item].constructor === Object)) {
-			NaNcheck(data[item]);
+			NaNcheck(data[item], name + "." + item);
 		}
 	}
 }
