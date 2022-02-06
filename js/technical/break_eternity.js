@@ -1545,3 +1545,5 @@
     globalScope.OmegaNum = OmegaNum;
   }
 })(this);
+const Decimal = OmegaNum
+ExpantaNum = OmegaNum
