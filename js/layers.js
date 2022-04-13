@@ -8122,7 +8122,7 @@ addLayer("h", {
     {
         beatclicker = new ExpantaNum(1)
 	}
-    player.h.willpowereffect = player.h.willpower.log10().pow(0.2)
+    player.h.willpowereffect = player.h.willpower.plus(1).log10().pow(0.2)
     player.h.points = beatcookie.add(beatanti.add(beatclicker.add(player.h.willpowereffect)))
     if (hasUpgrade("h", 11)) player.h.willpowerpersecond = new ExpantaNum(1)
     player.h.willpowerpersecond = player.h.willpowerpersecond.mul(buyableEffect('h', 11))
