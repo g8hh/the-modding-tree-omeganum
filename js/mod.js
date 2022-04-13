@@ -13,16 +13,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "Something is Changing",
+	num: "1.2",
+	name: "FEED THE GODS",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<br/>
+	<h3>v1.2</h3><br/>
+		- Adds Clicker Heroes, Incremental^2, and the Hub.<br/>
+		- Added a lot more stuff!<br/>
+		- Bumped Endgame to around 7F6
+	<br/>
+	<br/>
 	<h3>v1.1</h3><br/>
 		- Adds Antimatter Dimensions and Military Minigame.<br/>
 		- Added a Research Tree to the Life Layer and a lot of Content!<br/>
-		- Bumped Endgame to around ee1e14
+		- Bumped Endgame to around ee1e11
 	<br/>
 	<h3>v1.0</h3><br>
 		- Added The First and Second Layer, as well as a Special Layer<br>
@@ -83,7 +89,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte([800, 2, 0, 1])
+	return player.points.gte([80000000, 2, 0, 1])
 }
 
 

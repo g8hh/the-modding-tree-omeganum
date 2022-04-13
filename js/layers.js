@@ -1,4 +1,4 @@
-
+﻿
 addLayer("i", {
     name: "Incremental Game", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "I", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -43,7 +43,7 @@ addLayer("i", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new ExpantaNum(1)
     },
-    row: 0, // Row the layer is in on the tree (0 is the first row)
+    row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "i", description: "I: Reset for incremental points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
@@ -606,7 +606,7 @@ addLayer("cc", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new ExpantaNum(1)
     },
-    row: 1, // Row the layer is in on the tree (0 is the first row)
+    row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "c", description: "c: Reset for Cookies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
@@ -2128,6 +2128,10 @@ addLayer("cc", {
     },
         update(delta) {
         {
+            if (player.i.points < 0)
+            {
+                player.i.points = new ExpantaNum(0)     
+			}
             let mult = new ExpantaNum(1)
             mult = mult.times(buyableEffect('cc', 31))
             if (hasUpgrade('cc', 61)) mult = mult.times(upgradeEffect('cc', 61))
@@ -2397,7 +2401,7 @@ addLayer("l", {
         row6researchcost: new ExpantaNum(1e24),
         row7researchcost: new ExpantaNum(1e3500),
         row8researchcost: new ExpantaNum(1e150000),
-        euros: new ExpantaNum(0), //�
+        euros: new ExpantaNum(0), //€
         euroeffect: new ExpantaNum(1),
         antimattertime: new ExpantaNum(0),
         antimattertimeeffect: new ExpantaNum(0),
@@ -2406,6 +2410,15 @@ addLayer("l", {
         itemvalue: new ExpantaNum(10),
         coins: new ExpantaNum(0),
         coineffect: new ExpantaNum(1),
+        minigamenumber: new ExpantaNum(1),
+        minigamenumbereffect: new ExpantaNum(1),
+        minigamenumbermult: new ExpantaNum(2),
+        militarytime: new ExpantaNum(0),
+        militarytimeeffect: new ExpantaNum(0),
+        supermarkettime: new ExpantaNum(0),
+        supermarkettimeeffect: new ExpantaNum(0),
+        clickerheroestime: new ExpantaNum(0),
+        clickerheroestimeeffect: new ExpantaNum(0),
     }},
     color: "green",
     resource: "$", 
@@ -3178,6 +3191,50 @@ addLayer("l", {
             currencyDisplayName: "Coins",
             currencyInternalName: "coins",
         },
+        119:
+        {
+            title: "Bored, so Imma add a Minigame.",
+            description: "Adds a 2048 minigame tab",
+            unlocked() { return hasUpgrade("ch", 21) },
+            cost() {
+                return "e1ee40"
+            },
+            currencyLocation() { return player[this.layer] },
+        },
+        121:
+        {
+            title: "<p style='transform: scale(-0.5, -2)'><alternate>HELP THE GOD</alternate></p>",
+            description: "<p style='transform: scale(-2, -0.5)'><alternate>MAKE HIM HAPPY AND GIVE HIM WHAT HE DESERVES</alternate></p>",
+            unlocked() { return hasUpgrade("l", 119) },
+            cost() {
+                return "e1ee125"
+            },
+            currencyLocation() { return player[this.layer] },
+        },
+        122:
+        {
+            title: "This Minigame also has an End?",
+            description: "Finishes this Minigame and get 100% of Sell Value per Second",
+            unlocked() { return hasUpgrade("l", 118) },
+            cost() {
+                return "1e6000000"
+            },
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName: "Coins",
+            currencyInternalName: "coins",
+        },
+        123:
+        {
+            title: "Finally, F NOTATION!",
+            description: "Unlocks a new layer (Probably the most Important Layer)",
+            unlocked() { return hasUpgrade("ch", 39) },
+            cost() {
+                return "10^^6"
+            },
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
     },
     buyables:
     {
@@ -3206,6 +3263,20 @@ addLayer("l", {
           return "Coins gained on Sell: " + format(player.l.itemsforsale.mul(player.l.itemvalue));
         },
     },
+           13: {
+        cost(x) { return },
+        title: "Multiply your Number",
+        unlocked() { return hasUpgrade("l", 119) },
+        canAfford() { return true },
+        buy() {
+        player.l.minigamenumber = player.l.minigamenumber.mul(player.l.minigamenumbermult)
+        },
+        display() 
+        { // Everything else displayed in the buyable button after the title
+          let data = tmp[this.layer].buyables[this.id]
+          return "Current Multiplier: " + format(player.l.minigamenumbermult);
+        }, 
+    },
     },
             bars: {
         itemsforsalebar: {
@@ -3223,7 +3294,11 @@ addLayer("l", {
             },
         },
         },
-        
+            clickables: {
+    11: {
+        title() {return format(player.l.minigamenumber)},
+    },
+    },
         update(delta) 
         {
             if (hasUpgrade("cc", 211)) player.l.$persecond = player.points.plus(10).log10().log10().pow(0.5).div(250).mul(player.cc.patreoneffect)
@@ -3308,10 +3383,34 @@ addLayer("l", {
             if (hasUpgrade("l", 104)) antimattertimeincome = antimattertimeincome.mul(upgradeEffect("l", 104))
             if (hasUpgrade("l", 105)) antimattertimeincome = antimattertimeincome.mul(10)
             antimattertimeincome = antimattertimeincome.mul(player.l.coineffect)
+            if (hasUpgrade("i2", 13)) antimattertimeincome = antimattertimeincome.mul(player.i2.incrementalstoneseffect1)
             player.l.antimattertime = player.l.antimattertime.add(antimattertimeincome.mul(delta))
 
             player.l.antimattertimeeffect = EN(player[this.layer].antimattertime)
             player.l.antimattertimeeffect = EN.pow(4, EN.pow(4, player.l.antimattertimeeffect)).sub(3)
+
+            let militarytimeincome = new ExpantaNum(0)
+            if (hasUpgrade("m", 19)) militarytimeincome = militarytimeincome.add(1)
+            if (hasUpgrade("i2", 17)) militarytimeincome = militarytimeincome.mul(player.i2.incrementalstoneseffect3)
+            militarytimeincome = militarytimeincome.mul(player.l.supermarkettimeeffect)
+            player.l.militarytime = player.l.militarytime.add(militarytimeincome.mul(delta))
+
+            player.l.militarytimeeffect = player.l.militarytime.pow(0.9)
+
+            let supermarkettimeincome = new ExpantaNum(0)
+            if (hasUpgrade("l", 122)) supermarkettimeincome = supermarkettimeincome.add(1)
+            supermarkettimeincome = supermarkettimeincome.mul(player.l.clickerheroestimeeffect)
+            player.l.supermarkettime = player.l.supermarkettime.add(supermarkettimeincome.mul(delta))
+
+            player.l.supermarkettimeeffect = player.l.supermarkettime.pow(0.2).add(1)
+
+            let clickerheroestimeincome = new ExpantaNum(0)
+            if (hasUpgrade("ch", 39)) clickerheroestimeincome = clickerheroestimeincome.add(1)
+            if (hasUpgrade("i2", 19)) clickerheroestimeincome = clickerheroestimeincome.mul(player.i2.incrementalstoneseffect3)
+            if (hasUpgrade("h", 17)) clickerheroestimeincome = clickerheroestimeincome.mul(player.h.timeeffect3)
+            player.l.clickerheroestime = player.l.clickerheroestime.add(clickerheroestimeincome.mul(delta))
+
+            player.l.clickerheroestimeeffect = EN.pow(1.1, EN.pow(1.1, player.l.clickerheroestime)).sub(3)
 
             let itemgaintimer = new ExpantaNum(1)
             if (hasUpgrade("l", 112)) itemgaintimer = new ExpantaNum(2)
@@ -3342,6 +3441,10 @@ addLayer("l", {
             if (hasUpgrade("l", 113)) player.l.itemvalue = player.l.itemvalue.mul(3)
             if (hasUpgrade("l", 114)) player.l.itemvalue = player.l.itemvalue.mul(upgradeEffect("l", 114))
             player.l.itemvalue = player.l.itemvalue.mul(layers.ch.effect())
+
+            player.l.minigamenumbereffect = player.l.minigamenumber.pow(0.5)
+
+            if (hasUpgrade("l", 122)) player.l.coins = player.l.coins.add(player.l.itemvalue.mul(delta))    
         },
     microtabs: 
     {
@@ -3357,7 +3460,9 @@ addLayer("l", {
           ["display-text", () => "You Have " + format(player.l.savedmoney) + "$ in your Savings Account and a x" + format(player.l.savedmoneyeffect) + " boost to Points"],
           ["display-text", () => hasUpgrade("l", 76) ? "Your $ Converts to " + format(player.l.euros) + " Euros in your Savings Account and a x" + format(player.l.euroeffect) + " boost to Hevipelle Points" : ""],  
           ["row", [["buyable", 11]]],
-          ["row", [["upgrade", 75], ["upgrade", 76], ["upgrade", 77], ["upgrade", 78], ["upgrade", 79], ["upgrade", 101], ["upgrade", 102], ["upgrade", 103], ["upgrade", 104]]],
+          ["row", [["upgrade", 75], ["upgrade", 76], ["upgrade", 77], ["upgrade", 78], ["upgrade", 79]]],
+          ["row", [["upgrade", 101], ["upgrade", 102], ["upgrade", 103], ["upgrade", 104], ["upgrade", 119]]],
+          ["row", [["upgrade", 121], ["upgrade", 123]]],
           ]
           },
           "Supermarket": 
@@ -3370,13 +3475,19 @@ addLayer("l", {
           ["row", [["upgrade", 105]]],
           ]
           },
-                "The List of Games Made": {
+                "The Times": {
                 unlocked() { return hasUpgrade("l", 22) },
                 content: 
                 [
                     ["blank", "15px"],
                     ["display-text", () => "Cookie Clicker Time: " + formatTime(player.l.cookietime) + " -> x" + format(player.l.cookietimeeffect) + " boost to Points"],
                     ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions Time: " + formatTime(player.l.antimattertime) + " -> x" + format(player.l.antimattertimeeffect) + " boost to Cookie Clicker Time" : ""],
+                    ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes Time: " + formatTime(player.l.clickerheroestime) + " -> x" + format(player.l.clickerheroestimeeffect) + " boost to Supermarket Time" : ""],
+                    ["blank", "25px"],
+                    ["display-text", () => "The Minigames"],
+                    ["blank", "15px"],
+                    ["display-text", () => hasUpgrade("m", 19) ? "Military Time: " + formatTime(player.l.militarytime) + " -> +^" + format(player.l.militarytimeeffect) + " to Clicker Heroes Gold Effect" : ""],
+                    ["display-text", () => hasUpgrade("l", 122) ? "Supermarket Time: " + formatTime(player.l.supermarkettime) + " -> x" + format(player.l.supermarkettimeeffect) + " boost to Military Time" : ""],
                 ]
             },
                 "Research Tree": {
@@ -3415,6 +3526,17 @@ addLayer("l", {
                 ["row", [["buyable", 12]]],
                 ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]],
                 ["row", [["upgrade", 115], ["upgrade", 116], ["upgrade", 117], ["upgrade", 118]]],
+                ["row", [["upgrade", 122]]],
+                ]
+            },
+               "2048 Minigame": {
+                unlocked() { return hasUpgrade("l", 119) },
+                content: 
+                [
+                ["row", [["clickable", 11]]],
+                ["display-text", () => "Your number gives a x" + format(player.l.minigamenumbereffect) + " boost to Respect"],
+                ["blank", "15px"],
+                ["row", [["buyable", 13]]],
                 ]
             },
         },
@@ -3665,7 +3787,7 @@ addLayer("ad", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new ExpantaNum(1)
     },
-    row: 1, // Row the layer is in on the tree (0 is the first row)
+    row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "A", description: "A: Reset for hevipelle points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
@@ -3809,7 +3931,7 @@ addLayer("ad", {
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
-        40:
+        101:
         {
             title: "Just to make stuff easier",
             description: "Boost all dimensions by x100",
@@ -5561,7 +5683,7 @@ addLayer("ad", {
           content: [
           ["display-text", () => "You have " + format(player.ad.antimatter) + " Antimatter and a x" + format(player.ad.antimattereffect) + " boost to Cookie Time"],
           ["row", [["buyable", 31], ["buyable", 32], ["buyable", 33], ["buyable", 34]]],
-          ["row", [["upgrade", 4], ["upgrade", 41], ["upgrade", 42]]],
+          ["row", [["upgrade", 101], ["upgrade", 41], ["upgrade", 42]]],
           ]
           },
           "Infinity": {
@@ -5699,6 +5821,11 @@ addLayer("m", {
         deadcooldown: new ExpantaNum(0),
         bloodshedbadge: new ExpantaNum(0),
         intermediatesoldierbadge: new ExpantaNum(0),
+        experiencedsoldierbadge: new ExpantaNum(0),
+        commanderbadge: new ExpantaNum(0),
+        supersoldierbadge: new ExpantaNum(0),
+        finalbadge: new ExpantaNum(0),
+        veteranbadge: new ExpantaNum(0),
     }},
     color: "#766D31",
         nodeStyle() {
@@ -5836,6 +5963,68 @@ addLayer("m", {
             unlocked() { return player.points.gte("1e540000000") },
             cost: new ExpantaNum(20000),
         },
+        14:
+        {
+            title: "Big Inflation So Funny",
+            description: "Boosts Player Max Health based on Military Power and Disables the Death Cooldown",
+            unlocked() { return hasUpgrade("m", 13) },
+            cost: new ExpantaNum("1e500"),
+                effect() 
+                {
+                     return player[this.layer].militarypower.add(1).pow(0.8)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        15:
+        {
+            title: "Too much, right?",
+            description: "Boosts Gold effect to ^20",
+            unlocked() { return hasUpgrade("m", 14) },
+            cost: new ExpantaNum("1e1000"),
+        },
+        16:
+        {
+            title: "Turn into a Chad",
+            description: "Boosts Player Damage based on Military Power",
+            unlocked() { return hasUpgrade("m", 15) },
+            cost: new ExpantaNum("1e2500"),
+                effect() 
+                {
+                     return player[this.layer].militarypower.add(1).pow(0.7)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        17:
+        {
+            title: "Turn into a Gigachad",
+            description: "Boosts Player Damage based on Enemy Level",
+            unlocked() { return hasUpgrade("m", 16) },
+            cost: new ExpantaNum("1e7500"),
+                effect() 
+                {
+                     return player[this.layer].enemylevel.add(1).pow(1.1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        18:
+        {
+            title: "Go Saiyan",
+            description: "Boosts Player Health based on Enemy Level",
+            unlocked() { return hasUpgrade("m", 17) },
+            cost: new ExpantaNum("1e8000"),
+                effect() 
+                {
+                     return player[this.layer].enemylevel.add(1).pow(1.1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        19:
+        {
+            title: "THE END",
+            description: "Finishes the Layer",
+            unlocked() { return player.m.veteranbadge >= 1 },
+            cost: new ExpantaNum("1e300000"),
+        },
         },
     update(delta) 
     {
@@ -5859,6 +6048,7 @@ addLayer("m", {
         }
         trainingmult = trainingmult.mul(player.m.militarypowereffect)
         trainingmult = trainingmult.mul(player.m.inspirationeffect)
+        trainingmult = trainingmult.mul(player.l.minigamenumbereffect)
         player.m.trainingmult = trainingmult
 
         player.m.points = player.m.points.add(player.m.trainingtime.mul(trainingmult).mul(delta))
@@ -5919,6 +6109,38 @@ addLayer("m", {
         {
             player.m.battlesoldierbadge = new ExpantaNum(1)  
 		}
+        if (player.m.militarypower >= 200000)
+        {
+            player.m.experiencedsoldierbadge = new ExpantaNum(1)  
+		}
+        if (player.m.points >= "1e2000")
+        {
+            player.m.commanderbadge = new ExpantaNum(1)  
+		}
+        if (player.m.militarypower >= 5000000)
+        {
+            player.m.supersoldierbadge = new ExpantaNum(1)  
+		}
+        if (player.m.militarypower >= 1e20)
+        {
+            player.m.finalbadge = new ExpantaNum(1)  
+		}
+        if (player.m.militarypower >= "1e1000000")
+        {
+            player.m.veteranbadge = new ExpantaNum(1)  
+		}
+        let trainingtimemult = new ExpantaNum(0.1)
+        let inspirationmult = new ExpantaNum(0.5)
+        let enemylevelmult = new ExpantaNum(1.1)
+        let enemylevelpow = new ExpantaNum(1.1)
+        if (player.m.experiencedsoldierbadge >= 1)
+        {
+            player.m.trainingtime = player.m.trainingtime.mul(trainingtimemult.mul(delta).add(1))
+		}
+        if (player.m.commanderbadge >= 1)
+        {
+            player.m.inspiration = player.m.inspiration.mul(inspirationmult.mul(delta).add(1))
+		}
         player.m.inspirationeffect = player.m.inspiration.mul(0.05).pow(0.9).add(1)
 
         if (!hasUpgrade("l", 77)) player.m.militarypow = new ExpantaNum(1.1)
@@ -5949,10 +6171,18 @@ addLayer("m", {
                 player.m.militarypower = player.m.militarypower.add(player.m.enemylevel)
                 player.m.enemylevel = player.m.enemylevel.add(1)
                 player.m.enemyhealth = player.m.maxenemyhealth
+                if (player.m.supersoldierbadge >= 1)
+                {
+                    player.m.enemylevel = player.m.enemylevel.mul(enemylevelmult)
+	        	}
+                if (player.m.supersoldierbadge >= 1)
+                {
+                    player.m.enemylevel = player.m.enemylevel.pow(enemylevelpow)
+	        	}
 			}
             if (player.m.playerhealth <= 0)
             {
-                player.m.deadcooldown = new ExpantaNum(60)
+                if (!hasUpgrade("m", 14)) player.m.deadcooldown = new ExpantaNum(60)
                 player.m.playerhealth = new ExpantaNum(0)
                 player.m.enemylevel = new ExpantaNum(1)
                 player.m.enemydamage = new ExpantaNum(1)
@@ -5973,7 +6203,17 @@ addLayer("m", {
                 if (player.m.battletoggle <= 0)
         {
         }
-        player.m.militarypowereffect = player.m.militarypower.add(1).pow(0.2)
+        if (!player.m.veteranbadge >= 1) player.m.militarypowereffect = player.m.militarypower.add(1).pow(0.2)
+        if (player.m.veteranbadge >= 1)
+        {
+             player.m.militarypowereffect = new ExpantaNum("1e300000")  
+		}
+
+        player.m.maxplayerhealth = new ExpantaNum(50)
+        if (hasUpgrade("m", 14)) player.m.maxplayerhealth = player.m.maxplayerhealth.mul(upgradeEffect("m", 14))
+        if (hasUpgrade("m", 18)) player.m.maxplayerhealth = player.m.maxplayerhealth.mul(upgradeEffect("m", 18))
+        if (hasUpgrade("m", 16)) player.m.playerdamage = player.m.playerdamage.mul(upgradeEffect("m", 16))
+        if (hasUpgrade("m", 17)) player.m.playerdamage = player.m.playerdamage.mul(upgradeEffect("m", 17))
     },
         microtabs: 
     {
@@ -5988,7 +6228,7 @@ addLayer("m", {
           ["display-text", () => "Cooldown: " + format(player.m.trainingcooldown) + " Seconds"],
           ["row", [["buyable", 11]]],
           ["row", [["buyable", 12]]],
-          ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13]]],
+          ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15], ["upgrade", 16], ["upgrade", 17], ["upgrade", 18], ["upgrade", 19]]],
           ]
           },
           "Badges": {
@@ -6001,6 +6241,11 @@ addLayer("m", {
           ["display-text", () => player.m.battlesoldierbadge >= 1 ? "Battle Soldier Badge: -1 Second Cooldown Time (Join the War)" : ""],
           ["display-text", () => player.m.bloodshedbadge >= 1 ? "Bloodshed Badge: x1.3 Respect Boost and x1.3 Training Speed (Get 25 Military Power)" : ""],
           ["display-text", () => player.m.intermediatesoldierbadge >= 1 ? "Intermediate Soldier Badge: x2 Inspiration Gain (Get 60 Military Power)" : ""],
+          ["display-text", () => player.m.experiencedsoldierbadge >= 1 ? "Experienced Soldier Badge: x1.1 Additional Training time per Second (Get 200000 Military Power)" : ""],
+          ["display-text", () => player.m.commanderbadge >= 1 ? "Commander Badge: x1.5 Additional Inspiration per Second (Get 1e2000 Respect)" : ""],
+          ["display-text", () => player.m.supersoldierbadge >= 1 ? "Super Soldier Badge: Get x1.1 Enemy Level on Kill (Get 5000000 Military Power)" : ""],
+          ["display-text", () => player.m.finalbadge >= 1 ? "Final Badge: Get ^1.1 Enemy Level on Kill (Get 1e20 Military Power)" : ""],
+          ["display-text", () => player.m.veteranbadge >= 1 ? "Veteran Badge: Hardcaps Military Power Effect, but unlocks the upgrade for this layer's completion (Get 1e1000000 Military Power)" : ""],
           ]
           },
           "War": {
@@ -6036,47 +6281,2063 @@ addLayer("ch", {
     startData() { return {
         unlocked: true,
         points: new ExpantaNum(0),
+        heroicpointspersecond: new ExpantaNum(0),
+        heroictime: new ExpantaNum(0),
+        gold: new ExpantaNum(0),
+        goldeffect: new ExpantaNum(0),
+        enemylevel: new ExpantaNum(1),
+        enemyhealth: new ExpantaNum(10),
+        enemymaxhealth: new ExpantaNum(10),
+        goldtoget: new ExpantaNum(1),
+        damagepersecond: new ExpantaNum(0),
+        zone: new ExpantaNum(0),
+        powersurgetime: new ExpantaNum(0),
+        powersurgecooldown: new ExpantaNum(0),
+        metaldetectortime: new ExpantaNum(0),
+        metaldetectorcooldown: new ExpantaNum(0),
+        ancienttreasurecooldown: new ExpantaNum(0),
+        herosouls: new ExpantaNum(0),
+        herosoulstoget: new ExpantaNum(0),
+        herosoulseffect: new ExpantaNum(1),
+        chronostime: new ExpantaNum(0),
+        inflationrelics: new ExpantaNum(0),
+        inflationrelicspersecond: new ExpantaNum(0),
+        inflationrelicseffect: new ExpantaNum(0),
+        inflationrelics2: new ExpantaNum(0),
+        inflationrelics2persecond: new ExpantaNum(0),
+        inflationrelics2effect: new ExpantaNum(0),
     }},
             nodeStyle: {
             background: "linear-gradient(100deg, #006400, #ffd800)",
             "background-origin": "border-box",
     },
+
     color: "#123456",
     symbol: "<img src='resources/clickerheroeslayersymbol.png' style='width:calc(110%);height:calc(60%);margin:-15%'></img>",
     resource: " Heroic Points", 
     row: "side",
     midsection: ["grid", "blank"],
     branches: ["i", "ad"],
-    displayRow: 1,
+    displayRow: 2,
     		effect() 
         {
-			return new ExpantaNum.add(player.ch.points, 1);
+			return new ExpantaNum.add(player.ch.points.pow(1.1), 1);
 		},
         effectDescription(){
                 let eff = layers.ch.effect()
                 return "which multiplies Coin gain by x" + format(eff)
         },
-            buyables:
+        automate()
     {
+        if (!hasUpgrade('ch', 36)) {
+            if (hasMilestone('ch', 13)) {
+    buyBuyable(this.layer, 11)
+    buyBuyable(this.layer, 12)
+    buyBuyable(this.layer, 13)
+    buyBuyable(this.layer, 14)
+    buyBuyable(this.layer, 15)
+    buyBuyable(this.layer, 16)
+    buyBuyable(this.layer, 17)
+    buyBuyable(this.layer, 18)
+    }
+        if (hasMilestone('ch', 14)) {
+    buyBuyable(this.layer, 31)
+    buyBuyable(this.layer, 32)
+    buyBuyable(this.layer, 33)
+    buyBuyable(this.layer, 34)
+    }
+        }
+    if (hasUpgrade('ch', 27)) {
+    buyBuyable(this.layer, 21)
+    buyBuyable(this.layer, 22)
+    buyBuyable(this.layer, 23)
+    }
+        if (hasUpgrade('ch', 36)) {
+    buyBuyable(this.layer, 35)
+    buyBuyable(this.layer, 36)
+    }
     },    
     upgrades: 
-    {
+    {        
+        11:
+        {
+            title: "Start becoming a Hero",
+            description: "You get 1 Heroic Point per Second",
+            unlocked() { return true },
+            cost: new ExpantaNum("ee1e12"),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
         },
+        12:
+        { 
+            title: "What about an Idle RPG game?",
+            description: "Boosts Heroic points based on Heroic points",
+            unlocked() { return hasUpgrade("ch", 11) },
+            cost: new ExpantaNum("20"),
+                effect() 
+                {
+                     return player[this.layer].points.pow(0.2).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        13:
+        { 
+            title: "A fighting Idle Game?",
+            description: "Boosts Heroic points based on time after buying the Upgrade",
+            unlocked() { return hasUpgrade("ch", 12) },
+            cost: new ExpantaNum("1000"),
+                effect() 
+                {
+                     return player[this.layer].heroictime.pow(0.9).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        14:
+        { 
+            title: "Screw this lets just finish the game now",
+            description: "Unlocks a new tab :)",
+            unlocked() { return hasUpgrade("ch", 13) },
+            cost: new ExpantaNum("1e5"),
+        },
+        15:
+        { 
+            title: "START THE JOURNEY",
+            description: "Deal 1 Damage per Second",
+            unlocked() { return hasUpgrade("ch", 14) },
+            cost: new ExpantaNum("1e5"),
+        },
+        16:
+        { 
+            title: "Let's make this faster, shall we?",
+            description: "Boosts Damage based on Enemy Level",
+            unlocked() { return hasUpgrade("ch", 15) },
+            cost: new ExpantaNum("1000"),
+                effect() 
+                {
+                     return player[this.layer].enemylevel.add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+        },
+        17:
+        { 
+            title: "ZONES",
+            description: "Unlocks Zones and boosts damage per second based on your zone.",
+            unlocked() { return hasUpgrade("ch", 16) },
+            cost: new ExpantaNum("5000"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+                effect() 
+                {
+                     return player[this.layer].zone.add(1).pow(5)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        18:
+        { 
+            title: "Powersurge",
+            description: "Unlocks the Powersurge Skill",
+            unlocked() { return hasUpgrade("ch", 17) },
+            cost: new ExpantaNum("50000"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+        },
+        19:
+        { 
+            title: "A lot of Gold!",
+            description: "Boosts gold based on Enemy Level",
+            unlocked() { return hasUpgrade("ch", 18) },
+            cost: new ExpantaNum("100000"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+                effect() 
+                {
+                     return player[this.layer].enemylevel.add(1).pow(1.1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        21:
+        { 
+            title: "Metal Detector",
+            description: "Unlocks the Metal Detector Skill",
+            unlocked() { return hasUpgrade("ch", 18) },
+            cost: new ExpantaNum("100000000"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+        },
+        22:
+        { 
+            title: "Improved Sorcery",
+            description: "Speeds up Powersurge and Metal Detector's cooldown times by 5x",
+            unlocked() { return hasUpgrade("ch", 21) },
+            cost: new ExpantaNum("150000000"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+        },
+        23:
+        { 
+            title: "Ancient Treasure",
+            description: "Unlocks the Ancient Treasure Skill",
+            unlocked() { return hasUpgrade("ch", 22) },
+            cost: new ExpantaNum("1e10"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+        },
+        24:
+        { 
+            title: "Ascension :()",
+            description: "Unlocks a new Tab",
+            unlocked() { return player[this.layer].buyables[18] >= 5},
+            cost: new ExpantaNum("1e11"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+        },
+        25:
+        { 
+            title: "Faster Game",
+            description: "Killing an Enemy Levels it up by 10, not 1",
+            unlocked() { return hasUpgrade("ch", 24)},
+            cost: new ExpantaNum("25"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Hero Souls",
+            currencyInternalName: "herosouls",
+        },
+        26:
+        { 
+            title: "Automated Ascensions",
+            description: "Gains 25% of Hero Souls per Second",
+            unlocked() { return hasUpgrade("ch", 25)},
+            cost: new ExpantaNum("500"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Hero Souls",
+            currencyInternalName: "herosouls",
+        },
+        27:
+        { 
+            title: "Wizard",
+            description: "Speeds up Powersurge, Metal Detector, and Ancient Treasure's Cooldown times by 10, and Automates Casting.",
+            unlocked() { return player[this.layer].buyables[33] >= 5},
+            cost: new ExpantaNum("1e34"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Gold",
+            currencyInternalName: "gold",
+        },
+        28:
+        { 
+            title: "OH GOD NO OH DEAR HEAVENS NO",
+            description: "Unlocks the Hall of Inflation",
+            unlocked() { return hasUpgrade("ch", 26)},
+            cost: new ExpantaNum("10000000"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Hero Souls",
+            currencyInternalName: "herosouls",
+        },
+        29:
+        { 
+            title: "Decorate the Hall of Inflation",
+            description: "Hero Souls boost Gold gain",
+            unlocked() { return hasUpgrade("ch", 26)},
+            cost: new ExpantaNum("1e12"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+                effect() 
+                {
+                     return player[this.layer].herosouls.add(1).pow(1.1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        31:
+        { 
+            title: "Build a Garden outside of the Hall of Inflation",
+            description: "Inflation Relics boost Inflation Relics",
+            unlocked() { return hasUpgrade("ch", 26)},
+            cost: new ExpantaNum("1e16"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+                effect() 
+                {
+                     return player[this.layer].inflationrelics.add(1).pow(0.7)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        32:
+        { 
+            title: "Inflate balloons to put inside of the hall of inflation",
+            description: "Enemy Kills add 100000 Levels",
+            unlocked() { return hasUpgrade("ch", 26)},
+            cost: new ExpantaNum("1e64"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+        },
+        33:
+        { 
+            title: "Paint the Hall of Inflation",
+            description: "Enemy Level boost Inflation Relics",
+            unlocked() { return hasUpgrade("ch", 32)},
+            cost: new ExpantaNum("1e68"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+                effect() 
+                {
+                     return player[this.layer].enemylevel.add(1).pow(5)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        34:
+        { 
+            title: "Build another Hall of Inflation",
+            description: "Unlocks Inflation Relics^2",
+            unlocked() { return hasUpgrade("ch", 33)},
+            cost: new ExpantaNum("1e180"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+        },
+        35:
+        { 
+            title: "Add another Floor to the Hall of Inflation",
+            description: "Inflation Relics^2 boost Inflation Relics^2",
+            unlocked() { return hasUpgrade("ch", 34)},
+            cost: new ExpantaNum("1e290"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+                effect() 
+                {
+                     return player[this.layer].inflationrelics2.add(1).pow(0.7)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        36:
+        { 
+            title: "Add a basement to the Hall of Inflation",
+            description: "Automates buying Hall of Inflation Buyables and stops autobuying Heroes and Ancients (Lag Purposes)",
+            unlocked() { return hasUpgrade("ch", 35)},
+            cost: new ExpantaNum("1e500"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+        },
+        37:
+        { 
+            title: "Add a Bouncy House outside of the Hall of Inflation",
+            description: "Boosts DPS based on Gold",
+            unlocked() { return hasUpgrade("ch", 36)},
+            cost: new ExpantaNum("1e12"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics^2",
+            currencyInternalName: "inflationrelics2",
+                effect() 
+                {
+                     return player[this.layer].gold.add(1).pow(50)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        38:
+        { 
+            title: "Inflate it so Much that it is kind of Concerning",
+            description: "Boosts Inflation Relics^2 based on DPS",
+            unlocked() { return hasUpgrade("ch", 37)},
+            cost: new ExpantaNum("1e540"),
+            currencyLocation() { return player.ch },
+            currencyDisplayName: "Inflation Relics",
+            currencyInternalName: "inflationrelics",
+                effect() 
+                {
+                     return player[this.layer].damagepersecond.add(1).pow(0.00001)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        39:
+        { 
+            title: "THE END",
+            description: "Finishes the layer",
+            unlocked() { return hasUpgrade("ch", 38)},
+            cost: new ExpantaNum("ee1000"),
+        },
+    },
+    clickables: {
+    11: {
+        display() {return "<img src='resources/sword.png' style='width:calc(130%);height:calc(60%);margin:-15%'></img>"},
+    },
+    12: {
+        display() {return "<img src='resources/enemy.png' style='width:calc(90%);height:calc(45%);margin:-15%'></img>"},
+    },
+    13: {
+        title() {return "Zone " + format(player.ch.zone.add(1))},
+    },
+    14: {
+        canClick() { return true },
+        title() {return "You are here at Zone " + format(player.ch.zone)},
+    },
+    15: {
+        title() {return "Zone " + format(player.ch.zone.sub(1))},
+    },
+    },
+                buyables:
+    {
+        11: {
+        cost(x) { return new ExpantaNum(2).pow(x.div(12)).mul(2) },
+        title: "Cid, the Helpful Adventurer",
+        unlocked() { return true },
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Damage Per Second";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul((buyableEffect('ch', 12))).pow(1.5).add(1)
+        },
+        },
+        12: {
+        cost(x) { return new ExpantaNum(10).pow(x.div(12.5)).mul(10) },
+        title: "Treebeast",
+        unlocked() { return (player[this.layer].buyables[11] >= 5)},
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Cid";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul((buyableEffect('ch', 13))).pow(1.5).add(1)
+        },
+        },
+        13: {
+        cost(x) { return new ExpantaNum(100).pow(x.div(13)).mul(100) },
+        title: "Brittany, Beach Princess",
+        unlocked() { return (player[this.layer].buyables[12] >= 5)},
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Treebeast";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul((buyableEffect('ch', 14))).pow(1.5).add(1)
+        },
+        },
+        14: {
+        cost(x) { return new ExpantaNum(1000).pow(x.div(13.5)).mul(1000) },
+        title: "The Masked Samurai",
+        unlocked() { return (player[this.layer].buyables[13] >= 5)},
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Brittany";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul((buyableEffect('ch', 15))).pow(1.5).add(1)
+        },
+        },
+        15: {
+        cost(x) { return new ExpantaNum(1e6).pow(x.div(14)).mul(1e6) },
+        title: "The Great Forest Seer",
+        unlocked() { return (player[this.layer].buyables[14] >= 10)},
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to The Masked Samurai";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul((buyableEffect('ch', 16))).pow(1.5).add(1)
+        },
+        },
+        16: {
+        cost(x) { return new ExpantaNum(1e7).pow(x.div(14)).mul(1e7) },
+        title: "Mercedes, Duchess of Blades",
+        unlocked() { return (player[this.layer].buyables[15] >= 5)},
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to The Great Forest Seer";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul((buyableEffect('ch', 17))).pow(1.5).add(1)
+        },
+        },
+        17: {
+        cost(x) { return new ExpantaNum(1e8).pow(x.div(14.5)).mul(1e8) },
+        title: "King Midas",
+        unlocked() { return (player[this.layer].buyables[16] >= 5)},
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Mercedes, Duchess of Blades";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul((buyableEffect('ch', 18))).pow(1.5).add(1)
+        },
+        },
+        18: {
+        cost(x) { return new ExpantaNum(1e9).pow(x.div(15)).mul(1e9) },
+        title: "Amenhotep",
+        unlocked() { return hasMilestone("ch", 12)},
+        canAfford() { return player.ch.gold.gte(this.cost()) },
+        buy() {
+            if (!hasMilestone('ch', 13)) player.ch.gold = player.ch.gold.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Gold\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Mercedes, Duchess of Blades";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].pow(1.5).add(1)
+        },
+        },
+        21: {
+        cost(x) { return new ExpantaNum(1000) },
+        title: "Powersurge",
+        unlocked() { return hasUpgrade("ch", 18) },
+        canAfford() { return player.ch.powersurgecooldown <= 0 },
+        buy() {
+
+                        if (player.ch.powersurgetime <= 0)
+                        {
+                           player.ch.powersurgetime = new ExpantaNum(30)
+                        }
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "x100 boost to Damage per Second \n\
+           Spell time: " + formatTime(player.ch.powersurgetime) + " seconds" + " \n\
+           Cooldown time: " + formatTime(player.ch.powersurgecooldown) + " seconds";
+         },
+        },
+        22: {
+        cost(x) { return new ExpantaNum(1000) },
+        title: "Metal Detector",
+        unlocked() { return hasUpgrade("ch", 21) },
+        canAfford() { return player.ch.metaldetectorcooldown <= 0 },
+        buy() {
+
+                        if (player.ch.metaldetectortime <= 0)
+                        {
+                            player.ch.metaldetectortime = new ExpantaNum(120)
+                        }
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "x5 boost to Coins\n\
+           Spell time: " + formatTime(player.ch.metaldetectortime) + " seconds" + " \n\
+           Cooldown time: " + formatTime(player.ch.metaldetectorcooldown) + " seconds";
+         },
+        },
+        23: {
+        cost(x) { return new ExpantaNum(1000) },
+        title: "Ancient Treasure",
+        unlocked() { return hasUpgrade("ch", 23) },
+        canAfford() { return player.ch.ancienttreasurecooldown <= 0 },
+        buy() {
+              player.ch.gold = player.ch.gold.add(player.ch.goldtoget.mul(2000))
+              player.ch.ancienttreasurecooldown = new ExpantaNum(7200)
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Gains 2000x Enemy drops worth of Gold on use" + " \n\
+           Cooldown time: " + formatTime(player.ch.ancienttreasurecooldown) + " seconds";
+         },
+        },
+        24: {
+        cost(x) { return new ExpantaNum(1000) },
+        title: "Ascension",
+        unlocked() { return true },
+        canAfford() { return player.ch.zone >= 20 },
+        buy() {
+              player.ch.gold = new ExpantaNum(0)
+              player.ch.buyables[11] = new ExpantaNum(0)
+              player.ch.buyables[12] = new ExpantaNum(0)
+              player.ch.buyables[13] = new ExpantaNum(0)
+              player.ch.buyables[14] = new ExpantaNum(0)
+              player.ch.buyables[15] = new ExpantaNum(0)
+              player.ch.buyables[16] = new ExpantaNum(0)
+              player.ch.buyables[17] = new ExpantaNum(0)
+              player.ch.buyables[18] = new ExpantaNum(0)
+              player.ch.enemylevel = new ExpantaNum(1)
+              player.ch.enemymaxhealth = new ExpantaNum(10)
+              player.ch.enemyhealth = new ExpantaNum(10)
+              player.ch.goldtoget = new ExpantaNum(1)
+              player.ch.herosouls = player.ch.herosouls.add(player.ch.herosoulstoget)
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Reset for " + format(player.ch.herosoulstoget) + " Hero Souls (Requires Zone 20)";
+         },
+        },
+        31: {
+        cost(x) { return new ExpantaNum(2).pow(x.div(8)).mul(2) },
+        title: "Mammon, Ancient of Greed",
+        unlocked() { return hasMilestone("ch", 13)},
+        canAfford() { return player.ch.herosouls.gte(this.cost()) },
+        buy() {
+            player.ch.herosouls = player.ch.herosouls.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Hero Souls\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Gold";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].pow(10).add(1)
+        },
+        },
+        32: {
+        cost(x) { return new ExpantaNum(10).pow(x.div(7.5)).mul(10) },
+        title: "Siyalatas, Ancient of Abandon",
+        unlocked() { return player.ch.buyables[31] >= 10 },
+        canAfford() { return player.ch.herosouls.gte(this.cost()) },
+        buy() {
+            player.ch.herosouls = player.ch.herosouls.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Hero Souls\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to DPS";
+         },
+        effect() 
+        {
+            let basevalue = new ExpantaNum(1000)
+            return player[this.layer].buyables[this.id].mul(basevalue.pow(player[this.layer].buyables[this.id])).pow(2).add(1)
+        },
+        },
+        33: {
+        cost(x) { return new ExpantaNum(100).pow(x.div(7.25)).mul(100) },
+        title: "Chronos, Ancient of Time",
+        unlocked() { return player.ch.buyables[32] >= 5 },
+        canAfford() { return player.ch.herosouls.gte(this.cost()) },
+        buy() {
+            player.ch.herosouls = player.ch.herosouls.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Hero Souls\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to DPS based on time after buying one of this Ancient";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(player.ch.chronostime).pow(9).add(1)
+        },
+        },
+        34: {
+        cost(x) { return new ExpantaNum(25000).pow(x.div(7)).mul(25000) },
+        title: "Morgulis, Ancient of Death",
+        unlocked() { return player.ch.buyables[33] >= 5 },
+        canAfford() { return player.ch.herosouls.gte(this.cost()) },
+        buy() {
+            player.ch.herosouls = player.ch.herosouls.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Hero Souls\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Hero Souls";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].pow(2).add(1)
+        },
+        },
+        35: {
+        cost(x) { return new ExpantaNum(3).pow(x.div(2)).mul(3) },
+        title: "Upgrade the Hall of Inflation",
+        unlocked() { return player.ch.buyables[33] >= 5 },
+        canAfford() { return player.ch.inflationrelics.gte(this.cost()) },
+        buy() {
+            player.ch.inflationrelics = player.ch.inflationrelics.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Inflation Totems\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Inflation Totems";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].pow(6.5).add(1)
+        },
+        },
+        36: {
+        cost(x) { return new ExpantaNum(100).pow(x.div(2)).mul(100) },
+        title: "Make the Hall of Inflation Bigger",
+        unlocked() { return hasUpgrade("ch", 29) },
+        canAfford() { return player.ch.inflationrelics.gte(this.cost()) },
+        buy() {
+            player.ch.inflationrelics = player.ch.inflationrelics.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Inflation Totems\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           +^" + format(data.effect) + " to the Inflation Totems Effect Power";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].pow(0.8)
+        },
+        },
+    },
+    milestones: {
+    11: {
+        requirementDescription: "Reach Zone 6",
+        effectDescription: "Unlocks a new Tab",
+        done() { return player.ch.zone.gte(6) }
+    },
+    12: {
+        requirementDescription: "Reach Zone 14",
+        effectDescription: "Gains 100% of Gold on Kill per second and unlocks the Final Hero",
+        done() { return player.ch.zone.gte(14) }
+    },
+    13: {
+        requirementDescription: "Reach Zone 24",
+        effectDescription: "Autobuys all Heroes",
+        done() { return player.ch.zone.gte(24) }
+    },
+    14: {
+        requirementDescription: "Reach Zone 666",
+        effectDescription: "Autobuys all Ancients",
+        done() { return player.ch.zone.gte(666) }
+    },
+    },
     update(delta) 
     {
+        if (hasUpgrade("ch", 11)) player.ch.heroicpointspersecond = new ExpantaNum(1)
+        if (hasUpgrade("ch", 12)) player.ch.heroicpointspersecond = player.ch.heroicpointspersecond.mul(upgradeEffect("ch", 12))
+        if (hasUpgrade("ch", 13)) player.ch.heroicpointspersecond = player.ch.heroicpointspersecond.mul(upgradeEffect("ch", 13))
+        player.ch.heroicpointspersecond = player.ch.heroicpointspersecond.mul(player.ch.goldeffect)
+        player.ch.points = player.ch.points.add(player.ch.heroicpointspersecond.mul(delta))
+
+        heroictimegain = new ExpantaNum(1)
+        if (hasUpgrade("ch", 13)) player.ch.heroictime = player.ch.heroictime.add(heroictimegain.mul(delta))
+
+        spellspeed = new ExpantaNum(1)
+        if (hasUpgrade("ch", 15)) player.ch.damagepersecond = new ExpantaNum(1)
+        player.ch.damagepersecond = player.ch.damagepersecond.mul(buyableEffect("ch", 11))
+        if (hasUpgrade("ch", 16)) player.ch.damagepersecond = player.ch.damagepersecond.mul(upgradeEffect("ch", 16))
+        if (hasUpgrade("ch", 17)) player.ch.damagepersecond = player.ch.damagepersecond.mul(upgradeEffect("ch", 17))
+        if (hasUpgrade("i2", 16)) player.ch.damagepersecond = player.ch.damagepersecond.mul(player.i2.incrementalstoneseffect2)
+        player.ch.damagepersecond = player.ch.damagepersecond.mul(player.ch.herosoulseffect)
+        player.ch.damagepersecond = player.ch.damagepersecond.mul(buyableEffect("ch", 32))
+        player.ch.damagepersecond = player.ch.damagepersecond.mul(buyableEffect("ch", 33))
+        if (hasUpgrade("ch", 37)) player.ch.damagepersecond = player.ch.damagepersecond.mul(upgradeEffect("ch", 37))
+        let powersurgetimesub = new ExpantaNum(1)
+        let powersurgecooldownsub = new ExpantaNum(1)
+        if (hasUpgrade("ch", 22)) powersurgecooldownsub = powersurgecooldownsub.mul(5)
+        if (hasUpgrade("ch", 27)) powersurgecooldownsub = powersurgecooldownsub.mul(10)
+        if (player.ch.powersurgetime > 0)
+        {
+            player.ch.damagepersecond = player.ch.damagepersecond.mul(100)
+            player.ch.powersurgetime = player.ch.powersurgetime.sub(powersurgetimesub.mul(delta))  
+		}
+        if (player.ch.powersurgecooldown > 0)
+        {
+            player.ch.powersurgecooldown = player.ch.powersurgecooldown.sub(powersurgecooldownsub.mul(delta))  
+		}
+        if (player.ch.powersurgetime < 0)
+        {
+            player.ch.powersurgecooldown = new ExpantaNum(60)
+            player.ch.powersurgetime = new ExpantaNum(0) 
+		}
+        if (player.ch.powersurgecooldown < 0)
+        {
+            player.ch.powersurgecooldown = new ExpantaNum(0) 
+		}
+        player.ch.enemyhealth = player.ch.enemyhealth.sub(player.ch.damagepersecond.mul(delta))
+        player.ch.goldtoget = player.ch.enemylevel.pow(1.5)
+        let metaldetectortimesub = new ExpantaNum(1)
+        let metaldetectorcooldownsub = new ExpantaNum(1)
+        if (hasUpgrade("ch", 22)) metaldetectorcooldownsub = metaldetectorcooldownsub.mul(5)
+        if (hasUpgrade("ch", 27)) metaldetectorcooldownsub = metaldetectorcooldownsub.mul(10)
+        if (player.ch.metaldetectortime > 0)
+        {
+            player.ch.goldtoget = player.ch.goldtoget.mul(5)
+            player.ch.metaldetectortime = player.ch.metaldetectortime.sub(metaldetectortimesub.mul(delta))  
+		}
+        if (player.ch.metaldetectorcooldown > 0)
+        {
+            player.ch.metaldetectorcooldown = player.ch.metaldetectorcooldown.sub(metaldetectorcooldownsub.mul(delta))  
+		}
+        if (player.ch.metaldetectortime < 0)
+        {
+            player.ch.metaldetectorcooldown = new ExpantaNum(180)
+            player.ch.metaldetectortime = new ExpantaNum(0) 
+		}
+        if (player.ch.metaldetectorcooldown < 0)
+        {
+            player.ch.metaldetectorcooldown = new ExpantaNum(0) 
+		}
+        if (hasUpgrade("ch", 19)) player.ch.goldtoget = player.ch.goldtoget.mul(upgradeEffect("ch", 19))
+        player.ch.goldtoget = player.ch.goldtoget.mul(buyableEffect("ch", 31))
+        if (hasUpgrade("ch", 29)) player.ch.goldtoget = player.ch.goldtoget.mul(upgradeEffect("ch", 29))
+
+        let goldeffectpow = new ExpantaNum(3.5)
+        if (hasUpgrade("m", 15)) goldeffectpow = new ExpantaNum(20)
+        goldeffectpow = goldeffectpow.plus(player.l.militarytimeeffect)
+        player.ch.goldeffect = player.ch.gold.pow(goldeffectpow).add(1)
+
+        if (player.ch.enemyhealth <= 0)
+        {  
+            if (!hasUpgrade("ch", 25)) player.ch.enemylevel = player.ch.enemylevel.add(1)
+            if ((hasUpgrade("ch", 25)) && (!hasUpgrade("ch", 32))) player.ch.enemylevel = player.ch.enemylevel.add(10)
+            if (hasUpgrade("ch", 32)) player.ch.enemylevel = player.ch.enemylevel.add(100000)
+            player.ch.gold = player.ch.gold.add(player.ch.goldtoget)
+            if (!hasUpgrade("ch", 25))  player.ch.enemymaxhealth = player.ch.enemymaxhealth.mul(1.2)
+            if ((hasUpgrade("ch", 25)) && (!hasUpgrade("ch", 32)))  player.ch.enemymaxhealth = player.ch.enemymaxhealth.mul(6.1917364224)
+            if (hasUpgrade("ch", 32))  player.ch.enemymaxhealth = player.ch.enemymaxhealth.mul("1.332e7918")
+            player.ch.enemyhealth = player.ch.enemymaxhealth
+		}
+
+        player.ch.zone = player.ch.enemylevel.div(50).round(50)
+
+        if (hasMilestone("ch", 12))
+        {
+            player.ch.gold = player.ch.gold.add(player.ch.goldtoget.div(10))                             
+		}
+
+        ancienttreasurecooldowncub = new ExpantaNum(1)
+        if (hasUpgrade("ch", 27)) ancienttreasurecooldowncub = ancienttreasurecooldowncub.mul(10)
+        if (player.ch.ancienttreasurecooldown > 0)
+        {
+            player.ch.ancienttreasurecooldown = player.ch.ancienttreasurecooldown.sub(ancienttreasurecooldowncub.mul(delta))  
+		}
+        if (player.ch.ancienttreasurecooldown < 0)
+        {
+            player.ch.ancienttreasurecooldown = new ExpantaNum(0)
+		}
+
+        let herosoulsmult = new ExpantaNum(1)
+        player.ch.herosoulstoget = player.ch.gold.pow(0.05).mul(herosoulsmult)
+        player.ch.herosoulstoget = player.ch.herosoulstoget.mul(buyableEffect("ch", 34))
+        player.ch.herosoulstoget = player.ch.herosoulstoget.mul(player.ch.inflationrelicseffect)
+
+        player.ch.herosoulseffect = player.ch.herosouls.mul(10).pow(7.5).add(1)
+
+        let chronosgain = new ExpantaNum(1)
+        if (player.ch.buyables[33] >= 1)
+        {
+            player.ch.chronostime = player.ch.chronostime.add(chronosgain.mul(delta))
+		}
+        if (hasUpgrade("ch", 26))  player.ch.herosouls = player.ch.herosouls.add(player.ch.herosoulstoget.mul(delta))
+
+        let inflationrelicspow = new ExpantaNum(10)
+        inflationrelicspow = inflationrelicspow.add(buyableEffect("ch", 36))
+        player.ch.inflationrelics = player.ch.inflationrelics.add(player.ch.inflationrelicspersecond.mul(delta))
+        if (hasUpgrade("ch", 28)) player.ch.inflationrelicspersecond = new ExpantaNum(1)
+        player.ch.inflationrelicspersecond = player.ch.inflationrelicspersecond.mul(buyableEffect("ch", 35))
+        if (hasUpgrade("ch", 31)) player.ch.inflationrelicspersecond = player.ch.inflationrelicspersecond.mul(upgradeEffect("ch", 31))
+        if (hasUpgrade("ch", 33)) player.ch.inflationrelicspersecond = player.ch.inflationrelicspersecond.mul(upgradeEffect("ch", 33))
+        player.ch.inflationrelicspersecond = player.ch.inflationrelicspersecond.mul(player.ch.inflationrelics2effect)
+        player.ch.inflationrelicseffect = player.ch.inflationrelics.pow(inflationrelicspow)
+
+        player.ch.inflationrelics2 = player.ch.inflationrelics2.add(player.ch.inflationrelics2persecond.mul(delta))
+        if (hasUpgrade("ch", 34)) player.ch.inflationrelics2persecond = new ExpantaNum(1)
+        if (hasUpgrade("ch", 35)) player.ch.inflationrelics2persecond = player.ch.inflationrelics2persecond.mul(upgradeEffect("ch", 35))
+        if (hasUpgrade("ch", 38)) player.ch.inflationrelics2persecond = player.ch.inflationrelics2persecond.mul(upgradeEffect("ch", 38))
+        player.ch.inflationrelics2effect = player.ch.inflationrelics2.pow(7).add(1)
     },
         microtabs: 
     {
         stuff: 
         {
+          "Development": {
+          content: [
+          ["blank", "15px"],
+          ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14]]],
+          ]
+          },
+          "Clicker Heroes": {
+          unlocked() { return hasUpgrade("ch", 14) },
+          content: [
+          ["display-text", () => "Gold: " + format(player.ch.gold) + " and a x" + format(player.ch.goldeffect) + " boost to Heroic Points"],
+          ["row", [["clickable", 11], ["blank", "100px"], ["clickable", 12]]],
+          ["display-text", () => "Enemy HP: " + format(player.ch.enemyhealth) + "/" + format(player.ch.enemymaxhealth) ],
+          ["display-text", () => "Gold on Kill: " + format(player.ch.goldtoget)],
+          ["display-text", () => "Level: " + format(player.ch.enemylevel) ],
+          ["display-text", () => "Damage Per Second: " + format(player.ch.damagepersecond) ],
+          ["row", [["upgrade", 15], ["upgrade", 16], ["upgrade", 17], ["upgrade", 19], ["upgrade", 24]]],
+          ["row", [["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14]]],
+          ["row", [["buyable", 15], ["buyable", 16], ["buyable", 17], ["buyable", 18]]],
+          ]
+          },
+          "Zones": {
+          unlocked() { return hasUpgrade("ch", 17) },
+          content: [
+          ["display-text", () => "Gold: " + format(player.ch.gold) + " and a x" + format(player.ch.goldeffect) + " boost to Heroic Points"],
+          ["row", [["clickable", 13]]],
+          ["row", [["clickable", 14]]],
+          ["row", [["clickable", 15]]],
+          ["blank", "15px"],
+          ["row", [["milestone", 11]]],
+          ["row", [["milestone", 12]]],
+          ["row", [["milestone", 13]]],
+          ["row", [["milestone", 14]]],
+          ]
+          },
+          "Skills": {
+          unlocked() { return hasMilestone("ch", 11) },
+          content: [
+          ["display-text", () => "Gold: " + format(player.ch.gold) + " and a x" + format(player.ch.goldeffect) + " boost to Heroic Points"],
+          ["row", [["upgrade", 18], ["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 27]]],
+          ["row", [["buyable", 21], ["buyable", 22], ["buyable", 23]]],
+          ]
+          },
+          "Ascension": {
+          unlocked() { return hasUpgrade("ch", 24) },
+          content: [
+          ["display-text", () => "Gold: " + format(player.ch.gold) + " and a x" + format(player.ch.goldeffect) + " boost to Heroic Points"],
+          ["display-text", () => "Level: " + format(player.ch.enemylevel) ],
+          ["display-text", () => "Zone: " + format(player.ch.zone) ],
+          ["display-text", () => "Hero Souls: " + format(player.ch.herosouls) + " and a x" + format(player.ch.herosoulseffect) + " boost to Damage per Second"],
+          ["row", [["buyable", 24]]],
+          ["row", [["buyable", 31], ["buyable", 32], ["buyable", 33], ["buyable", 34]]],
+          ["blank", "15px"],
+          ["row", [["upgrade", 25], ["upgrade", 26], ["upgrade", 28]]],
+          ]
+          },
+          "The Hall of Inflation": {
+          unlocked() { return hasUpgrade("ch", 28) },
+          content: [
+          ["display-text", () => "Gold: " + format(player.ch.gold) + " and a x" + format(player.ch.goldeffect) + " boost to Heroic Points"],
+          ["display-text", () => "Level: " + format(player.ch.enemylevel) ],
+          ["display-text", () => "Hero Souls: " + format(player.ch.herosouls) + " and a x" + format(player.ch.herosoulseffect) + " boost to Damage per Second"],
+          ["blank", "15px"],
+          ["display-text", () => "Inflation Relics: " + format(player.ch.inflationrelics) + " and a x" + format(player.ch.inflationrelicseffect) + " boost to Hero Souls"],
+          ["display-text", () => "You are gaining " + format(player.ch.inflationrelicspersecond) + " inflation relics per second"],
+          ["row", [["buyable", 35], ["buyable", 36]]],
+          ["row", [["upgrade", 29], ["upgrade", 31], ["upgrade", 32], ["upgrade", 33], ["upgrade", 34], ["upgrade", 35], ["upgrade", 36]]],
+          ["row", [["upgrade", 37], ["upgrade", 38]]],
+          ["display-text", () => hasUpgrade("ch", 34) ? "You have " + format(player.ch.inflationrelics2) + " Inflation Relics^2, and a x" + format(player.ch.inflationrelics2effect) + " boost to Inflation Relics" : ""],
+          ["display-text", () => hasUpgrade("ch", 34) ? "You are gaining " + format(player.ch.inflationrelics2persecond) + " Inflation Relics^2 per second" : ""],
+          ]
+          },
         },
     },
-        tabFormat: [
+            tabFormat: [
         "main-display",
-        ["LAYER COMING SOON"],
+        ["row", [["upgrade", 39]]],
         ["microtabs", "stuff"],
         ["blank", "25px"],
     ],
     layerShown(){return hasUpgrade("l", 118)}
+},
+)
+// A side layer with achievements, with no prestige
+addLayer("i2", {
+    startData() { return {
+        unlocked: true,
+		points: new ExpantaNum(0),
+        incrementalblessings: new ExpantaNum(0),
+        incrementalblessingeffect: new ExpantaNum(0),
+        incrementalritualtime: new ExpantaNum(0),
+        incrementalritualcooldown: new ExpantaNum(0),
+        incrementalstoneseffect1: new ExpantaNum(0),
+        cookieblessings: new ExpantaNum(0),
+        cookieblessingeffect: new ExpantaNum(0),
+        cookieritualtime: new ExpantaNum(0),
+        cookieritualcooldown: new ExpantaNum(0),
+        incrementalstoneseffect2: new ExpantaNum(0),
+        incrementalstoneseffect3: new ExpantaNum(0),
+        antimatterblessings: new ExpantaNum(0),
+        antimatterblessingeffect: new ExpantaNum(0),
+        antimatterritualtime: new ExpantaNum(0),
+        antimatterritualcooldown: new ExpantaNum(0),
+        clickerblessings: new ExpantaNum(0),
+        clickerblessingeffect: new ExpantaNum(0),
+        clickerritualtime: new ExpantaNum(0),
+        clickerritualcooldown: new ExpantaNum(0),
+    }},
+            nodeStyle: 
+            {
+            background: "linear-gradient(180deg, #ff0000, #ff7700, #ffff00, #77ff00, #00ff00, #00ff77, #00ffff, #0077ff, #0000ff, #7700ff, #ff00ff, #ff0077)",
+            "background-origin": "border-box",
+    },
+    color: "#123456",
+    symbol: "<p style='transform: scale(-2, -2)'><alternate>I2</alternate></p>",
+    resource: " Incremental Stones", 
+    row: "side",
+    midsection: ["grid", "blank"],
+    branches: ["cc"],
+    displayRow: 1,
+    position: 1, 
+        automate()
+    {
+    if (hasUpgrade('i2', 14)) {
+    buyBuyable(this.layer, 11)
+    }
+    if (hasUpgrade('i2', 18)) {
+    buyBuyable(this.layer, 12)
+    }
+    if (hasUpgrade('i2', 19)) {
+    buyBuyable(this.layer, 13)
+    }
+    if (hasUpgrade('h', 17)) {
+    buyBuyable(this.layer, 14)
+    }
+    },
+    buyables:
+    {
+    },    
+    upgrades: 
+    {
+        11:
+        { 
+            title: "Start the Ritual",
+            description: "Gain 1 Incremental Stone per Second",
+            unlocked() { return true },
+            cost: new ExpantaNum("0"),
+        },
+        12:
+        { 
+            title: "Wait a whole day for this Upgrade >:(",
+            description: "Unlocks the Incremental Ritual",
+            unlocked() { return hasUpgrade("i2", 11) },
+            cost: new ExpantaNum("86400"),
+        },
+        13:
+        { 
+            title: "Boosters? I'm interested!",
+            description: "Unlocks the Booster Tab",
+            unlocked() { return hasUpgrade("i2", 12) },
+            cost: new ExpantaNum("1e20"),
+        },
+        14:
+        { 
+            title: "Back at the Cookies",
+            description: "Unlocks the Cookie Ritual",
+            unlocked() { return hasUpgrade("i2", 12) },
+            cost: new ExpantaNum("1e40"),
+        },
+        15:
+        { 
+            title: "Blessing Automation",
+            description: "Automates the Incremental Ritual",
+            unlocked() { return hasUpgrade("i2", 14) },
+            cost: new ExpantaNum("ee1e180"),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+        16:
+        { 
+            title: "Bring on the Boosters!",
+            description: "Unlocks the second Incremental Stone effect",
+            unlocked() { return hasUpgrade("i2", 15) },
+            cost: new ExpantaNum("1e100"),
+        },
+        17:
+        { 
+            title: "A Great Boost!",
+            description: "Unlocks the third Incremental Stone effect",
+            unlocked() { return hasUpgrade("i2", 16) },
+            cost: new ExpantaNum("1e230"),
+        },
+        18:
+        { 
+            title: "Aha! The Game Inflated Again!",
+            description: "Automates the Cookie Ritual and unlocks another Ritual",
+            unlocked() { return hasUpgrade("i2", 17) },
+            cost: new ExpantaNum("ee1e8000000"),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+        19:
+        { 
+            title: "The Gods are seeing your worth...",
+            description: "Automates the Antimatter Dimensions Ritual and unlocks another Ritual and Effect #3 boosts Clicker Heroes time as well",
+            unlocked() { return hasUpgrade("i2", 18) },
+            cost: new ExpantaNum("eeeeee4.2"),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+    },
+    clickables: {
+    },
+    buyables:
+    {
+        11: {
+        cost(x) { return },
+        title: "Incremental Ritual",
+        unlocked() { return hasUpgrade("i2", 12) },
+        canAfford() { return player.i2.incrementalritualcooldown <= 0 },
+        buy() {
+        if (player.i2.incrementalritualtime <= 0)
+        {
+            player.i2.incrementalritualtime = new ExpantaNum(360)
+		}
+        },
+                 display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "+1 Incremental Blessing per ritual\n\
+           Ritual time: " + formatTime(player.i2.incrementalritualtime) + " seconds" + " \n\
+           Cooldown time: " + formatTime(player.i2.incrementalritualcooldown) + " seconds";
+         },
+        },
+        12: {
+        cost(x) { return },
+        title: "Cookie Ritual",
+        unlocked() { return hasUpgrade("i2", 14) },
+        canAfford() { return player.i2.cookieritualcooldown <= 0 },
+        buy() {
+        if (player.i2.cookieritualtime <= 0)
+        {
+            player.i2.cookieritualtime = new ExpantaNum(10)
+        }
+		},
+                 display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "+1 Cookie Blessing per ritual\n\
+           Ritual time: " + formatTime(player.i2.cookieritualtime) + " seconds" + " \n\
+           Cooldown time: " + formatTime(player.i2.cookieritualcooldown) + " seconds";
+         },
+        },
+        13: {
+        cost(x) { return },
+        title: "Antimatter Ritual",
+        unlocked() { return hasUpgrade("i2", 18) },
+        canAfford() { return player.i2.antimatterritualcooldown <= 0 },
+        buy() {
+        if (player.i2.antimatterritualtime <= 0)
+        {
+            player.i2.antimatterritualtime = new ExpantaNum(1800)
+		}
+        },
+                 display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "+1 Antimatter Blessing per ritual\n\
+           Ritual time: " + formatTime(player.i2.antimatterritualtime) + " seconds" + " \n\
+           Cooldown time: " + formatTime(player.i2.antimatterritualcooldown) + " seconds";
+         },
+        },
+        14: {
+        cost(x) { return },
+        title: "Clicker Heroes Ritual",
+        unlocked() { return hasUpgrade("i2", 19) },
+        canAfford() { return player.i2.clickerritualcooldown <= 0 },
+        buy() {
+        if (player.i2.clickerritualtime <= 0)
+        {
+            player.i2.clickerritualtime = new ExpantaNum(2)
+		}
+        },
+                 display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "+1 Clicker Heroes Blessing per ritual\n\
+           Ritual time: " + formatTime(player.i2.clickerritualtime) + " seconds" + " \n\
+           Cooldown time: " + formatTime(player.i2.clickerritualcooldown) + " seconds";
+         },
+        },
+    },
+    milestones: {
+    },
+    infoboxes: {
+    lore: {
+        title: "0-ee1e125 Points: Act 1: The Beginning",
+        body() { return "Yes, you may be wondering. Why is the lore this far into the game? Well, it's only the beginning. You will learn why you are doing this. You will learn about what you have to accomplish in this game. You see, you have been appointed by a god to do this. Who? I do not know. Why? I can not tell you. But all you know is what. You have to master the arts of all of these incremental games. In a world where Incremental games doesn't exist, you are there to create them. Now you are reading this, go and start an Incremental Ritual for the gods. They like it." },
+    },
+        lore2: {
+        unlocked() { return player.points > "10^^6" },
+        title: "ee1e125-1F6 Points: Act 2: The Hub",
+        body() { return "You realize what you have been doing. You are the Gods Servant. You make all these games to power the gods. You think to yourself, I will be better than the Gods one day. You made it far enough to unlock the hub. The main layer of everything. Good Luck." },
+    },
+    },
+    update(delta) 
+    {
+        incrementalstonegain = new ExpantaNum(1)
+        incrementalstonegain = incrementalstonegain.mul(player.i2.incrementalblessingeffect)
+        if (hasUpgrade("i2", 11)) player.i2.points = player.i2.points.add(incrementalstonegain.mul(delta))
+
+        let incrementalblessinggain = new ExpantaNum(0.00277777777778)
+        incrementalblessinggain = incrementalblessinggain.mul(player.i2.cookieblessingeffect)
+        incrementalblessinggain = incrementalblessinggain.mul(player.h.moonlighteffect)
+        let incrementalritualtimesub = new ExpantaNum(1)
+        let incrementalritualcooldownsub = new ExpantaNum(1)
+        if (hasUpgrade("h", 17)) incrementalritualcooldownsub = incrementalritualcooldownsub.mul(player.h.timeeffect2)
+        if (hasUpgrade("h", 18)) incrementalritualcooldownsub = incrementalritualcooldownsub.mul(player.h.sunshineeffect)
+        if (player.i2.incrementalritualtime > 0)
+        {
+            player.i2.incrementalblessings = player.i2.incrementalblessings.add(incrementalblessinggain.mul(delta))
+            player.i2.incrementalritualtime = player.i2.incrementalritualtime.sub(incrementalritualtimesub.mul(delta))  
+		}
+        if (player.i2.incrementalritualcooldown > 0)
+        {
+            player.i2.incrementalritualcooldown = player.i2.incrementalritualcooldown.sub(incrementalritualcooldownsub.mul(delta))  
+		}
+        if (player.i2.incrementalritualtime < 0)
+        {
+            player.i2.incrementalritualcooldown = new ExpantaNum(7200)
+            player.i2.incrementalritualtime = new ExpantaNum(0) 
+		}
+        if (player.i2.incrementalritualcooldown < 0)
+        {
+            player.i2.incrementalritualcooldown = new ExpantaNum(0) 
+		}
+        player.i2.incrementalblessingeffect = player.i2.incrementalblessings.add(1).pow(40)
+
+        player.i2.incrementalstoneseffect1 = player.i2.points.pow(0.3).add(1)
+        player.i2.incrementalstoneseffect2 = player.i2.points.plus(1).log10().pow(0.8)
+        player.i2.incrementalstoneseffect3 = player.i2.points.plus(1).log10().pow(0.2)
+
+        let cookieblessinggain = new ExpantaNum(0.1)
+        cookieblessinggain = cookieblessinggain.mul(player.i2.antimatterblessingeffect)
+        cookieblessinggain = cookieblessinggain.mul(player.h.moonlighteffect)
+        let cookieritualtimesub = new ExpantaNum(1)
+        let cookieritualcooldownsub = new ExpantaNum(1)
+        if (hasUpgrade("h", 17)) cookieritualcooldownsub = cookieritualcooldownsub.mul(player.h.timeeffect2)
+        if (hasUpgrade("h", 18)) cookieritualcooldownsub = cookieritualcooldownsub.mul(player.h.sunshineeffect)
+        if (player.i2.cookieritualtime > 0)
+        {
+            player.i2.cookieblessings = player.i2.cookieblessings.add(cookieblessinggain.mul(delta))
+            player.i2.cookieritualtime = player.i2.cookieritualtime.sub(cookieritualtimesub.mul(delta))  
+		}
+        if (player.i2.cookieritualcooldown > 0)
+        {
+            player.i2.cookieritualcooldown = player.i2.cookieritualcooldown.sub(cookieritualcooldownsub.mul(delta))  
+		}
+        if (player.i2.cookieritualtime < 0)
+        {
+            player.i2.cookieritualcooldown = new ExpantaNum(86400)
+            player.i2.cookieritualtime = new ExpantaNum(0) 
+		}
+        if (player.i2.cookieritualcooldown < 0)
+        {
+            player.i2.cookieritualcooldown = new ExpantaNum(0) 
+		}
+        player.i2.cookieblessingeffect = player.i2.cookieblessings.add(1).pow(5)
+
+        let antimatterblessinggain = new ExpantaNum(0.0005555555555555555555555)
+        antimatterblessinggain = antimatterblessinggain.mul(player.i2.clickerblessingeffect)
+        antimatterblessinggain = antimatterblessinggain.mul(player.h.moonlighteffect)
+        let antimatterritualtimesub = new ExpantaNum(1)
+        let antimatterritualcooldownsub = new ExpantaNum(1)
+        if (hasUpgrade("h", 17)) antimatterritualcooldownsub = antimatterritualcooldownsub.mul(player.h.timeeffect2)
+        if (hasUpgrade("h", 18)) antimatterritualcooldownsub = antimatterritualcooldownsub.mul(player.h.sunshineeffect)
+        if (player.i2.antimatterritualtime > 0)
+        {
+            player.i2.antimatterblessings = player.i2.antimatterblessings.add(antimatterblessinggain.mul(delta))
+            player.i2.antimatterritualtime = player.i2.antimatterritualtime.sub(antimatterritualtimesub.mul(delta))  
+		}
+        if (player.i2.antimatterritualcooldown > 0)
+        {
+            player.i2.antimatterritualcooldown = player.i2.antimatterritualcooldown.sub(antimatterritualcooldownsub.mul(delta))  
+		}
+        if (player.i2.antimatterritualtime < 0)
+        {
+            player.i2.antimatterritualcooldown = new ExpantaNum(1800)
+            player.i2.antimatterritualtime = new ExpantaNum(0) 
+		}
+        if (player.i2.antimatterritualcooldown < 0)
+        {
+            player.i2.antimatterritualcooldown = new ExpantaNum(0) 
+		}
+        player.i2.antimatterblessingeffect = player.i2.antimatterblessings.add(1).pow(7)
+
+        let clickerblessinggain = new ExpantaNum(0.5)
+        clickerblessinggain = clickerblessinggain.mul(player.h.moonlighteffect)
+        let clickerritualtimesub = new ExpantaNum(1)
+        let clickerritualcooldownsub = new ExpantaNum(1)
+        if (hasUpgrade("h", 17)) clickerritualcooldownsub = clickerritualcooldownsub.mul(player.h.timeeffect2)
+        if (hasUpgrade("h", 18)) clickerritualcooldownsub = clickerritualcooldownsub.mul(player.h.sunshineeffect)
+        if (player.i2.clickerritualtime > 0)
+        {
+            player.i2.clickerblessings = player.i2.clickerblessings.add(clickerblessinggain.mul(delta))
+            player.i2.clickerritualtime = player.i2.clickerritualtime.sub(clickerritualtimesub.mul(delta))  
+		}
+        if (player.i2.clickerritualcooldown > 0)
+        {
+            player.i2.clickerritualcooldown = player.i2.clickerritualcooldown.sub(clickerritualcooldownsub.mul(delta))  
+		}
+        if (player.i2.clickerritualtime < 0)
+        {
+            player.i2.clickerritualcooldown = new ExpantaNum(3600)
+            player.i2.clickerritualtime = new ExpantaNum(0) 
+		}
+        if (player.i2.clickerritualcooldown < 0)
+        {
+            player.i2.clickerritualcooldown = new ExpantaNum(0) 
+		}
+        player.i2.clickerblessingeffect = player.i2.clickerblessings.add(1).pow(7.5)
+    },
+        microtabs: 
+    {
+        stuff: 
+        {
+          "Lore": {
+          content: [
+          ["row", [["infobox", "lore"]]],
+          ["row", [["infobox", "lore2"]]],
+          ]
+          },
+          "Incremental Ritual": {
+          content: [
+          ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15], ["upgrade", 16], ["upgrade", 17]]],
+          ["row", [["upgrade", 18], ["upgrade", 19]]],
+          ["display-text", () => hasUpgrade("i2", 12) ? "You have " + format(player.i2.incrementalblessings) + " Incremental Blessings, and a x" + format(player.i2.incrementalblessingeffect) + " boost to Incremental Stones" : ""],
+          ["display-text", () => hasUpgrade("i2", 14) ? "You have " + format(player.i2.cookieblessings) + " Cookie Blessings, and a x" + format(player.i2.cookieblessingeffect) + " boost to Incremental Blessings" : ""],
+          ["display-text", () => hasUpgrade("i2", 18) ? "You have " + format(player.i2.antimatterblessings) + " Antimatter Blessings, and a x" + format(player.i2.antimatterblessingeffect) + " boost to Cookie Blessings" : ""],
+          ["display-text", () => hasUpgrade("i2", 19) ? "You have " + format(player.i2.clickerblessings) + " Clicker Heroes Blessings, and a x" + format(player.i2.clickerblessingeffect) + " boost to Antimatter Blessings" : ""],
+          ["row", [["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14]]],
+          ]
+          },
+          "Boosters": {
+          unlocked() { return hasUpgrade("i2", 13) },
+          content: [
+          ["display-text", () => hasUpgrade("i2", 13) ? format(player.i2.points) + " Incremental Stones converted to a x" + format(player.i2.incrementalstoneseffect1) + " boost to Antimatter Dimensions Time" : ""],
+          ["display-text", () => hasUpgrade("i2", 16) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect2) + " boost to DPS in the Clicker Heroes Layer" : ""],
+          ["display-text", () => hasUpgrade("i2", 17) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect3) + " boost to Military Time" : ""],
+          ]
+          },
+        },
+    },
+            tabFormat: [
+        "main-display",
+        ["microtabs", "stuff"],
+        ["blank", "25px"],
+    ],
+    layerShown(){return hasUpgrade("l", 121)}
+},
+)
+addLayer("h", {
+    startData() { return {
+        unlocked: true,
+		points: new ExpantaNum(0),
+		willpower: new ExpantaNum(0),
+		willpowerpersecond: new ExpantaNum(0),
+        willpowereffect: new ExpantaNum(0),
+        achievementpower: new ExpantaNum(0),
+        second: new ExpantaNum(0),
+        minute: new ExpantaNum(0),
+        time: new ExpantaNum(0),
+        timeeffect: new ExpantaNum(0),
+        timeeffect2: new ExpantaNum(0),
+        timeeffect3: new ExpantaNum(0),
+        timeplayedstring: "How'd you get here so fast? You probably cheated.",
+        dayornight: new ExpantaNum(0),
+        sunshine: new ExpantaNum(0),
+        moonlight: new ExpantaNum(0),
+        sunshineeffect: new ExpantaNum(0),
+        moonlighteffect: new ExpantaNum(0),
+    }},
+            nodeStyle: 
+            {
+           "background-image": "linear-gradient(85deg, #fbef53, #68e8f4, #fbef53)",  
+         "width": 400,
+        "height": 400,
+        "border-left": "100px solid fbef53",
+        "border-right": "100px solid 68e8f4",
+        "border-bottom": "140px solid fbef53",
+        "border-radius": 0,
+    },
+    color: "#68e8f4",
+    symbol: "<p style='transform: scale(3, 3)'><alternate>H</alternate></p>",
+    resource: " Potential", 
+    row: "side",
+    tooltip: "The Hub",
+    midsection: ["grid", "blank"],
+    branches: ["i", "i2"],
+    displayRow: 0,
+    position: 0, 
+        automate()
+    {
+    },
+    buyables:
+    {
+    },    
+    upgrades: 
+    {
+        11:
+        { 
+            title: "Become Worthy",
+            description: "Gain 1 Willpower per Second",
+            unlocked() { return true },
+            cost: new ExpantaNum("eeeeee1.4"),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+        12:
+        { 
+            title: "Achievements",
+            description: "Unlocks the Achievements Tab",
+            unlocked() { return hasUpgrade("h", 11) },
+            cost: new ExpantaNum("200"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        13:
+        { 
+            title: "Willpower Booster",
+            description: "Unlocks a Buyable",
+            unlocked() { return hasUpgrade("h", 12) },
+            cost: new ExpantaNum("1000"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        14:
+        { 
+            title: "Become Worthier",
+            description: "Boost Willpower based on Achievement Power",
+            unlocked() { return true },
+            cost: new ExpantaNum("eeeeee5"),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+                effect() 
+                {
+                     return player[this.layer].achievementpower.add(1).pow(3)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        15:
+        { 
+            title: "The Clock",
+            description: "Unlocks a new tab",
+            unlocked() { return hasUpgrade("h", 13) },
+            cost: new ExpantaNum("1000000"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        16:
+        { 
+            title: "Give Potential some Worth",
+            description: "Potential boosts Willpower",
+            unlocked() { return hasUpgrade("h", 14) },
+            cost: new ExpantaNum("1e10"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+                effect() 
+                {
+                     return player[this.layer].points.add(1).pow(3)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        17:
+        { 
+            title: "A Wrinkle in Time",
+            description: "Time gives more effects",
+            unlocked() { return hasUpgrade("h", 16) },
+            cost: new ExpantaNum("4e11"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        18:
+        { 
+            title: "The Fun Achievements!",
+            description: "Adds Miscellaneous Achievements and more things in the Clock Tab",
+            unlocked() { return hasUpgrade("h", 16) },
+            cost: new ExpantaNum("1e14"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        19:
+        { 
+            title: "Realm Grinder?",
+            description: "Adds the Realm Grinder Game",
+            unlocked() { return hasUpgrade("h", 18) },
+            cost: new ExpantaNum("eeeeee7"),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+    },
+    achievements: {
+        11: {
+            name: "Willpower I",
+            done() {return player.h.willpower.gte(1000)},
+            tooltip: "Get 1000 Willpower", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        12: {
+            name: "Willpower II",
+            done() {return player.h.willpower.gte(1e6)},
+            tooltip: "Get 1000000 Willpower", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        13: {
+            name: "Willpower III",
+            done() {return player.h.willpower.gte(1e20)},
+            tooltip: "Get 1e20 Willpower", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        14: {
+            name: "Willpower IV",
+            done() {return player.h.willpower.gte(1e80)},
+            tooltip: "Get 1e80 Willpower", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        15: {
+            name: "Willpower V",
+            done() {return player.h.willpower.gte("1e400")},
+            tooltip: "Get 1e400 Willpower", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        16: {
+            name: "Willpower VI",
+            done() {return player.h.willpower.gte("1e1000")},
+            tooltip: "Get 1e1000 Willpower", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2)}
+        },
+        21: {
+            name: "Potential I",
+            done() {return player.h.points.gte(6)},
+            tooltip: "Get 6 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        22: {
+            name: "Potential II",
+            done() {return player.h.points.gte(8)},
+            tooltip: "Get 8 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        23: {
+            name: "Potential III",
+            done() {return player.h.points.gte(12)},
+            tooltip: "Get 12 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        24: {
+            name: "Potential IV",
+            done() {return player.h.points.gte(16)},
+            tooltip: "Get 16 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2)}
+        },
+        25: {
+            name: "Potential V",
+            done() {return player.h.points.gte(30)},
+            tooltip: "Get 30 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(4)}
+        },
+        26: {
+            name: "Potential VI",
+            done() {return player.h.points.gte(100)},
+            tooltip: "Get 100 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(6)}
+        },
+        27: {
+            name: "Potential VII",
+            done() {return player.h.points.gte(300)},
+            tooltip: "Get 300 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(8)}
+        },
+        28: {
+            name: "Potential VIII",
+            done() {return player.h.points.gte(1000)},
+            tooltip: "Get 1000 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(12)}
+        },
+        31: {
+            name: "Incremental Stones I",
+            done() {return player.i2.points.gte("1e5000")},
+            tooltip: "Get 1e5000 Incremental Stones", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        32: {
+            name: "Incremental Stones II",
+            done() {return player.i2.points.gte("1e10000")},
+            tooltip: "Get 1e10000 Incremental Stones", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        33: {
+            name: "Incremental Stones III",
+            done() {return player.i2.points.gte("1e50000")},
+            tooltip: "Get 1e50000 Incremental Stones", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        34: {
+            name: "Incremental Stones IV",
+            done() {return player.i2.points.gte("e1e9")},
+            tooltip: "Get e1e9 Incremental Stones", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        35: {
+            name: "Incremental Stones V",
+            done() {return player.i2.points.gte("e1e300")},
+            tooltip: "Get e1e300 Incremental Stones", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2)}
+        },
+        36: {
+            name: "Incremental Stones VI",
+            done() {return player.i2.points.gte("ee1e1000")},
+            tooltip: "Get ee1e1000 Incremental Stones", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2)}
+        },
+        41: {
+            name: "Points I",
+            done() {return player.points.gte("10^^7")},
+            tooltip: "Get 1F7 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        42: {
+            name: "Points II",
+            done() {return player.points.gte("10^^10")},
+            tooltip: "Get 1F10 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)}
+        },
+        43: {
+            name: "Points III",
+            done() {return player.points.gte("10^^10^20")},
+            tooltip: "Get 1F1e20 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2)}
+        },
+        44: {
+            name: "Points IV",
+            done() {return player.points.gte("10^^10^10^10")},
+            tooltip: "Get 1Fe1e10 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2)}
+        },
+        45: {
+            name: "Points V",
+            done() {return player.points.gte("10^^10^10^10^1000")},
+            tooltip: "Get 1Fee1e1000 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(3)}
+        },
+        46: {
+            name: "Points VI",
+            done() {return player.points.gte("10^^10^^6")},
+            tooltip: "Get 1FF6 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(3)}
+        },
+        47: {
+            name: "Points VII",
+            done() {return player.points.gte("10^^^6")},
+            tooltip: "Get 1G6 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(4)}
+        },
+        48: {
+            name: "Points VIII",
+            done() {return player.points.gte("10^^^10^^^6")},
+            tooltip: "Get 1GG6 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(6)}
+        },
+        49: {
+            name: "Points IX",
+            done() {return player.points.gte("10^^^^6")},
+            tooltip: "Get 1H6 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(6)}
+        },
+        51: {
+            name: "Points X",
+            done() {return player.points.gte("10^^^^10^^^^6")},
+            tooltip: "Get 1HH6 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(7)}
+        },
+        52: {
+            name: "Points XI",
+            done() {return player.points.gte("10^^^^^^^^^^6")},
+            tooltip: "Get 1J10 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(9)}
+        },
+        53: {
+            name: "Points XII",
+            done() {return player.points.gte("10^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6")},
+            tooltip: "Get 1J100 Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(10)}
+        },
+        54: {
+            name: "Why would anyone even do this???",
+            done() {return player.l.minigamenumber.gte("1e10000")},
+            tooltip: "Get your 2048 Minigame number to 1e10000", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        55: {
+            name: "Generation to the Maximum!!!",
+            done() {return player[this.layer].buyables[11].gte("100")},
+            tooltip: "Buy 100 Willpower Generators", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        56: {
+            name: "Will the Willpower Power my Power?",
+            done() {return player.h.willpowereffect.gte("2")},
+            tooltip: "Get Willpower to make 2 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        57: {
+            name: "Will the Willpower Power my Power? II",
+            done() {return player.h.willpowereffect.gte("40")},
+            tooltip: "Get Willpower to make 40 Potential", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        58: {
+            name: "True Veteran",
+            done() {return player.m.points.gte("1e400000")},
+            tooltip: "Get 1e400000 Respect", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        59: {
+            name: "Now you remember this part of the game!",
+            done() {return player.cc.wrinklerjuice.gte("1e21")},
+            tooltip: "Get 1e21 Wrinkler Juice", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+    },
+    clickables: {
+    },
+    buyables:
+    {
+        11: {
+        cost(x) { return new ExpantaNum("100").pow(x.div(20)).mul("100") },
+        title: "Willpower Generator",
+        unlocked() { return hasUpgrade("h", 13) },
+        canAfford() { return player.h.willpower.gte(this.cost()) },
+        buy() {
+            player.h.willpower = player.h.willpower.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Willpower\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Willpower";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1)
+        },
+        },
+    },
+    update(delta) {
+    let beatcookie = new ExpantaNum(0)
+    let beatanti = new ExpantaNum(0)
+    let beatclicker = new ExpantaNum(0)
+
+    if (hasUpgrade("l", 21))
+    {
+        beatcookie = new ExpantaNum(2)
+	}
+    if (hasUpgrade("ad", 98))
+    {
+        beatanti = new ExpantaNum(3)
+	}
+    if (hasUpgrade("ch", 39))
+    {
+        beatclicker = new ExpantaNum(1)
+	}
+    player.h.willpowereffect = player.h.willpower.log10().pow(0.2)
+    player.h.points = beatcookie.add(beatanti.add(beatclicker.add(player.h.willpowereffect)))
+    if (hasUpgrade("h", 11)) player.h.willpowerpersecond = new ExpantaNum(1)
+    player.h.willpowerpersecond = player.h.willpowerpersecond.mul(buyableEffect('h', 11))
+    if (hasUpgrade("h", 14)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(upgradeEffect("h", 14))
+    if (hasUpgrade("h", 15)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(player.h.timeeffect)
+    if (hasUpgrade("h", 16)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(upgradeEffect("h", 16))
+    player.h.willpower = player.h.willpower.add(player.h.willpowerpersecond.mul(delta))
+
+    let clockspeed = new ExpantaNum(1)
+    let hours = player.h.time.div(3600).floor()
+    let minutes = player.h.time.div(60).sub(hours.mul(60)).floor()
+    let seconds = player.h.time.sub(hours.mul(3600).add(minutes.mul(60)))
+    if (player.h.time > 86400)
+    {
+        player.h.time = new ExpantaNum(0)
+	}
+    player.h.time = player.h.time.add(clockspeed.mul(delta))
+    player.h.timeeffect = player.h.time.div(1800).pow(1.5).add(1)
+    player.h.timeeffect2 = seconds.pow(1.1).add(1)
+    player.h.timeeffect3 = minutes.pow(1.4).add(1)
+
+    let day = new ExpantaNum(86400)
+    if (player.timePlayed > day.mul(2))
+    {
+        player.h.timeplayedstring = "You are a speedrunner to get here this fast!"
+	}
+    if (player.timePlayed > day.mul(5))
+    {
+        player.h.timeplayedstring = "You have been playing this game for some time now."
+	}
+    if (player.timePlayed > day.mul(10))
+    {
+        player.h.timeplayedstring = "Take your time, this is an incremental game anyways!"
+	}
+    if (player.timePlayed > day.mul(30))
+    {
+        player.h.timeplayedstring = "Pathetic. More Than A month"
+	}
+    if (player.timePlayed > day.mul(100))
+    {
+        player.h.timeplayedstring = "Is anyone going to stop you?"
+	}
+    if (player.timePlayed > day.mul(365))
+    {
+        player.h.timeplayedstring = "It's been more than a year!"
+	}
+    if (player.timePlayed > day.mul(1800))
+    {
+        player.h.timeplayedstring = "It's been years now!"
+	}
+    if (player.timePlayed > day.mul(46500))
+    {
+        player.h.timeplayedstring = "You are probably dead right now."
+	}
+    player.h.timeplayed = player.timePlayed
+    let sunshinegain = new ExpantaNum(1)
+    let moonlightgain = new ExpantaNum(1)
+    if (player.h.time < 43200 && hasUpgrade("h", 18))
+    {
+        player.h.dayornight = 1
+        player.h.sunshine = player.h.sunshine.add(sunshinegain.mul(delta))
+	}
+    if (player.h.time > 43200 && hasUpgrade("h", 18))
+    {
+        player.h.dayornight = 2
+        player.h.moonlight = player.h.moonlight.add(moonlightgain.mul(delta))
+	}
+        player.h.sunshineeffect = player.h.sunshine.log10().add(1)
+        player.h.moonlighteffect = player.h.moonlight.pow(0.5).add(1)
+	},
+    milestones: {
+    },
+
+        microtabs: 
+    {
+        stuff: 
+        {
+          "Main": {
+          content: [
+          ["blank", "10px"],
+          ["display-text", () => hasUpgrade("l", 22) ? "Cookie Clicker: 2 Potential" : ""],
+          ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions: 3 Potential" : ""],
+          ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes: 1 Potential" : ""],
+          ["blank", "10px"],
+          ["display-text", () => hasUpgrade("h", 11) ? "Willpower: " + format(player.h.willpowereffect) + " Potential" : ""],
+          ]
+          },
+          "Willpower": {
+          content: [
+          ["display-text", () => hasUpgrade("h", 11) ? "You have " + format(player.h.willpower) + " Willpower" : ""],
+          ["blank", "10px"],
+          ["row", [["upgrade", 11], ["upgrade", 14], ["upgrade", 16]]],
+          ["blank", "10px"],
+          ["row", [["buyable", 11]]],
+          ["blank", "10px"],
+          ["microtabs", "willpower"],
+          ]
+          },
+          "Achievements": {
+          unlocked() { return hasUpgrade("h", 12) },
+          content: [
+          ["display-text", () => "You have " + format(player.h.achievementpower) + " Achievement Power"],
+          ["blank", "10px"],
+          ["display-text", () => "Willpower"],
+          ["row", [["achievement", 11], ["achievement", 12], ["achievement", 13], ["achievement", 14], ["achievement", 15], ["achievement", 16]]],
+          ["blank", "10px"],
+          ["display-text", () => "Potential"],
+          ["row", [["achievement", 21], ["achievement", 22], ["achievement", 23], ["achievement", 24], ["achievement", 25], ["achievement", 26], ["achievement", 27], ["achievement", 28]]],
+          ["blank", "10px"],
+          ["display-text", () => "Incremental Stones"],
+          ["row", [["achievement", 31], ["achievement", 32], ["achievement", 33], ["achievement", 34], ["achievement", 35], ["achievement", 36]]],
+          ["blank", "10px"],
+          ["display-text", () => "Points"],
+          ["row", [["achievement", 41], ["achievement", 42], ["achievement", 43], ["achievement", 44], ["achievement", 45], ["achievement", 46]]],
+          ["row", [["achievement", 47], ["achievement", 48], ["achievement", 49], ["achievement", 51], ["achievement", 52], ["achievement", 53]]],
+          ["display-text", () => hasUpgrade("h", 18) ? "Miscellaneous Achievements" : ""],
+          ["row", [["achievement", 54], ["achievement", 55], ["achievement", 56], ["achievement", 57], ["achievement", 58], ["achievement", 59]]],
+          ]
+          },
+        },
+        willpower: 
+        {
+          "Unlockables": {
+          content: [
+          ["row", [["upgrade", 12], ["upgrade", 13], ["upgrade", 15], ["upgrade", 18], ["upgrade", 19]]],
+          ]
+          },
+          "The Clock": {
+          unlocked() { return hasUpgrade("h", 15) },
+          content: [
+          ['display-image', 'https://www.drpescatore.com/wp-content/uploads/2016/12/ticking_clock.gif'],
+          ["display-text", () => "It has been " + formatTime(player.h.time) + " into the Day"],
+          ["display-text", () => "The time translates to a " + format(player.h.timeeffect) + "x boost to Willpower"],
+          ["display-text", () => hasUpgrade("h", 17) ? "The time (seconds) also translates to a " + format(player.h.timeeffect2) + "x boost to Ritual Cooldowns. Also automates Clicker Heroes ritual." : ""],
+          ["display-text", () => hasUpgrade("h", 17) ? "The time (minutes) also translates to a " + format(player.h.timeeffect3) + "x boost to Clicker Heroes Time" : ""],
+          ["blank", "10px"],
+          ["row", [["upgrade", 17]]],
+          ["blank", "10px"],
+          ["display-text", () => player.h.time < 43200 && hasUpgrade("h", 18) ? "It is day": ""],
+          ["display-text", () => player.h.time > 43200 && hasUpgrade("h", 18) ? "It is night": ""],
+          ["display-text", () => hasUpgrade("h", 18) ? "You have " + format(player.h.moonlight) + " Moonlight and a x" + format(player.h.moonlighteffect) + " boost to Incremental, Cookie, Antimatter, and Clicker Hero blessings": ""],
+          ["display-text", () => hasUpgrade("h", 18) ? "You have " + format(player.h.sunshine) + " Sunshine and a x" + format(player.h.sunshineeffect) + " boost to Ritual Cooldowns": ""],
+          ["blank", "10px"],
+          ["display-text", () => hasUpgrade("h", 18) ? "You have played this game for " + formatTime(player.timePlayed) + ". " + player.h.timeplayedstring: ""],
+          ]
+          },
+        },
+    },
+            tabFormat: [
+        "main-display",
+        ["microtabs", "stuff"],
+        ["blank", "25px"],
+    ],
+    layerShown(){return hasUpgrade("l", 123)}
+},
+)
+addLayer("rg", {
+    startData() { return {
+        unlocked: true,
+		points: new ExpantaNum(0),
+    }},
+            nodeStyle: 
+            {
+           "background-image": "linear-gradient(85deg, #5c0a0a, #333333)",  
+    },
+    color: "#333333",
+    symbol: "<img src='resources/realmgrinder.png' style='width:calc(100%);height:calc(80%);margin:0%'></img>",
+    resource: " Realm Power", 
+    row: "side",
+    midsection: ["grid", "blank"],
+    branches: ["cc", "ad", "ch"],
+    displayRow: 3,
+    position: 0, 
+    automate()
+    {
+    },
+    buyables:
+    {
+    },    
+    upgrades: 
+    {
+
+    },
+    achievements: {
+
+    },
+    clickables: {
+    },
+    buyables:
+    {
+
+    },
+    update(delta) {
+
+	},
+    milestones: {
+    },
+
+        microtabs: 
+    {
+        stuff: 
+        {
+          "Development": {
+          content: [
+          ["blank", "10px"],
+          ["display-text", () => "The End for Now!"],
+          ]
+          },
+        },
+    },
+            tabFormat: [
+        "main-display",
+        ["microtabs", "stuff"],
+        ["blank", "25px"],
+    ],
+    layerShown(){return hasUpgrade("h", 19)}
 },
 )
