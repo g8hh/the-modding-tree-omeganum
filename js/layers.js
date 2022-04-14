@@ -3399,7 +3399,7 @@ addLayer("l", {
 
             let supermarkettimeincome = new ExpantaNum(0)
             if (hasUpgrade("l", 122)) supermarkettimeincome = supermarkettimeincome.add(1)
-            supermarkettimeincome = supermarkettimeincome.mul(player.l.clickerheroestimeeffect)
+            if (hasUpgrade("ch", 39)) supermarkettimeincome = supermarkettimeincome.mul(player.l.clickerheroestimeeffect)
             player.l.supermarkettime = player.l.supermarkettime.add(supermarkettimeincome.mul(delta))
 
             player.l.supermarkettimeeffect = player.l.supermarkettime.pow(0.2).add(1)
