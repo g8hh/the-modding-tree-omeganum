@@ -7219,7 +7219,7 @@ addLayer("ch", {
         if (hasUpgrade("ch", 31)) player.ch.inflationrelicspersecond = player.ch.inflationrelicspersecond.mul(upgradeEffect("ch", 31))
         if (hasUpgrade("ch", 33)) player.ch.inflationrelicspersecond = player.ch.inflationrelicspersecond.mul(upgradeEffect("ch", 33))
         player.ch.inflationrelicspersecond = player.ch.inflationrelicspersecond.mul(player.ch.inflationrelics2effect)
-        player.ch.inflationrelicseffect = player.ch.inflationrelics.pow(inflationrelicspow)
+        player.ch.inflationrelicseffect = player.ch.inflationrelics.pow(inflationrelicspow).add(1)
 
         player.ch.inflationrelics2 = player.ch.inflationrelics2.add(player.ch.inflationrelics2persecond.mul(delta))
         if (hasUpgrade("ch", 34)) player.ch.inflationrelics2persecond = new ExpantaNum(1)
