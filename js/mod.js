@@ -5,8 +5,8 @@ let modInfo = {
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
-	discordName: "",
-	discordLink: "",
+	discordName: "Icecreamdude's Games Discord Server",
+	discordLink: "https://discord.gg/DubGsHrbs2",
 	initialStartPoints: new ExpantaNum(10), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
