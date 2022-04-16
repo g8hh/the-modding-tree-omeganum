@@ -7199,8 +7199,8 @@ addLayer("ch", {
 
         let herosoulsmult = new ExpantaNum(1)
         player.ch.herosoulstoget = player.ch.gold.pow(0.05).mul(herosoulsmult)
-        player.ch.herosoulstoget = player.ch.herosoulstoget.mul(buyableEffect("ch", 34))
-        player.ch.herosoulstoget = player.ch.herosoulstoget.mul(player.ch.inflationrelicseffect)
+        herosoulsmult = herosoulsmult.mul(buyableEffect("ch", 34))
+        herosoulsmult = herosoulsmult.mul(player.ch.inflationrelicseffect)
 
         player.ch.herosoulseffect = player.ch.herosouls.mul(10).pow(7.5).add(1)
 
