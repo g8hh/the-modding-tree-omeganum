@@ -49,7 +49,7 @@ addLayer("i", {
     ],
     automate()
     {
-                if (!hasUpgrade('ad', 43))
+                if (!hasUpgrade('ad', 35))
             {
                 if (hasUpgrade('i', 31)) {
     buyBuyable(this.layer, 11)
@@ -512,7 +512,7 @@ addLayer("i", {
         {
             title: "Finish Coding",
             description: "x1e30 boost to Point gain, and unlock new stuff",
-            cost: new ExpantaNum(2e87),
+            cost: new ExpantaNum(2e85),
             unlocked() { return hasUpgrade("i", 43) },
             branches: [11, 12, 13, 14, 15, 23, 31, 32, 33, 41, 42, 43],
         },
@@ -620,7 +620,7 @@ addLayer("cc", {
         },
     automate()
     {
-            if (!hasUpgrade('ad', 43))
+            if (!hasUpgrade('ad', 35))
             {
                         if (hasUpgrade('cc', 22)) 
         {
@@ -676,7 +676,7 @@ addLayer("cc", {
     buyables:
     {
         11: {
-        cost(x) { return new ExpantaNum(4).pow(x.div(40)).mul(4) },
+        cost(x) { return new ExpantaNum(2).pow(x.div(40)).mul(2) },
         title: "Cursor",
         unlocked() { return hasUpgrade("cc", 12)  || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player[this.layer].points.gte(this.cost()) },
@@ -748,7 +748,7 @@ addLayer("cc", {
         },
         },
         14: {
-        cost(x) { return new ExpantaNum(1e7).pow(x.div(16)).mul(1e7) },
+        cost(x) { return new ExpantaNum(4e6).pow(x.div(16)).mul(4e6) },
         title: "Cookie Mine",
         unlocked() { return (tmp.cc.buyables[12].effect||0)>=25  || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player[this.layer].points.gte(this.cost()) },
@@ -840,11 +840,11 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 24))).pow(0.95).add(1)
+            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 24))).pow(1.05).add(1)
         },
         },
         24: {
-        cost(x) { return new ExpantaNum(1e26).pow(x.div(11)).mul(1e26) },
+        cost(x) { return new ExpantaNum(1e25).pow(x.div(11)).mul(1e25) },
         title: "Cookie Wizard Tower",
         unlocked() { return (tmp.cc.buyables[23].effect||0)>=4.5  || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player[this.layer].points.gte(this.cost()) },
@@ -864,7 +864,7 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].pow(0.95).add(1)
+            return player[this.layer].buyables[this.id].pow(1.05).add(1)
         },
         },
         31: {
@@ -873,7 +873,10 @@ addLayer("cc", {
         unlocked() { return (tmp.cc.buyables[24].effect||0)>=3.8  || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player.cc.sugarlumps.gte(this.cost()) },
         buy() {
+                                                         if (!hasUpgrade("cc", 71))
+            {
             player.cc.sugarlumps = player.cc.sugarlumps.sub(this.cost())
+            }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -894,7 +897,10 @@ addLayer("cc", {
         unlocked() { return (tmp.cc.buyables[31].effect||0)>=4.5  || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player.cc.sugarlumps.gte(this.cost()) },
         buy() {
+                                                         if (!hasUpgrade("cc", 71))
+            {
             player.cc.sugarlumps = player.cc.sugarlumps.sub(this.cost())
+            }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -915,7 +921,10 @@ addLayer("cc", {
         unlocked() { return (tmp.cc.buyables[32].effect||0)>=4.0  || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player.cc.sugarlumps.gte(this.cost()) },
         buy() {
+                                                         if (!hasUpgrade("cc", 71))
+            {
             player.cc.sugarlumps = player.cc.sugarlumps.sub(this.cost())
+            }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -936,7 +945,10 @@ addLayer("cc", {
         unlocked() { return (tmp.cc.buyables[33].effect||0)>=3.4 || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player.cc.sugarlumps.gte(this.cost()) },
         buy() {
+                                                         if (!hasUpgrade("cc", 71))
+            {
             player.cc.sugarlumps = player.cc.sugarlumps.sub(this.cost())
+            }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -952,7 +964,7 @@ addLayer("cc", {
         },
         },
         41: {
-        cost(x) { return new ExpantaNum(1e37).pow(x.div(3.55)).mul(1e37) },
+        cost(x) { return new ExpantaNum(1e37).pow(x.div(6.5)).mul(1e37) },
         title: "Cookie Ascension",
         unlocked() { return (tmp.cc.buyables[34].effect||0)>=2.4 || (tmp.cc.buyables[41].effect||0)>=1 },
         canAfford() { return player.cc.points.gte(this.cost()) },
@@ -986,7 +998,7 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].mul(1).pow(1.5)
+            return player[this.layer].buyables[this.id].mul(1).pow(1.8)
         },
         },
         51: {
@@ -995,7 +1007,10 @@ addLayer("cc", {
         unlocked() { return (tmp.cc.buyables[41].effect||0)>=2.5 },
         canAfford() { return player.cc.heavenlychips.gte(this.cost()) },
         buy() {
+                                                                 if (!hasUpgrade("cc", 111))
+            {
             player.cc.heavenlychips = player.cc.heavenlychips.sub(this.cost())
+            }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -1007,7 +1022,7 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 52))).pow(0.8).add(1)
+            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 52))).pow(0.95).add(1)
         },
         },
         52: {
@@ -1016,7 +1031,10 @@ addLayer("cc", {
         unlocked() { return (tmp.cc.buyables[51].effect||0)>=4.2 },
         canAfford() { return player.cc.heavenlychips.gte(this.cost()) },
         buy() {
+                                                                 if (!hasUpgrade("cc", 111))
+            {
             player.cc.heavenlychips = player.cc.heavenlychips.sub(this.cost())
+            }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -1028,7 +1046,7 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 53))).pow(0.8).add(1)
+            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 53))).pow(0.95).add(1)
         },
         },
         53: {
@@ -1037,7 +1055,10 @@ addLayer("cc", {
         unlocked() { return (tmp.cc.buyables[52].effect||0)>=5.18 },
         canAfford() { return player.cc.heavenlychips.gte(this.cost()) },
         buy() {
+                                                                 if (!hasUpgrade("cc", 111))
+            {
             player.cc.heavenlychips = player.cc.heavenlychips.sub(this.cost())
+            }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -1049,11 +1070,11 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].pow(0.8).add(1)
+            return player[this.layer].buyables[this.id].pow(0.95).add(1)
         },
         },
         61: {
-        cost(x) { return new ExpantaNum(1e16).pow(x.div(5)).mul(1e16) },
+        cost(x) { return new ExpantaNum(1e15).pow(x.div(14)).mul(1e15) },
         title: "Wrinkler",
         unlocked() { return hasUpgrade("cc", 102) },
         canAfford() { return player.cc.sugarlumps.gte(this.cost()) },
@@ -1091,7 +1112,7 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 72))).pow(0.7).add(1)
+            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 72))).pow(0.9).add(1)
         },
         },
         72: {
@@ -1112,7 +1133,7 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 73))).pow(0.7).add(1)
+            return player[this.layer].buyables[this.id].mul((buyableEffect('cc', 73))).pow(0.9).add(1)
         },
         },
         73: {
@@ -1133,7 +1154,7 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].pow(0.7).add(1)
+            return player[this.layer].buyables[this.id].pow(0.9).add(1)
         },
         },
         81: {
@@ -1216,7 +1237,7 @@ addLayer("cc", {
         },
         },
         111: {
-        cost(x) { return new ExpantaNum(1e6).pow(x.div(18)).mul(1e6) },
+        cost(x) { return new ExpantaNum(100000).pow(x.div(18)).mul(100000) },
         title: "X Cookie Wrinkler",
         unlocked() { return hasUpgrade("cc", 181) && hasUpgrade("cc", 182)},
         canAfford() { return player.cc.xlumps.gte(this.cost()) },
@@ -1233,11 +1254,11 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].pow(0.5).add(1)
+            return player[this.layer].buyables[this.id].pow(0.8).add(1)
         },
         },
         112: {
-        cost(x) { return new ExpantaNum(1e6).pow(x.div(18)).mul(1e6) },
+        cost(x) { return new ExpantaNum(100000).pow(x.div(18)).mul(100000) },
         title: "Y Cookie Wrinkler",
         unlocked() { return hasUpgrade("cc", 181) && hasUpgrade("cc", 182) },
         canAfford() { return player.cc.ylumps.gte(this.cost()) },
@@ -1254,11 +1275,11 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].pow(0.4).add(1)
+            return player[this.layer].buyables[this.id].pow(0.8).add(1)
         },
         },
         113: {
-        cost(x) { return new ExpantaNum(1e6).pow(x.div(18)).mul(1e6) },
+        cost(x) { return new ExpantaNum(100000).pow(x.div(18)).mul(100000) },
         title: "Z Cookie Wrinkler",
         unlocked() { return hasUpgrade("cc", 181) && hasUpgrade("cc", 182) },
         canAfford() { return player.cc.zlumps.gte(this.cost()) },
@@ -1275,11 +1296,11 @@ addLayer("cc", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].pow(0.45).add(1)
+            return player[this.layer].buyables[this.id].pow(0.7).add(1)
         },
         },
         121: {
-        cost(x) { return new ExpantaNum(25).pow(x.div(20)).mul(25) },
+        cost(x) { return new ExpantaNum(20).pow(x.div(20)).mul(20) },
         title: "Priest Grandma",
         unlocked() { return hasUpgrade("cc", 192) },
         canAfford() { return player.cc.cookiebibles.gte(this.cost()) },
@@ -1300,7 +1321,7 @@ addLayer("cc", {
         },
         },
         122: {
-        cost(x) { return new ExpantaNum(400).pow(x.div(5)).mul(400) },
+        cost(x) { return new ExpantaNum(100).pow(x.div(5)).mul(100) },
         title: "Sacrifice Cultists",
         unlocked() { return (tmp.cc.buyables[121].effect||0)>=4.8 },
         canAfford() { return player.cc.cultists.gte(this.cost()) },
@@ -1371,25 +1392,25 @@ addLayer("cc", {
         {
             title: "Free Points",
             description: "Get 1e14 Incremental Points per second and autobuys the rest of the buyables",
-            cost: new ExpantaNum(1),
+            cost: new ExpantaNum(0),
         },
         12:
         {
             title: "Automation^3",
             description: "Autobuys all the upgrades",
-            cost: new ExpantaNum(6),
+            cost: new ExpantaNum(1),
         },
         13:
         {
             title: "Automation^4",
             description: "Passively Generate Cookies",
-            cost: new ExpantaNum(100),
+            cost: new ExpantaNum(3),
         },
         21:
         {
             title: "Cookie-Point Synergy",
             description: "Cookies also boost Point gain",
-            cost: new ExpantaNum(1e10),
+            cost: new ExpantaNum(1e9),
             unlocked() { return (tmp.cc.buyables[14].effect||0)>=5 },
                 effect() 
                 {
@@ -1402,18 +1423,18 @@ addLayer("cc", {
             title: "Cookie Engineer",
             description: "Automates the First row of buyables",
             unlocked() { return (tmp.cc.buyables[14].effect||0)>=5 },
-            cost: new ExpantaNum(1e20),
+            cost: new ExpantaNum(1e12),
             unlocked() { return (tmp.cc.buyables[14].effect||0)>=24 },
         },
         31:
         {
             title: "Point-Cookie Synergy",
             description: "Points boost Cookie gain",
-            cost: new ExpantaNum(1e15),
+            cost: new ExpantaNum(1e13),
             unlocked() { return (tmp.cc.buyables[21].effect||0)>=3 },
                 effect() 
                 {
-                     return player.points.add(1).pow(0.0005)
+                     return player.points.add(1).pow(0.0006)
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -1421,11 +1442,11 @@ addLayer("cc", {
         {
             title: "Incremental Point-Cookie Synergy",
             description: "Incremental Points boost Cookie gain",
-            cost: new ExpantaNum(1e15),
+            cost: new ExpantaNum(1e13),
             unlocked() { return (tmp.cc.buyables[21].effect||0)>=3 },
                 effect() 
                 {
-                     return player.points.add(1).pow(0.0007)
+                     return player.points.add(1).pow(0.0009)
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -1433,11 +1454,11 @@ addLayer("cc", {
         {
             title: "Cookie-Cookie Synergy",
             description: "Cookies boost Cookie gain",
-            cost: new ExpantaNum(1e15),
+            cost: new ExpantaNum(1e13),
             unlocked() { return (tmp.cc.buyables[21].effect||0)>=3 },
                 effect() 
                 {
-                     return player.cc.points.add(1).pow(0.008)
+                     return player.cc.points.add(1).pow(0.01)
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -1449,7 +1470,7 @@ addLayer("cc", {
             unlocked() { return (tmp.cc.buyables[22].effect||0)>=1.9 },
                 effect() 
                 {
-                     return player.cc.sugarlumps.add(1).pow(0.23456789)
+                     return player.cc.sugarlumps.add(1).pow(0.3456789)
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
             currencyLocation() { return player[this.layer] },
@@ -1460,7 +1481,7 @@ addLayer("cc", {
         {
             title: "Sugar Lumps-Point Synergy",
             description: "Sugar Lumps boost Point gain",
-            cost: new ExpantaNum(50),
+            cost: new ExpantaNum(20),
             unlocked() { return (tmp.cc.buyables[22].effect||0)>1.9 },
                 effect() 
                 {
@@ -1475,7 +1496,7 @@ addLayer("cc", {
         {
             title: "Sugar Lumps-Incremental Point Synergy",
             description: "Sugar Lumps boost Incremental Point gain",
-            cost: new ExpantaNum(250),
+            cost: new ExpantaNum(40),
             unlocked() { return (tmp.cc.buyables[22].effect||0)>=1.9 },
                 effect() 
                 {
@@ -1490,14 +1511,14 @@ addLayer("cc", {
         {
             title: "Cookie Lord",
             description: "Automates the Second row of buyables",
-            cost: new ExpantaNum(1e27),
+            cost: new ExpantaNum(1e26),
             unlocked() { return (tmp.cc.buyables[24].effect||0)>=2 },
         },
         52:
         {
             title: "Cookie Master",
             description: "Boost Cookie Gain based on Time Played",
-            cost: new ExpantaNum(100000),
+            cost: new ExpantaNum(10000),
             unlocked() { return (tmp.cc.buyables[24].effect||0)>=2 },
                 effect() 
                 {
@@ -1572,7 +1593,7 @@ addLayer("cc", {
         {
             title: "Cookie God",
             description: "Automates the Third row of buyables",
-            cost: new ExpantaNum(20),
+            cost: new ExpantaNum(5),
             unlocked() { return (tmp.cc.buyables[41].effect||0)>=1 },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Heavenly Chips",
@@ -1582,7 +1603,7 @@ addLayer("cc", {
         {
             title: "Heavenly Chip-Points and Incremental Points Synergy",
             description: "Boosts Points and Incremental Points based on Heavenly Chips",
-            cost: new ExpantaNum(100),
+            cost: new ExpantaNum(10),
             unlocked() { return (tmp.cc.buyables[41].effect||0)>=1 },
                 effect() 
                 {
@@ -1597,7 +1618,7 @@ addLayer("cc", {
         {
             title: "Heavenly Chip-Cookies Synergy",
             description: "Boosts Cookies based on Heavenly Chips",
-            cost: new ExpantaNum(100),
+            cost: new ExpantaNum(15),
             unlocked() { return (tmp.cc.buyables[41].effect||0)>=1 },
                 effect() 
                 {
@@ -1612,7 +1633,7 @@ addLayer("cc", {
         {
             title: "Heavenly Chip-Sugar Lumps Synergy",
             description: "Boosts Sugar Lumps based on Heavenly Chips",
-            cost: new ExpantaNum(100),
+            cost: new ExpantaNum(20),
             unlocked() { return (tmp.cc.buyables[41].effect||0)>=1 },
                 effect() 
                 {
@@ -1627,7 +1648,7 @@ addLayer("cc", {
         {
             title: "Heavenly Chip-Points Synergy",
             description: "Boosts Points based on Heavenly Chips",
-            cost: new ExpantaNum(2500),
+            cost: new ExpantaNum(250),
             unlocked() { return (tmp.cc.buyables[41].effect||0)>=2.5 },
                 effect() 
                 {
@@ -1642,7 +1663,7 @@ addLayer("cc", {
         {
             title: "Heavenly Chip-Incremental Points Synergy",
             description: "Boosts Incremental Points based on Heavenly Chips",
-            cost: new ExpantaNum(2500),
+            cost: new ExpantaNum(250),
             unlocked() { return (tmp.cc.buyables[41].effect||0)>=2.5 },
                 effect() 
                 {
@@ -1657,7 +1678,7 @@ addLayer("cc", {
         {
             title: "Incremental Points and Cookies-Point Synergy",
             description: "Boosts Points based on Incremental Points and Cookies",
-            cost: new ExpantaNum(10000),
+            cost: new ExpantaNum(1000),
             unlocked() { return (tmp.cc.buyables[51].effect||0)>=3.44 },
                 effect() 
                 {
@@ -1672,7 +1693,7 @@ addLayer("cc", {
         {
             title: "Points and Cookies-Incremental Point Synergy",
             description: "Boosts Incremental Points based on Points and Cookies",
-            cost: new ExpantaNum(10000),
+            cost: new ExpantaNum(1000),
             unlocked() { return (tmp.cc.buyables[51].effect||0)>=3.44 },
                 effect() 
                 {
@@ -1687,7 +1708,7 @@ addLayer("cc", {
         {
             title: "Cookie Immortality",
             description: "Boosts Heavenly Chips and Sugar Lumps based on time played",
-            cost: new ExpantaNum(25000),
+            cost: new ExpantaNum(2500),
             unlocked() { return (tmp.cc.buyables[52].effect||0)>=2.7 },
                 effect() 
                 {
@@ -1703,7 +1724,7 @@ addLayer("cc", {
         {
             title: "Cookie Holy Lords",
             description: "Boosts Heavenly Chips and Sugar Lumps based on amount of Cursors",
-            cost: new ExpantaNum(1000000),
+            cost: new ExpantaNum(100000),
             unlocked() { return (tmp.cc.buyables[53].effect||0)>=4 },
                 effect() 
                 {
@@ -1733,7 +1754,7 @@ addLayer("cc", {
         {
             title: "The Grandmas are Mad...",
             description: "Boosts Points based on amount of Grandmas",
-            cost: new ExpantaNum(5e8),
+            cost: new ExpantaNum(1e8),
             unlocked() { return (tmp.cc.buyables[53].effect||0)>=11 },
                 effect() 
                 {
@@ -1748,7 +1769,7 @@ addLayer("cc", {
         {
             title: "START THE GRANDMAPOCALYPSE",
             description: "THIS UPGRADE HAS NO OFF BUTTON. BE WARNED. SLOWS COOKIE GAIN BY 100 AND INCREASES SUGAR LUMP GAIN BY 10. IT IS UNCERTAIN ABOUT WHAT IS GOING TO HAPPEN NEXT.",
-            cost: new ExpantaNum(1e9),
+            cost: new ExpantaNum(5e8),
             unlocked() { return (tmp.cc.buyables[53].effect||0)>=11 },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Heavenly Chips",
@@ -1758,7 +1779,7 @@ addLayer("cc", {
         {
             title: "Cookie Devil",
             description: "Automates the Fifth row of buyables",
-            cost: new ExpantaNum(1e90),
+            cost: new ExpantaNum(1e80),
             unlocked() { return (tmp.cc.buyables[61].effect||0)>=1.4},
         },
         112:
@@ -1816,8 +1837,8 @@ addLayer("cc", {
         {
             title: "X cookie synergy",
             description: "Boosts X Cookies based on X Cookie Grandmas",
-            cost: new ExpantaNum(1000),
-            unlocked() { return (tmp.cc.buyables[81].effect||0)>=11 },
+            cost: new ExpantaNum(50),
+            unlocked() { return (tmp.cc.buyables[81].effect||0)>=6 },
                 effect() 
                 {
                      return player[this.layer].buyables[81].pow(0.95)
@@ -1831,8 +1852,8 @@ addLayer("cc", {
         {
             title: "Y cookie synergy",
             description: "Boosts Y Cookies based on Y Cookie Grandmas",
-            cost: new ExpantaNum(1000),
-            unlocked() { return (tmp.cc.buyables[82].effect||0)>=8.55 },
+            cost: new ExpantaNum(50),
+            unlocked() { return (tmp.cc.buyables[82].effect||0)>=6 },
                 effect() 
                 {
                      return player[this.layer].buyables[82].pow(0.90)
@@ -1846,8 +1867,8 @@ addLayer("cc", {
         {
             title: "Z cookie synergy",
             description: "Boosts Z Cookies based on Z Cookie Grandmas",
-            cost: new ExpantaNum(250),
-            unlocked() { return (tmp.cc.buyables[83].effect||0)>=2.7 },
+            cost: new ExpantaNum(50),
+            unlocked() { return (tmp.cc.buyables[83].effect||0)>=2.3 },
                 effect() 
                 {
                      return player[this.layer].buyables[83].pow(0.90)
@@ -1861,8 +1882,8 @@ addLayer("cc", {
         {
             title: "Look for Dimensional Sugar Lumps?",
             description: "Boost all Dimensional Cookie gain by 10 and unlocks a new tab",
-            cost: new ExpantaNum(1000),
-            unlocked() { return (tmp.cc.buyables[83].effect||0)>=3.15 },
+            cost: new ExpantaNum(200),
+            unlocked() { return (tmp.cc.buyables[83].effect||0)>=2.7 },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Z Cookies",
             currencyInternalName: "zcookies",
@@ -1961,7 +1982,7 @@ addLayer("cc", {
         {
             title: "Train your mind to make you automatically run",
             description: "Automatically Walks 10 Meters Per Second",
-            cost: new ExpantaNum(200000),
+            cost: new ExpantaNum(100000),
             unlocked() { return hasUpgrade("cc", 161) && hasUpgrade("cc", 162) && hasUpgrade("cc", 163) },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Z Sugar Lumps",
@@ -1971,7 +1992,7 @@ addLayer("cc", {
         {
             title: "Sugar Lump flavored Gatorade",
             description: "Autowalks Forward Faster based on Sugar Lumps",
-            cost: new ExpantaNum(1e6),
+            cost: new ExpantaNum(200000),
             unlocked() { return hasUpgrade("cc", 171) },
                 effect() 
                 {
@@ -1986,7 +2007,7 @@ addLayer("cc", {
         {
             title: "Ascended Heavenly Chip Shoes",
             description: "Autowalks Right Faster based on Heavenly Chips",
-            cost: new ExpantaNum(1e6),
+            cost: new ExpantaNum(200000),
             unlocked() { return hasUpgrade("cc", 171) },
                 effect() 
                 {
@@ -2001,7 +2022,7 @@ addLayer("cc", {
         {
             title: "The Big Boost",
             description: "Boosts Autowalking Speed based on time played",
-            cost: new ExpantaNum(4e7),
+            cost: new ExpantaNum(1e6),
             unlocked() { return hasUpgrade("cc", 181) && hasUpgrade("cc", 182) },
                 effect() 
                 {
@@ -2017,7 +2038,7 @@ addLayer("cc", {
         {
             title: "Unlock the third quarter of this layer",
             description: "Unlocks the Church",
-            cost: new ExpantaNum(1e12),
+            cost: new ExpantaNum(1e9),
             unlocked() { return hasUpgrade("cc", 191) },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Z Sugar Lumps",
@@ -2027,7 +2048,7 @@ addLayer("cc", {
         {
             title: "Cookie Trollge",
             description: "Automates buying Dimensional Grandmas and Dimensional Wrinklers",
-            cost: new ExpantaNum(50000),
+            cost: new ExpantaNum(1000),
             unlocked() { return (tmp.cc.buyables[122].effect||0)>=0.27 },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Cookie Bibles",
@@ -2037,7 +2058,7 @@ addLayer("cc", {
         {
             title: "Blood Donation",
             description: "Boosts Cookie Blood Gain based on Cultists",
-            cost: new ExpantaNum(2000),
+            cost: new ExpantaNum(300),
             unlocked() { return hasUpgrade("cc", 201) },
                 effect() 
                 {
@@ -2052,7 +2073,7 @@ addLayer("cc", {
         {
             title: "The New Testament",
             description: "Boosts Cookie Blood Gain based on Cookie Bibles",
-            cost: new ExpantaNum(100000),
+            cost: new ExpantaNum(10000),
             unlocked() { return hasUpgrade("cc", 202) },
                 effect() 
                 {
@@ -2089,7 +2110,7 @@ addLayer("cc", {
         {
             title: "The Final Cookie",
             description: "Automatically buys Church Buyables",
-            cost: new ExpantaNum(20),
+            cost: new ExpantaNum(10),
             unlocked() { return hasUpgrade("cc", 211) },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Patreon Subscribers",
@@ -2099,7 +2120,7 @@ addLayer("cc", {
         {
             title: "Heralds",
             description: "Boosts Cookies Based on Patreon Subscribers",
-            cost: new ExpantaNum(1e30),
+            cost: new ExpantaNum(1e26),
             unlocked() { return hasUpgrade("cc", 221) },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Heavenly Chips",
@@ -2114,7 +2135,7 @@ addLayer("cc", {
         {
             title: "Money is Power",
             description: "Boosts Patreon Subscribers based on $",
-            cost: new ExpantaNum(30),
+            cost: new ExpantaNum(15),
             unlocked() { return hasUpgrade("cc", 222) },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Patreon Subscribers",
@@ -2353,7 +2374,7 @@ addLayer("cc", {
                     ["display-text", () => "You have " + format(player.cc.zlumps) + " Z Sugar Lumps"],
                     ["blank", "15px"],
                     ["display-text", () => "You have " + format(player.cc.cookiebibles) + " Cookie Bibles and a x" + format(player.cc.cookiebibleeffect) + " boost to all layer 1 buyables except the last one"],
-                    ["display-text", () => "You have " + format(player.cc.cultists) + " Cultists and a x" + format(player.cc.cultisteffect) + " boost to all layer all Dimensional cookies and Lumps"],
+                    ["display-text", () => "You have " + format(player.cc.cultists) + " Cultists and a x" + format(player.cc.cultisteffect) + " boost to all Dimensional cookies and Lumps"],
                     ["display-text", () => "You have " + format(player.cc.cookieblood) + " Cookie Blood and a x" + format(player.cc.cookiebloodeffect) + " boost to Cookie Bible production"],
                     ["row", [["buyable", 121], ["buyable", 122]]],
                     ["row", [["buyable", 131], ["buyable", 132]]],
@@ -2398,7 +2419,7 @@ addLayer("l", {
         row2researchcost: new ExpantaNum(10),
         row3researchcost: new ExpantaNum(100),
         row5researchcost: new ExpantaNum(250000),
-        row6researchcost: new ExpantaNum(1e24),
+        row6researchcost: new ExpantaNum(1e15),
         row7researchcost: new ExpantaNum(1e3500),
         row8researchcost: new ExpantaNum(1e150000),
         euros: new ExpantaNum(0), //€
@@ -3060,7 +3081,7 @@ addLayer("l", {
             description: "Boosts Antimatter Dimensions Time based on Respect",
             unlocked() { return hasUpgrade("ad", 98) },
             cost() {
-                return "e1e1000"
+                return "e1e150"
             },
             currencyLocation() { return player[this.layer] },
                 effect() 
@@ -3075,7 +3096,7 @@ addLayer("l", {
             description: "Unlocks Supermarket Management, and Boosts Antimatter Dimensions Time by 10",
             unlocked() { return hasUpgrade("l", 104) },
             cost() {
-                return "e1e10000"
+                return "e1e600"
             },
             currencyLocation() { return player[this.layer] },
         },
@@ -3085,7 +3106,7 @@ addLayer("l", {
             description: "x3 Coins gained on Sell",
             unlocked() { return hasUpgrade("l", 105) },
             cost() {
-                return "1000"
+                return "100"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3097,7 +3118,7 @@ addLayer("l", {
             description: "Makes Item gain 2 times faster",
             unlocked() { return hasUpgrade("l", 111) },
             cost() {
-                return "5000"
+                return "500"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3109,7 +3130,7 @@ addLayer("l", {
             description: "x3 Coins gained on Sell (Again)",
             unlocked() { return hasUpgrade("l", 112) },
             cost() {
-                return "15000"
+                return "1500"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3121,7 +3142,7 @@ addLayer("l", {
             description: "Boosts Coins based on Respect",
             unlocked() { return hasUpgrade("l", 113) },
             cost() {
-                return "25000"
+                return "2500"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3138,7 +3159,7 @@ addLayer("l", {
             description: "Automatically Sells when you get 100 items",
             unlocked() { return hasUpgrade("l", 114) },
             cost() {
-                return "150000"
+                return "15000"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3150,7 +3171,7 @@ addLayer("l", {
             description: "Boosts Time to make an Item based on Items you have",
             unlocked() { return hasUpgrade("l", 115) },
             cost() {
-                return "1000000"
+                return "100000"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3167,7 +3188,7 @@ addLayer("l", {
             description: "Boosts Time to make an Item based on Items you don't have",
             unlocked() { return hasUpgrade("l", 116) },
             cost() {
-                return "5000000"
+                return "500000"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3185,7 +3206,7 @@ addLayer("l", {
             description: "Unlocks a new layer",
             unlocked() { return hasUpgrade("l", 117) },
             cost() {
-                return "7500000"
+                return "750000"
             },
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Coins",
@@ -3301,7 +3322,7 @@ addLayer("l", {
     },
         update(delta) 
         {
-            if (hasUpgrade("cc", 211)) player.l.$persecond = player.points.plus(10).log10().log10().pow(0.5).div(250).mul(player.cc.patreoneffect)
+            if (hasUpgrade("cc", 211)) player.l.$persecond = player.points.plus(10).log10().log10().pow(0.5).mul(player.cc.patreoneffect)
             if (hasUpgrade("l", 21)) player.l.$persecond = player.l.$persecond.mul(upgradeEffect("l", 21))
             if (hasUpgrade("l", 31)) player.l.$persecond = player.l.$persecond.mul(upgradeEffect("l", 31))
             player.l.$persecond = player.l.$persecond.mul(layers.m.effect())
@@ -3350,7 +3371,7 @@ addLayer("l", {
             if (hasUpgrade("l", 43)) row5researchmult = row5researchmult.mul(4)
             player.l.row5researchcost = row5researchmult
 
-            let row6researchmult = new ExpantaNum(1e24)
+            let row6researchmult = new ExpantaNum(1e15)
             if (hasUpgrade("l", 61)) row6researchmult = row6researchmult.mul(1e4)
             if (hasUpgrade("l", 62)) row6researchmult = row6researchmult.mul(1e4)
             player.l.row6researchcost = row6researchmult
@@ -3453,7 +3474,7 @@ addLayer("l", {
           "Finance": {
           content: [
           ["blank", "15px"],
-          ["display-text", () => "You Gain Dollars Based on the Log10(Log10)^0.5/250 of Points you have"],
+          ["display-text", () => "You Gain Dollars Based on the Log10(Log10)^0.5 of Points you have"],
           ["display-text", () => format(player.l.$persecond) + "$ per second"],
           ["display-text", () => "Your Salary is " + format(player.l.$persecond.mul(3600)) + "$ per hour"],
           ["display-text", () => "You Specifically Have " + format(player.l.points) + "$"],   
@@ -3484,7 +3505,7 @@ addLayer("l", {
                     ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions Time: " + formatTime(player.l.antimattertime) + " -> x" + format(player.l.antimattertimeeffect) + " boost to Cookie Clicker Time" : ""],
                     ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes Time: " + formatTime(player.l.clickerheroestime) + " -> x" + format(player.l.clickerheroestimeeffect) + " boost to Supermarket Time" : ""],
                     ["blank", "25px"],
-                    ["display-text", () => "The Minigames"],
+                    ["display-text", () => hasUpgrade("m", 19) ? "The Minigames" : ""],
                     ["blank", "15px"],
                     ["display-text", () => hasUpgrade("m", 19) ? "Military Time: " + formatTime(player.l.militarytime) + " -> +^" + format(player.l.militarytimeeffect) + " to Clicker Heroes Gold Effect" : ""],
                     ["display-text", () => hasUpgrade("l", 122) ? "Supermarket Time: " + formatTime(player.l.supermarkettime) + " -> x" + format(player.l.supermarkettimeeffect) + " boost to Military Time" : ""],
@@ -3537,6 +3558,35 @@ addLayer("l", {
                 ["display-text", () => "Your number gives a x" + format(player.l.minigamenumbereffect) + " boost to Respect"],
                 ["blank", "15px"],
                 ["row", [["buyable", 13]]],
+                ]
+            },
+                "Timewall Graveyard": {
+                unlocked() { return hasUpgrade("l", 31) },
+                content: 
+                [
+                 ['display-image', 'https://purepng.com/public/uploads/large/purepng.com-gravestonegravestoneheadstonetombstonestele-1701527777253h01mk.png'],
+                 ["display-text", () => "Here lies the Timewalls of this game"],
+                 ["display-text", () => "2021-2022"],
+                 ["blank", "40px"],
+                 ["display-text", () => "Nobody liked you, you will never be missed."],
+                 ["blank", "25px"],
+                 ["display-text", () => "You know that nobody is gonna play that? There are already too many timewalls"],
+                 ["display-text", () => "-jakub 4/17/22"],
+                 ["blank", "15px"],
+                 ["display-text", () => "Abuses Timewalls, Trash, and a pile of GARBAGE!"],
+                 ["display-text", () => "-nullified_okra 4/18/22"],
+                 ["blank", "15px"],
+                 ["display-text", () => "F**king Amount of Timewall."],
+                 ["display-text", () => "-3^3=7 4/18/22"],
+                 ["blank", "15px"],
+                 ["display-text", () => "id give u a 65 with the current timewalls"],
+                 ["display-text", () => "-reeeeeeeeeeeeeeeeeee 4/19/22"],
+                 ["blank", "15px"],
+                 ["display-text", () => "I'm gonna be honest, the timewalls are the only things stopping this from being in my top mods"],
+                 ["display-text", () => "-Razorphoenix 4/19/22"],
+                 ["blank", "15px"],
+                 ["display-text", () => "i aint waiting 1 week for an upgrade"],
+                 ["display-text", () => "-Alex208 4/19/22"],
                 ]
             },
         },
@@ -3863,28 +3913,28 @@ addLayer("ad", {
             title: "Timewalls?",
             description: "Unlock Timewalls",
             unlocked() { return hasUpgrade("ad", 23) },
-            cost: new ExpantaNum(20000),
+            cost: new ExpantaNum(5000),
         },
         32:
         {
             title: "Speed up the Timewalls",
             description: "Speeds up Timewall Seconds gain by 3x and Automatically generate Hevipelle points",
-            unlocked() { return player.ad.timewalls >= 10 },
-            cost: new ExpantaNum(5000000),
+            unlocked() { return player.ad.timewalls >= 1 },
+            cost: new ExpantaNum(20000),
         },
         33:
         {
             title: "Automatic Timewalls",
             description: "Automatically gets Timewalls",
-            unlocked() { return player.ad.timewalls >= 15 },
-            cost: new ExpantaNum(1000000000),
+            unlocked() { return player.ad.timewalls >= 4 },
+            cost: new ExpantaNum(10000000),
         },
         34:
         {
             title: "Hevi Timewalls",
             description: "Timewalls boost Hevipelle points",
-            unlocked() { return player.ad.timewalls >= 25 },
-            cost: new ExpantaNum(5000000000),
+            unlocked() { return player.ad.timewalls >= 7 },
+            cost: new ExpantaNum(1e9),
                 effect() 
                 {
                      return player[this.layer].timewalls.pow(0.85).add(1)
@@ -3894,9 +3944,9 @@ addLayer("ad", {
         35:
         {
             title: "Antimatter Dimensions",
-            description: "Unlocks a new Tab",
-            unlocked() { return player.ad.timewalls >= 40 },
-            cost: new ExpantaNum(1e12),
+            description: "Unlocks a new Tab (Also disables some autobuyers for performance it wont affect that much)",
+            unlocked() { return player.ad.timewalls >= 11 },
+            cost: new ExpantaNum(1e10),
         },
         36:
         {
@@ -3941,6 +3991,16 @@ addLayer("ad", {
             currencyDisplayName: "Antimatter",
             currencyInternalName: "antimatter",
         },
+        102:
+        {
+            title: "Just to make stuff even easier",
+            description: "Boost all dimensions by x1000",
+            unlocked() { return player.ad.antimattergalaxies >= 2 },
+            cost: new ExpantaNum(1e120),
+            currencyLocation() { return player[this.layer] },
+            currencyDisplayName: "Antimatter",
+            currencyInternalName: "antimatter",
+        },
         41:
         {
             title: "Automation, Already??? And where is the Tickspeed Boost???",
@@ -3976,7 +4036,7 @@ addLayer("ad", {
         43:
         {
             title: "THE INFLATED UPGRADE #1",
-            description: "Automates buying Dimension Boosts, Galaxies, Production Multipliers, and Automatically gains Sacrifice mult, But unfortunately, stops autobuying buyables in the Incremental Layer and the Cookie Clicker layer. (This is due to performance issues it wont change anything gameplay-wise so dont worry)",
+            description: "Automates buying Dimension Boosts, Galaxies, Production Multipliers, and Automatically gains Sacrifice mult",
             unlocked() { return player.ad.infinitypoints > 0 },
             cost: new ExpantaNum(1),
             currencyLocation() { return player[this.layer] },
@@ -4013,7 +4073,7 @@ addLayer("ad", {
             title: "Why Not?",
             description: "Gets 50% of Infinity Points production per Second",
             unlocked() { return hasUpgrade("ad", 45) },
-            cost: new ExpantaNum(10000),
+            cost: new ExpantaNum(3),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4023,7 +4083,7 @@ addLayer("ad", {
             title: "The Boost of the Infinite Gods",
             description: "Boost to the 1st Dimension based on Infinity Points",
             unlocked() { return hasUpgrade("ad", 46) },
-            cost: new ExpantaNum(500000),
+            cost: new ExpantaNum(5000),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4038,7 +4098,7 @@ addLayer("ad", {
             title: "Infinite Synergy",
             description: "Boost to Infinity Points based on Infinity Points",
             unlocked() { return hasUpgrade("ad", 46) },
-            cost: new ExpantaNum(500000),
+            cost: new ExpantaNum(10000),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4053,7 +4113,7 @@ addLayer("ad", {
             title: "You will need this",
             description: "x10 Boost to all Infinity Dimensions and Infinity Points",
             unlocked() { return hasUpgrade("ad", 48) },
-            cost: new ExpantaNum(1e8),
+            cost: new ExpantaNum(1e5),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4063,7 +4123,7 @@ addLayer("ad", {
             title: "Replicanti this early in the game?????",
             description: "Unlocks a new tab",
             unlocked() { return hasUpgrade("ad", 49) },
-            cost: new ExpantaNum(1e10),
+            cost: new ExpantaNum(1e8),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4087,7 +4147,7 @@ addLayer("ad", {
             title: "Replication is now Duplication",
             description: "Gets 2x Replicanti instead of 1.1x",
             unlocked() { return hasUpgrade("ad", 49) },
-            cost: new ExpantaNum(1e13),
+            cost: new ExpantaNum(1e9),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4097,7 +4157,7 @@ addLayer("ad", {
             title: "Couldn't get enought replicanti?",
             description: "Gets 5x Replicanti now",
             unlocked() { return hasUpgrade("ad", 54) },
-            cost: new ExpantaNum(4e14),
+            cost: new ExpantaNum(1e10),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4107,7 +4167,7 @@ addLayer("ad", {
             title: "We need more Infinity Points",
             description: "Replicanti Boosts Infinity Points",
             unlocked() { return hasUpgrade("ad", 55) },
-            cost: new ExpantaNum(1e17),
+            cost: new ExpantaNum(1e11),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4121,8 +4181,8 @@ addLayer("ad", {
         {
             title: "Breakreplicantinfinity",
             description: "You can go past 1.79e308 Replicanti and get 0.1 Singularities per Second",
-            unlocked() { return hasUpgrade("ad", 54) },
-            cost: new ExpantaNum(1e19),
+            unlocked() { return hasUpgrade("ad", 56) },
+            cost: new ExpantaNum(1e15),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4132,7 +4192,7 @@ addLayer("ad", {
             title: "More Singularities?",
             description: "Boosts Singularities based on Replicanti",
             unlocked() { return hasUpgrade("ad", 57) },
-            cost: new ExpantaNum(1e22),
+            cost: new ExpantaNum(1e18),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4147,7 +4207,7 @@ addLayer("ad", {
             title: "This was never in the real game!",
             description: "Unlocks a new tab",
             unlocked() { return hasUpgrade("ad", 58) },
-            cost: new ExpantaNum(1e26),
+            cost: new ExpantaNum(1e21),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4157,7 +4217,7 @@ addLayer("ad", {
             title: "Big Black Holes (AYO?)",
             description: "Generates Black Holes based on Infinity Points",
             unlocked() { return hasUpgrade("ad", 59) },
-            cost: new ExpantaNum(1e26),
+            cost: new ExpantaNum(1e21),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4178,7 +4238,7 @@ addLayer("ad", {
             title: "Make the Dimensions useful again",
             description: "Boost Replicanti Mult Gain based on 1st Infinity Dimension Mult",
             unlocked() { return hasUpgrade("ad", 62) },
-            cost: new ExpantaNum(1e68),
+            cost: new ExpantaNum(1e54),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4205,7 +4265,7 @@ addLayer("ad", {
             title: "Omega > Infinity",
             description: "Boost Omega Dimensions based on Singularities",
             unlocked() { return hasUpgrade("ad", 63) },
-            cost: new ExpantaNum(1e88),
+            cost: new ExpantaNum(1e70),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4240,7 +4300,7 @@ addLayer("ad", {
             title: "Doubler Automation",
             description: "Automates Singularity Doublers and Black Hole Doublers",
             unlocked() { return hasUpgrade("ad", 67) },
-            cost: new ExpantaNum(1e250),
+            cost: new ExpantaNum(1e200),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4250,7 +4310,7 @@ addLayer("ad", {
             title: "A boost everyone would like",
             description: "x1e50 Replicanti Boost and unlocks a new tab",
             unlocked() { return hasUpgrade("ad", 68) },
-            cost: new ExpantaNum("1e700"),
+            cost: new ExpantaNum("1e350"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4260,7 +4320,7 @@ addLayer("ad", {
             title: "Subatomic Booster",
             description: "Autobuys Subatomic Dimensions and Subatomic Power Effect also boosts Subatomic Particles",
             unlocked() { return hasUpgrade("ad", 69) },
-            cost: new ExpantaNum("1e2000"),
+            cost: new ExpantaNum("1e1000"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4270,7 +4330,7 @@ addLayer("ad", {
             title: "Atom Self-Replication",
             description: "Boosts Atoms based on Atoms",
             unlocked() { return hasUpgrade("ad", 71) },
-            cost: new ExpantaNum("1e6000"),
+            cost: new ExpantaNum("1e3000"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4285,7 +4345,7 @@ addLayer("ad", {
             title: "Start the Universal Generation",
             description: "Unlocks a new Tab",
             unlocked() { return hasUpgrade("ad", 72) },
-            cost: new ExpantaNum("1e150000"),
+            cost: new ExpantaNum("1e20000"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4429,10 +4489,10 @@ addLayer("ad", {
         },
         93:
         {
-            title: "The Cost of this Upgrade is Funny Number",
+            title: "Boosts each other like brothers",
             description: "Effect Shards and Gain Shards boost each other",
             unlocked() { return hasUpgrade("ad", 92) },
-            cost: new ExpantaNum("e6e9"),
+            cost: new ExpantaNum("e2e9"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4442,7 +4502,7 @@ addLayer("ad", {
             title: "Hevipelle knows your the Chosen one",
             description: "Boosts Electron effect Pow to ^2000",
             unlocked() { return hasUpgrade("ad", 93) },
-            cost: new ExpantaNum("e5e10"),
+            cost: new ExpantaNum("e1e10"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4452,7 +4512,7 @@ addLayer("ad", {
             title: "Even more Inflated boosting",
             description: "Effect Shards and Gain Shards boost each other even more",
             unlocked() { return hasUpgrade("ad", 94) },
-            cost: new ExpantaNum("e7.5e10"),
+            cost: new ExpantaNum("e2e10"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4462,7 +4522,7 @@ addLayer("ad", {
             title: "No more Constant Switching",
             description: "Produce Gain Shards and Effect Shards at the Same time",
             unlocked() { return hasUpgrade("ad", 95) },
-            cost: new ExpantaNum("e1e14"),
+            cost: new ExpantaNum("e4e12"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4472,7 +4532,7 @@ addLayer("ad", {
             title: "The End is Near...",
             description: "Unlock Final Shards but turn off the other Autobuyers (For Performance)",
             unlocked() { return hasUpgrade("ad", 96) },
-            cost: new ExpantaNum("e1e20"),
+            cost: new ExpantaNum("e1e16"),
             currencyLocation() { return player[this.layer] },
             currencyDisplayName: "Infinity Points",
             currencyInternalName: "infinitypoints",
@@ -4840,7 +4900,7 @@ addLayer("ad", {
          },
         effect() 
         {
-            return player[this.layer].buyables[this.id].add(1).pow(0.8)
+            return player[this.layer].buyables[this.id].add(1).pow(1.5)
         },
         },
                         41: {
@@ -4993,7 +5053,7 @@ addLayer("ad", {
          },
         },
         61: {
-        cost(x) { return new ExpantaNum(1e10).pow(x.div(40)).mul(1e10) },
+        cost(x) { return new ExpantaNum(1e8).pow(x.div(70)).mul(1e8) },
         title: "Replicanti Time Booster",
         unlocked() { return player.ad.antimattergalaxies >= 1  || player.ad.infinitypoints > 0 },
         canAfford() { return player.ad.infinitypoints.gte(this.cost()) },
@@ -5388,8 +5448,9 @@ addLayer("ad", {
             if (hasUpgrade("ad", 47)) antimattermult = antimattermult.mul(upgradeEffect("ad", 47))
 
             let alldimsmult = new ExpantaNum(1)
+            if (hasUpgrade("ad", 101)) alldimsmult = alldimsmult.mul(100)
             if (hasUpgrade("ad", 44)) alldimsmult = alldimsmult.mul(upgradeEffect("ad", 44))
-            if (hasUpgrade("ad", 40)) alldimsmult = alldimsmult.mul(100)
+            if (hasUpgrade("ad", 102)) alldimsmult = alldimsmult.mul(1000)
 
             player.ad.antimatter = player.ad.antimatter.add(player.ad.dimension1.mul(player.ad.dimension1mult).mul(player.ad.dimboosteffect).mul(antimattermult).mul(buyableEffect("ad", 34)).mul(alldimsmult).mul(player.ad.infinitypowereffect).mul(delta))
             player.ad.dimension1 = player.ad.dimension1.add(player.ad.dimension2.mul(player.ad.dimension2mult).mul(player.ad.dimboosteffect).mul(buyableEffect("ad", 34)).mul(alldimsmult).mul(player.ad.infinitypowereffect).mul(delta))
@@ -5487,7 +5548,7 @@ addLayer("ad", {
 					}
 				}
 			}
-            player.ad.replicantieffect = player.ad.replicanti.add(1).pow(0.5)
+            player.ad.replicantieffect = player.ad.replicanti.add(1).pow(1.1)
             player.ad.singularityeffect = player.ad.singularities.add(1).pow(125)
             player.ad.singularityeffect2 = player.ad.singularities.add(1).pow(1250)
             let singularitygain = new ExpantaNum(0.1)
@@ -5505,7 +5566,7 @@ addLayer("ad", {
             {
                 player.ad.blackholes = player.ad.blackholes.add(player.ad.blackholestoget.mul(blackholemult).mul(delta))
             }
-            player.ad.blackholestoget = player.ad.infinitypoints.plus(10).log10()
+            player.ad.blackholestoget = player.ad.infinitypoints.plus(10).log10().mul(100)
             player.ad.blackholeseffect = player.ad.blackholes.add(1).pow(0.9)
 
             let omegadimensionmult = new ExpantaNum(1)
@@ -5632,7 +5693,7 @@ addLayer("ad", {
 			}
             if (hasUpgrade("ad", 97))
             {
-                player.ad.finalshardspersecond = player.points.plus(10).log10().log10().pow(0.5)
+                player.ad.finalshardspersecond = player.points.plus(10).log10().log10().pow(1)
                 player.ad.finalshards = player.ad.finalshards.add(player.ad.finalshardspersecond.mul(delta)) 
             }
             player.ad.finalshardseffect = player.ad.finalshards.add(1).pow(4)
@@ -5683,7 +5744,7 @@ addLayer("ad", {
           content: [
           ["display-text", () => "You have " + format(player.ad.antimatter) + " Antimatter and a x" + format(player.ad.antimattereffect) + " boost to Cookie Time"],
           ["row", [["buyable", 31], ["buyable", 32], ["buyable", 33], ["buyable", 34]]],
-          ["row", [["upgrade", 101], ["upgrade", 41], ["upgrade", 42]]],
+          ["row", [["upgrade", 101], ["upgrade", 41], ["upgrade", 42], ["upgrade", 102]]],
           ]
           },
           "Infinity": {
@@ -6364,7 +6425,7 @@ addLayer("ch", {
             title: "Start becoming a Hero",
             description: "You get 1 Heroic Point per Second",
             unlocked() { return true },
-            cost: new ExpantaNum("ee1e12"),
+            cost: new ExpantaNum("ee1e9"),
             currencyLocation() { return player },
             currencyDisplayName: "Points",
             currencyInternalName: "points",
@@ -6374,10 +6435,10 @@ addLayer("ch", {
             title: "What about an Idle RPG game?",
             description: "Boosts Heroic points based on Heroic points",
             unlocked() { return hasUpgrade("ch", 11) },
-            cost: new ExpantaNum("20"),
+            cost: new ExpantaNum("10"),
                 effect() 
                 {
-                     return player[this.layer].points.pow(0.2).add(1)
+                     return player[this.layer].points.pow(0.3).add(1)
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -6386,10 +6447,10 @@ addLayer("ch", {
             title: "A fighting Idle Game?",
             description: "Boosts Heroic points based on time after buying the Upgrade",
             unlocked() { return hasUpgrade("ch", 12) },
-            cost: new ExpantaNum("1000"),
+            cost: new ExpantaNum("100"),
                 effect() 
                 {
-                     return player[this.layer].heroictime.pow(0.9).add(1)
+                     return player[this.layer].heroictime.pow(1.1).add(1)
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
@@ -6507,7 +6568,7 @@ addLayer("ch", {
             title: "Faster Game",
             description: "Killing an Enemy Levels it up by 10, not 1",
             unlocked() { return hasUpgrade("ch", 24)},
-            cost: new ExpantaNum("25"),
+            cost: new ExpantaNum("5"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Hero Souls",
             currencyInternalName: "herosouls",
@@ -6517,7 +6578,7 @@ addLayer("ch", {
             title: "Automated Ascensions",
             description: "Gains 25% of Hero Souls per Second",
             unlocked() { return hasUpgrade("ch", 25)},
-            cost: new ExpantaNum("500"),
+            cost: new ExpantaNum("50"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Hero Souls",
             currencyInternalName: "herosouls",
@@ -6527,7 +6588,7 @@ addLayer("ch", {
             title: "Wizard",
             description: "Speeds up Powersurge, Metal Detector, and Ancient Treasure's Cooldown times by 10, and Automates Casting.",
             unlocked() { return player[this.layer].buyables[33] >= 5},
-            cost: new ExpantaNum("1e34"),
+            cost: new ExpantaNum("1e28"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Gold",
             currencyInternalName: "gold",
@@ -6537,7 +6598,7 @@ addLayer("ch", {
             title: "OH GOD NO OH DEAR HEAVENS NO",
             description: "Unlocks the Hall of Inflation",
             unlocked() { return hasUpgrade("ch", 26)},
-            cost: new ExpantaNum("10000000"),
+            cost: new ExpantaNum("25000"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Hero Souls",
             currencyInternalName: "herosouls",
@@ -6562,7 +6623,7 @@ addLayer("ch", {
             title: "Build a Garden outside of the Hall of Inflation",
             description: "Inflation Relics boost Inflation Relics",
             unlocked() { return hasUpgrade("ch", 26)},
-            cost: new ExpantaNum("1e16"),
+            cost: new ExpantaNum("1e13"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics",
             currencyInternalName: "inflationrelics",
@@ -6577,7 +6638,7 @@ addLayer("ch", {
             title: "Inflate balloons to put inside of the hall of inflation",
             description: "Enemy Kills add 100000 Levels",
             unlocked() { return hasUpgrade("ch", 26)},
-            cost: new ExpantaNum("1e64"),
+            cost: new ExpantaNum("1e52"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics",
             currencyInternalName: "inflationrelics",
@@ -6587,7 +6648,7 @@ addLayer("ch", {
             title: "Paint the Hall of Inflation",
             description: "Enemy Level boost Inflation Relics",
             unlocked() { return hasUpgrade("ch", 32)},
-            cost: new ExpantaNum("1e68"),
+            cost: new ExpantaNum("1e55"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics",
             currencyInternalName: "inflationrelics",
@@ -6602,7 +6663,7 @@ addLayer("ch", {
             title: "Build another Hall of Inflation",
             description: "Unlocks Inflation Relics^2",
             unlocked() { return hasUpgrade("ch", 33)},
-            cost: new ExpantaNum("1e180"),
+            cost: new ExpantaNum("1e165"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics",
             currencyInternalName: "inflationrelics",
@@ -6612,7 +6673,7 @@ addLayer("ch", {
             title: "Add another Floor to the Hall of Inflation",
             description: "Inflation Relics^2 boost Inflation Relics^2",
             unlocked() { return hasUpgrade("ch", 34)},
-            cost: new ExpantaNum("1e290"),
+            cost: new ExpantaNum("1e210"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics",
             currencyInternalName: "inflationrelics",
@@ -6627,7 +6688,7 @@ addLayer("ch", {
             title: "Add a basement to the Hall of Inflation",
             description: "Automates buying Hall of Inflation Buyables and stops autobuying Heroes and Ancients (Lag Purposes)",
             unlocked() { return hasUpgrade("ch", 35)},
-            cost: new ExpantaNum("1e500"),
+            cost: new ExpantaNum("1e300"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics",
             currencyInternalName: "inflationrelics",
@@ -6637,7 +6698,7 @@ addLayer("ch", {
             title: "Add a Bouncy House outside of the Hall of Inflation",
             description: "Boosts DPS based on Gold",
             unlocked() { return hasUpgrade("ch", 36)},
-            cost: new ExpantaNum("1e12"),
+            cost: new ExpantaNum("1e6"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics^2",
             currencyInternalName: "inflationrelics2",
@@ -6652,7 +6713,7 @@ addLayer("ch", {
             title: "Inflate it so Much that it is kind of Concerning",
             description: "Boosts Inflation Relics^2 based on DPS",
             unlocked() { return hasUpgrade("ch", 37)},
-            cost: new ExpantaNum("1e540"),
+            cost: new ExpantaNum("1e370"),
             currencyLocation() { return player.ch },
             currencyDisplayName: "Inflation Relics",
             currencyInternalName: "inflationrelics",
@@ -6775,7 +6836,7 @@ addLayer("ch", {
         },
         },
         15: {
-        cost(x) { return new ExpantaNum(1e6).pow(x.div(14)).mul(1e6) },
+        cost(x) { return new ExpantaNum(1e5).pow(x.div(14)).mul(1e5) },
         title: "The Great Forest Seer",
         unlocked() { return (player[this.layer].buyables[14] >= 10)},
         canAfford() { return player.ch.gold.gte(this.cost()) },
@@ -6796,7 +6857,7 @@ addLayer("ch", {
         },
         },
         16: {
-        cost(x) { return new ExpantaNum(1e7).pow(x.div(14)).mul(1e7) },
+        cost(x) { return new ExpantaNum(1e6).pow(x.div(14)).mul(1e6) },
         title: "Mercedes, Duchess of Blades",
         unlocked() { return (player[this.layer].buyables[15] >= 5)},
         canAfford() { return player.ch.gold.gte(this.cost()) },
@@ -7006,7 +7067,7 @@ addLayer("ch", {
         },
         },
         34: {
-        cost(x) { return new ExpantaNum(25000).pow(x.div(7)).mul(25000) },
+        cost(x) { return new ExpantaNum(1000).pow(x.div(7)).mul(1000) },
         title: "Morgulis, Ancient of Death",
         unlocked() { return player.ch.buyables[33] >= 5 },
         canAfford() { return player.ch.herosouls.gte(this.cost()) },
@@ -7081,9 +7142,9 @@ addLayer("ch", {
         done() { return player.ch.zone.gte(14) }
     },
     13: {
-        requirementDescription: "Reach Zone 24",
+        requirementDescription: "Reach Zone 20",
         effectDescription: "Autobuys all Heroes",
-        done() { return player.ch.zone.gte(24) }
+        done() { return player.ch.zone.gte(20) }
     },
     14: {
         requirementDescription: "Reach Zone 666",
@@ -7380,24 +7441,24 @@ addLayer("i2", {
         },
         12:
         { 
-            title: "Wait a whole day for this Upgrade >:(",
+            title: "Wait a whole minute for this Upgrade >:(",
             description: "Unlocks the Incremental Ritual",
             unlocked() { return hasUpgrade("i2", 11) },
-            cost: new ExpantaNum("86400"),
+            cost: new ExpantaNum("60"),
         },
         13:
         { 
             title: "Boosters? I'm interested!",
             description: "Unlocks the Booster Tab",
             unlocked() { return hasUpgrade("i2", 12) },
-            cost: new ExpantaNum("1e20"),
+            cost: new ExpantaNum("1e10"),
         },
         14:
         { 
             title: "Back at the Cookies",
             description: "Unlocks the Cookie Ritual",
             unlocked() { return hasUpgrade("i2", 12) },
-            cost: new ExpantaNum("1e40"),
+            cost: new ExpantaNum("1e20"),
         },
         15:
         { 
@@ -7414,14 +7475,14 @@ addLayer("i2", {
             title: "Bring on the Boosters!",
             description: "Unlocks the second Incremental Stone effect",
             unlocked() { return hasUpgrade("i2", 15) },
-            cost: new ExpantaNum("1e100"),
+            cost: new ExpantaNum("1e45"),
         },
         17:
         { 
             title: "A Great Boost!",
             description: "Unlocks the third Incremental Stone effect",
             unlocked() { return hasUpgrade("i2", 16) },
-            cost: new ExpantaNum("1e230"),
+            cost: new ExpantaNum("1e60"),
         },
         18:
         { 
@@ -7438,7 +7499,7 @@ addLayer("i2", {
             title: "The Gods are seeing your worth...",
             description: "Automates the Antimatter Dimensions Ritual and unlocks another Ritual and Effect #3 boosts Clicker Heroes time as well",
             unlocked() { return hasUpgrade("i2", 18) },
-            cost: new ExpantaNum("eeeeee4.2"),
+            cost: new ExpantaNum("eeeeee2"),
             currencyLocation() { return player },
             currencyDisplayName: "Points",
             currencyInternalName: "points",
@@ -7529,12 +7590,12 @@ addLayer("i2", {
     },
     infoboxes: {
     lore: {
-        title: "0-ee1e125 Points: Act 1: The Beginning",
+        title: "ee1e125 Points: Act 1: The Beginning",
         body() { return "Yes, you may be wondering. Why is the lore this far into the game? Well, it's only the beginning. You will learn why you are doing this. You will learn about what you have to accomplish in this game. You see, you have been appointed by a god to do this. Who? I do not know. Why? I can not tell you. But all you know is what. You have to master the arts of all of these incremental games. In a world where Incremental games doesn't exist, you are there to create them. Now you are reading this, go and start an Incremental Ritual for the gods. They like it." },
     },
         lore2: {
         unlocked() { return player.points > "10^^6" },
-        title: "ee1e125-1F6 Points: Act 2: The Hub",
+        title: "1F6 Points: Act 2: The Hub",
         body() { return "You realize what you have been doing. You are the Gods Servant. You make all these games to power the gods. You think to yourself, I will be better than the Gods one day. You made it far enough to unlock the hub. The main layer of everything. Good Luck." },
     },
     },
@@ -7562,7 +7623,7 @@ addLayer("i2", {
 		}
         if (player.i2.incrementalritualtime < 0)
         {
-            player.i2.incrementalritualcooldown = new ExpantaNum(7200)
+            player.i2.incrementalritualcooldown = new ExpantaNum(360)
             player.i2.incrementalritualtime = new ExpantaNum(0) 
 		}
         if (player.i2.incrementalritualcooldown < 0)
@@ -7593,7 +7654,7 @@ addLayer("i2", {
 		}
         if (player.i2.cookieritualtime < 0)
         {
-            player.i2.cookieritualcooldown = new ExpantaNum(86400)
+            player.i2.cookieritualcooldown = new ExpantaNum(420)
             player.i2.cookieritualtime = new ExpantaNum(0) 
 		}
         if (player.i2.cookieritualcooldown < 0)
@@ -7646,7 +7707,7 @@ addLayer("i2", {
 		}
         if (player.i2.clickerritualtime < 0)
         {
-            player.i2.clickerritualcooldown = new ExpantaNum(3600)
+            player.i2.clickerritualcooldown = new ExpantaNum(600)
             player.i2.clickerritualtime = new ExpantaNum(0) 
 		}
         if (player.i2.clickerritualcooldown < 0)
@@ -7747,7 +7808,7 @@ addLayer("h", {
             title: "Become Worthy",
             description: "Gain 1 Willpower per Second",
             unlocked() { return true },
-            cost: new ExpantaNum("eeeeee1.4"),
+            cost: new ExpantaNum("eeeeee1.1"),
             currencyLocation() { return player },
             currencyDisplayName: "Points",
             currencyInternalName: "points",
@@ -7757,7 +7818,7 @@ addLayer("h", {
             title: "Achievements",
             description: "Unlocks the Achievements Tab",
             unlocked() { return hasUpgrade("h", 11) },
-            cost: new ExpantaNum("200"),
+            cost: new ExpantaNum("60"),
             currencyLocation() { return player.h },
             currencyDisplayName: "Willpower",
             currencyInternalName: "willpower",
@@ -7767,7 +7828,7 @@ addLayer("h", {
             title: "Willpower Booster",
             description: "Unlocks a Buyable",
             unlocked() { return hasUpgrade("h", 12) },
-            cost: new ExpantaNum("1000"),
+            cost: new ExpantaNum("140"),
             currencyLocation() { return player.h },
             currencyDisplayName: "Willpower",
             currencyInternalName: "willpower",
@@ -7777,7 +7838,7 @@ addLayer("h", {
             title: "Become Worthier",
             description: "Boost Willpower based on Achievement Power",
             unlocked() { return true },
-            cost: new ExpantaNum("eeeeee5"),
+            cost: new ExpantaNum("eeeeee1.4"),
             currencyLocation() { return player },
             currencyDisplayName: "Points",
             currencyInternalName: "points",
@@ -7802,7 +7863,7 @@ addLayer("h", {
             title: "Give Potential some Worth",
             description: "Potential boosts Willpower",
             unlocked() { return hasUpgrade("h", 14) },
-            cost: new ExpantaNum("1e10"),
+            cost: new ExpantaNum("50000"),
             currencyLocation() { return player.h },
             currencyDisplayName: "Willpower",
             currencyInternalName: "willpower",
@@ -7817,7 +7878,7 @@ addLayer("h", {
             title: "A Wrinkle in Time",
             description: "Time gives more effects",
             unlocked() { return hasUpgrade("h", 16) },
-            cost: new ExpantaNum("4e11"),
+            cost: new ExpantaNum("1.5e10"),
             currencyLocation() { return player.h },
             currencyDisplayName: "Willpower",
             currencyInternalName: "willpower",
@@ -7827,7 +7888,7 @@ addLayer("h", {
             title: "The Fun Achievements!",
             description: "Adds Miscellaneous Achievements and more things in the Clock Tab",
             unlocked() { return hasUpgrade("h", 16) },
-            cost: new ExpantaNum("1e14"),
+            cost: new ExpantaNum("1e11"),
             currencyLocation() { return player.h },
             currencyDisplayName: "Willpower",
             currencyInternalName: "willpower",
@@ -7837,7 +7898,7 @@ addLayer("h", {
             title: "Realm Grinder?",
             description: "Adds the Realm Grinder Game",
             unlocked() { return hasUpgrade("h", 18) },
-            cost: new ExpantaNum("eeeeee7"),
+            cost: new ExpantaNum("eeeeee4.44"),
             currencyLocation() { return player },
             currencyDisplayName: "Points",
             currencyInternalName: "points",
@@ -8045,8 +8106,8 @@ addLayer("h", {
         },
         55: {
             name: "Generation to the Maximum!!!",
-            done() {return player[this.layer].buyables[11].gte("100")},
-            tooltip: "Buy 100 Willpower Generators", // Shows when achievement is not completed
+            done() {return player[this.layer].buyables[11].gte("400")},
+            tooltip: "Buy 400 Willpower Generators", // Shows when achievement is not completed
             onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
             unlocked() { return hasUpgrade("h", 18) },
         },
@@ -8084,7 +8145,7 @@ addLayer("h", {
     buyables:
     {
         11: {
-        cost(x) { return new ExpantaNum("100").pow(x.div(20)).mul("100") },
+        cost(x) { return new ExpantaNum("5").pow(x.div(20)).mul("5") },
         title: "Willpower Generator",
         unlocked() { return hasUpgrade("h", 13) },
         canAfford() { return player.h.willpower.gte(this.cost()) },
