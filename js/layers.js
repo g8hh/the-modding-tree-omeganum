@@ -8251,7 +8251,7 @@ addLayer("h", {
         player.h.dayornight = 2
         player.h.moonlight = player.h.moonlight.add(moonlightgain.mul(delta))
 	}
-        player.h.sunshineeffect = player.h.sunshine.log10().add(1)
+        player.h.sunshineeffect = player.h.sunshine.pow(0.1).add(1)
         player.h.moonlighteffect = player.h.moonlight.pow(0.5).add(1)
 	},
     milestones: {
