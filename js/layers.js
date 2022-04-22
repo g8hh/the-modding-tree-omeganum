@@ -8192,7 +8192,7 @@ addLayer("h", {
     if (hasUpgrade("h", 16)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(upgradeEffect("h", 16))
     player.h.willpower = player.h.willpower.add(player.h.willpowerpersecond.mul(delta))
 
-    let clockspeed = new ExpantaNum(1)
+    let clockspeed = new ExpantaNum(60)
     let hours = player.h.time.div(3600).floor()
     let minutes = player.h.time.div(60).sub(hours.mul(60)).floor()
     let seconds = player.h.time.sub(hours.mul(3600).add(minutes.mul(60)))
@@ -8206,15 +8206,15 @@ addLayer("h", {
     player.h.timeeffect3 = minutes.pow(1.4).add(1)
 
     let day = new ExpantaNum(86400)
-    if (player.timePlayed > day.mul(2))
+    if (player.timePlayed > day.mul(0.5))
     {
         player.h.timeplayedstring = "You are a speedrunner to get here this fast!"
 	}
-    if (player.timePlayed > day.mul(5))
+    if (player.timePlayed > day.mul(2))
     {
         player.h.timeplayedstring = "You have been playing this game for some time now."
 	}
-    if (player.timePlayed > day.mul(10))
+    if (player.timePlayed > day.mul(6))
     {
         player.h.timeplayedstring = "Take your time, this is an incremental game anyways!"
 	}
