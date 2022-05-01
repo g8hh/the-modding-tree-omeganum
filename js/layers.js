@@ -3429,7 +3429,7 @@ addLayer("l", {
             if (hasUpgrade("ch", 39)) clickerheroestimeincome = clickerheroestimeincome.add(1)
             if (hasUpgrade("i2", 19)) clickerheroestimeincome = clickerheroestimeincome.mul(player.i2.incrementalstoneseffect3)
             if (hasUpgrade("h", 17)) clickerheroestimeincome = clickerheroestimeincome.mul(player.h.timeeffect3)
-            clickerheroestimeincome = clickerheroestimeincome.mul(player.rg.pointeffect)
+            //clickerheroestimeincome = clickerheroestimeincome.mul(player.rg.pointeffect)
             player.l.clickerheroestime = player.l.clickerheroestime.add(clickerheroestimeincome.mul(delta))
             player.l.clickerheroestimeeffect = EN.pow(1.1, EN.pow(1.1, player.l.clickerheroestime)).sub(3)
 
@@ -8699,7 +8699,7 @@ addLayer("rg", {
        player.rg.coins = player.rg.coins.add(player.rg.coinspersecond.mul(delta))
        player.rg.coineffect = player.rg.coins.pow(0.8).add(1)
 
-       player.rg.assistantspersecond = player.rg.coins.log10().floor().div(25)
+       player.rg.assistantspersecond = player.rg.coins.plus(1).log10().div(25)
        player.rg.assistantspersecond = player.rg.assistantspersecond.mul(player.rg.angelboost)
        player.rg.assistants = player.rg.assistants.add(player.rg.assistantspersecond.mul(delta))
        player.rg.assistanteffect = player.rg.assistants.div(100).add(1)
