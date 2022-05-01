@@ -7392,6 +7392,7 @@ addLayer("i2", {
         clickerblessingeffect: new ExpantaNum(0),
         clickerritualtime: new ExpantaNum(0),
         clickerritualcooldown: new ExpantaNum(0),
+        incrementalstoneseffect4: new ExpantaNum(0),
     }},
             nodeStyle: 
             {
@@ -7497,6 +7498,13 @@ addLayer("i2", {
             currencyLocation() { return player },
             currencyDisplayName: "Points",
             currencyInternalName: "points",
+        },
+        21:
+        { 
+            title: "Finally, another useful boost!",
+            description: "Unlocks the fourth Incremental Stone effect",
+            unlocked() { return hasUpgrade("rg", 16) },
+            cost: new ExpantaNum("7e77777"),
         },
     },
     clickables: {
@@ -7629,6 +7637,7 @@ addLayer("i2", {
         player.i2.incrementalstoneseffect1 = player.i2.points.pow(0.3).add(1)
         player.i2.incrementalstoneseffect2 = player.i2.points.plus(1).log10().pow(0.8)
         player.i2.incrementalstoneseffect3 = player.i2.points.plus(1).log10().pow(0.2)
+        player.i2.incrementalstoneseffect4 = player.i2.points.plus(1).log10().pow(0.08).mul(100000)
 
         let cookieblessinggain = new ExpantaNum(0.1)
         cookieblessinggain = cookieblessinggain.mul(player.i2.antimatterblessingeffect)
@@ -7723,7 +7732,7 @@ addLayer("i2", {
           "Incremental Ritual": {
           content: [
           ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15], ["upgrade", 16], ["upgrade", 17]]],
-          ["row", [["upgrade", 18], ["upgrade", 19]]],
+          ["row", [["upgrade", 18], ["upgrade", 19], ["upgrade", 21]]],
           ["display-text", () => hasUpgrade("i2", 12) ? "You have " + format(player.i2.incrementalblessings) + " Incremental Blessings, and a x" + format(player.i2.incrementalblessingeffect) + " boost to Incremental Stones" : ""],
           ["display-text", () => hasUpgrade("i2", 14) ? "You have " + format(player.i2.cookieblessings) + " Cookie Blessings, and a x" + format(player.i2.cookieblessingeffect) + " boost to Incremental Blessings" : ""],
           ["display-text", () => hasUpgrade("i2", 18) ? "You have " + format(player.i2.antimatterblessings) + " Antimatter Blessings, and a x" + format(player.i2.antimatterblessingeffect) + " boost to Cookie Blessings" : ""],
@@ -7737,6 +7746,7 @@ addLayer("i2", {
           ["display-text", () => hasUpgrade("i2", 13) ? format(player.i2.points) + " Incremental Stones converted to a x" + format(player.i2.incrementalstoneseffect1) + " boost to Antimatter Dimensions Time" : ""],
           ["display-text", () => hasUpgrade("i2", 16) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect2) + " boost to DPS in the Clicker Heroes Layer" : ""],
           ["display-text", () => hasUpgrade("i2", 17) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect3) + " boost to Military Time" : ""],
+          ["display-text", () => hasUpgrade("i2", 21) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect4) + " boost to Willpower" : ""],
           ]
           },
         },
@@ -8184,6 +8194,7 @@ addLayer("h", {
     if (hasUpgrade("h", 14)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(upgradeEffect("h", 14))
     if (hasUpgrade("h", 15)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(player.h.timeeffect)
     if (hasUpgrade("h", 16)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(upgradeEffect("h", 16))
+    if (hasUpgrade("i2", 21)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(player.i2.incrementalstoneseffect4)
     player.h.willpower = player.h.willpower.add(player.h.willpowerpersecond.mul(delta))
 
     let clockspeed = new ExpantaNum(60)
@@ -8655,7 +8666,7 @@ addLayer("rg", {
     12: {
         name: "Code the Game",
         challengeDescription: "Raises Realm Power Gain to the 0.5th power",
-        canComplete: function() {return player.rg.points.gte(10000)},
+        canComplete: function() {return player.rg.points.gte(4000)},
         goal() { return new ExpantaNum("4000") },
         currencyDisplayName: "Realm Power",
         currencyInternalName: "points",
