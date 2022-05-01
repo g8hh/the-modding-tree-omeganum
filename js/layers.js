@@ -3429,7 +3429,7 @@ addLayer("l", {
             if (hasUpgrade("ch", 39)) clickerheroestimeincome = clickerheroestimeincome.add(1)
             if (hasUpgrade("i2", 19)) clickerheroestimeincome = clickerheroestimeincome.mul(player.i2.incrementalstoneseffect3)
             if (hasUpgrade("h", 17)) clickerheroestimeincome = clickerheroestimeincome.mul(player.h.timeeffect3)
-            clickerheroestimeincome = clickerheroestimeincome.mul(layers.rg.effect())
+            clickerheroestimeincome = clickerheroestimeincome.mul(player.rg.pointeffect)
             player.l.clickerheroestime = player.l.clickerheroestime.add(clickerheroestimeincome.mul(delta))
             player.l.clickerheroestimeeffect = EN.pow(1.1, EN.pow(1.1, player.l.clickerheroestime)).sub(3)
 
@@ -8338,6 +8338,7 @@ addLayer("rg", {
     startData() { return {
         unlocked: true,
 		points: new ExpantaNum(0),
+		pointeffect: new ExpantaNum(0),
 		realmpowerpersecond: new ExpantaNum(0),
 		codethegamechallengeeffect: new ExpantaNum(1),
 		devenergy: new ExpantaNum(0),
@@ -8374,12 +8375,8 @@ addLayer("rg", {
     branches: ["cc", "ad", "ch"],
     displayRow: 3,
     position: 0, 
-    		effect() 
-        {
-			return new ExpantaNum.add(player.rg.points.pow(2), 1);
-		},
         effectDescription(){
-                let eff = layers.rg.effect()
+                let eff = player.rg.pointeffect
                 return "which multiplies Clicker Heroes Time gain by x" + format(eff)
         },
     automate()
@@ -8741,6 +8738,7 @@ addLayer("rg", {
             player.rg.undeadboost = player.rg.coins.pow(0.01).add(1)
             player.rg.demonboost = new ExpantaNum(1.5)
 	   }
+       player.rg.pointeffect = player.rg.points.pow(2).add(1)
 	},
                 bars: {
         factioncoinbar: {
