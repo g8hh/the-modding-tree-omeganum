@@ -3429,7 +3429,7 @@ addLayer("l", {
             if (hasUpgrade("ch", 39)) clickerheroestimeincome = clickerheroestimeincome.add(1)
             if (hasUpgrade("i2", 19)) clickerheroestimeincome = clickerheroestimeincome.mul(player.i2.incrementalstoneseffect3)
             if (hasUpgrade("h", 17)) clickerheroestimeincome = clickerheroestimeincome.mul(player.h.timeeffect3)
-            //clickerheroestimeincome = clickerheroestimeincome.mul(player.rg.pointeffect)
+            clickerheroestimeincome = clickerheroestimeincome.mul(player.rg.pointeffect)
             player.l.clickerheroestime = player.l.clickerheroestime.add(clickerheroestimeincome.mul(delta))
             player.l.clickerheroestimeeffect = EN.pow(1.1, EN.pow(1.1, player.l.clickerheroestime)).sub(3)
 
