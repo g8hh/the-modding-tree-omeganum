@@ -8344,10 +8344,10 @@ addLayer("rg", {
 		devenergy: new ExpantaNum(0),
 		challengeupgradetime: new ExpantaNum(0),
 		coins: new ExpantaNum(0),
-		coinseffect: new ExpantaNum(0),
+		coinseffect: new ExpantaNum(1),
 		coinspersecond: new ExpantaNum(0),
         assistants: new ExpantaNum(0),
-        assistanteffect: new ExpantaNum(0),
+        assistanteffect: new ExpantaNum(1),
         assistantspersecond: new ExpantaNum(0),
         goodalignment: new ExpantaNum(0),
         evilalignment: new ExpantaNum(0),
@@ -8678,7 +8678,7 @@ addLayer("rg", {
        if (hasUpgrade("rg", 14)) player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(upgradeEffect("rg", 14))
        if (hasUpgrade("rg", 15)) player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(upgradeEffect("rg", 15))
        player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.pow(player.rg.codethegamechallengeeffect)
-       player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(player.rg.coineffect)
+       if (hasUpgrade("rg", 18)) player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(player.rg.coineffect)
        player.rg.points = player.rg.points.add(player.rg.realmpowerpersecond.mul(delta))
        let upgradetimepersecond = new ExpantaNum(0)
        if (hasUpgrade("rg", 16)) upgradetimepersecond = new ExpantaNum(1)
@@ -8778,7 +8778,7 @@ addLayer("rg", {
           "Realm Grinder": {
           unlocked() { return maxedChallenge("rg", 12) },
           content: [
-          ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power"],
+          ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power (After Alignments Upgrade is Bought)"],
           ["display-text", () => "You are gaining " + format(player.rg.coinspersecond) + " Coins per Second"],
           ["blank", "10px"],
           ["display-text", () => "You have " + format(player.rg.assistants) + " Assistants a x" + format(player.rg.assistanteffect) + " boost to Coin Gain"],
