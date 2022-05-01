@@ -44,7 +44,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added The First and Second Layer, as well as a Special Layer<br>
 		- Added a lot of cool stuff! These layers are Packed with Content!<br/>
 		- Bumped Endgame to around 1e10000`
-
+		
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
