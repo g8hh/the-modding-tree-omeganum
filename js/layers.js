@@ -3429,8 +3429,8 @@ addLayer("l", {
             if (hasUpgrade("ch", 39)) clickerheroestimeincome = clickerheroestimeincome.add(1)
             if (hasUpgrade("i2", 19)) clickerheroestimeincome = clickerheroestimeincome.mul(player.i2.incrementalstoneseffect3)
             if (hasUpgrade("h", 17)) clickerheroestimeincome = clickerheroestimeincome.mul(player.h.timeeffect3)
+            clickerheroestimeincome = clickerheroestimeincome.mul(layers.rg.effect())
             player.l.clickerheroestime = player.l.clickerheroestime.add(clickerheroestimeincome.mul(delta))
-
             player.l.clickerheroestimeeffect = EN.pow(1.1, EN.pow(1.1, player.l.clickerheroestime)).sub(3)
 
             let itemgaintimer = new ExpantaNum(1)
@@ -5729,14 +5729,8 @@ addLayer("ad", {
           unlocked() { return hasUpgrade("ad", 35) },
           content: [
           ["display-text", () => "You have " + format(player.ad.antimatter) + " Antimatter and a x" + format(player.ad.antimattereffect) + " boost to Cookie Time"],
-          ["row", [["buyable", 21]]],
-          ["row", [["buyable", 22]]],
-          ["row", [["buyable", 23]]],
-          ["row", [["buyable", 24]]],
-          ["row", [["buyable", 25]]],
-          ["row", [["buyable", 26]]],
-          ["row", [["buyable", 27]]],
-          ["row", [["buyable", 28]]],
+          ["row", [["buyable", 21], ["buyable", 22], ["buyable", 23], ["buyable", 24]]],
+          ["row", [["buyable", 25], ["buyable", 26], ["buyable", 27], ["buyable", 28]]],
           ]
           },
           "Boosts and Galaxies": {
@@ -8344,6 +8338,29 @@ addLayer("rg", {
     startData() { return {
         unlocked: true,
 		points: new ExpantaNum(0),
+		realmpowerpersecond: new ExpantaNum(0),
+		codethegamechallengeeffect: new ExpantaNum(1),
+		devenergy: new ExpantaNum(0),
+		challengeupgradetime: new ExpantaNum(0),
+		coins: new ExpantaNum(0),
+		coinseffect: new ExpantaNum(0),
+		coinspersecond: new ExpantaNum(0),
+        assistants: new ExpantaNum(0),
+        assistanteffect: new ExpantaNum(0),
+        assistantspersecond: new ExpantaNum(0),
+        goodalignment: new ExpantaNum(0),
+        evilalignment: new ExpantaNum(0),
+        factioncoins: new ExpantaNum(0),
+        factioncointime: new ExpantaNum(0),
+        building4: "",
+        building5: "",
+        fairyboost: new ExpantaNum(1),
+        elvenboost: new ExpantaNum(1),
+        angelboost: new ExpantaNum(1),
+        goblinboost: new ExpantaNum(1),
+        undeadboost: new ExpantaNum(1),
+        demonboost: new ExpantaNum(1),
+        factioncoingain: new ExpantaNum(1),
     }},
             nodeStyle: 
             {
@@ -8357,28 +8374,390 @@ addLayer("rg", {
     branches: ["cc", "ad", "ch"],
     displayRow: 3,
     position: 0, 
+    		effect() 
+        {
+			return new ExpantaNum.add(player.rg.points.pow(2), 1);
+		},
+        effectDescription(){
+                let eff = layers.rg.effect()
+                return "which multiplies Clicker Heroes Time gain by x" + format(eff)
+        },
     automate()
     {
     },
     buyables:
     {
+                    11: {
+        cost(x) { return },
+        title: "Convert Realm Power into Dev Energy",
+        unlocked() { return hasUpgrade("rg", 13) },
+        canAfford() { return true },
+        effect() 
+        {
+            return player.rg.devenergy
+        },
+        effectDisplay() { return format(buyableEffect(this.layer, this.id))+" Dev Energy" }, // Add formatting to the effect
+        buy() {
+        player.rg.devenergy = player.rg.devenergy.add(player.rg.points.pow(0.3))
+        player.rg.points = new ExpantaNum(0)
+        },
+        },
+        12: {
+        cost(x) { return new ExpantaNum(10).pow(x.div(20)).mul(10).sub(10) },
+        title: "Farm",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].coins.gte(this.cost()) },
+        buy() {
+            player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Coins\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " Coins per Second";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(2).mul(player.rg.fairyboost)
+        },
+        },
+                13: {
+        cost(x) { return new ExpantaNum(10).pow(x.div(15)).mul(10).add(110) },
+        title: "Inn",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].coins.gte(this.cost()) },
+        buy() {
+            player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Coins\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " Coins per Second";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(6).mul(player.rg.fairyboost)
+        },
+    },
+        14: {
+        cost(x) { return new ExpantaNum(10).pow(x.div(9.7)).mul(10).add(600) },
+        title: "Blacksmith",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].coins.gte(this.cost()) },
+        buy() {
+            player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Coins\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " Coins per Second";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(20).mul(player.rg.fairyboost)
+        },
+        },
+                15: {
+        cost(x) { return new ExpantaNum(5).pow(x.div(20)).mul(5) },
+        title: "Royal Exchange",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].factioncoins.gte(this.cost()) },
+        buy() {
+            player[this.layer].factioncoins = player[this.layer].factioncoins.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Faction Coins\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Coins";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].div(5).add(1)
+        },
+    },
+            16: {
+        cost(x) { return new ExpantaNum(1000).pow(x.div(5)).mul(1000).add(30000).sub(10) },
+        title() {return player.rg.building4},
+        unlocked() { return hasUpgrade("rg", 18) },
+        canAfford() { return player[this.layer].coins.gte(this.cost()) },
+        buy() {
+            player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Coins\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " Coins per Second";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(600).mul(player.rg.demonboost)
+        },
+        },
+        17: {
+        cost(x) { return new ExpantaNum(1000).pow(x.div(4)).mul(1000).add(600000).sub(10) },
+        title() {return player.rg.building5},
+        unlocked() { return hasUpgrade("rg", 18) },
+        canAfford() { return player[this.layer].coins.gte(this.cost()) },
+        buy() {
+            player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Coins\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " Coins per Second";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(2000).mul(player.rg.demonboost)
+        },
+        },
+        21: {
+        cost(x) { return },
+        title: "Be Good",
+        unlocked() { return true },
+        canAfford() { return true },
+        buy() {
+        player.rg.evilalignment = new ExpantaNum(0)
+        player.rg.goodalignment = new ExpantaNum(1)
+        },
+    },
+        22: {
+        cost(x) { return },
+        title: "Be Evil",
+        unlocked() { return true },
+        canAfford() { return true },
+        buy() {
+        player.rg.evilalignment = new ExpantaNum(1)
+        player.rg.goodalignment = new ExpantaNum(0)
+        },
+    },
     },    
     upgrades: 
     {
-
+        11:
+        { 
+            title: "Start developing Realm Grinder",
+            description: "Gain 1 Realm Power per Second",
+            unlocked() { return true },
+            cost: new ExpantaNum("0"),
+        },
+        12:
+        { 
+            title: "A Medival Idle Game?",
+            description: "Boost Realm Power based on Realm Power",
+            unlocked() { return hasUpgrade("rg", 11) },
+            cost: new ExpantaNum("20"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+                effect() 
+                {
+                     return player[this.layer].points.add(1).pow(0.2)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        13:
+        { 
+            title: "With many ways of playing!",
+            description: "Unlocks Dev Energy",
+            unlocked() { return hasUpgrade("rg", 12) },
+            cost: new ExpantaNum("150"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+        14:
+        { 
+            title: "Positive Coding Environment",
+            description: "Boost Realm Power based on Dev Energy",
+            unlocked() { return hasUpgrade("rg", 13) },
+            cost: new ExpantaNum("20"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Dev Energy",
+            currencyInternalName: "devenergy",
+                effect() 
+                {
+                     return player[this.layer].devenergy.add(1).pow(0.4)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        15:
+        { 
+            title: "Negative Coding Environment",
+            description: "Boost Realm Power based on Dev Energy again but with a different formula",
+            unlocked() { return hasUpgrade("rg", 14) },
+            cost: new ExpantaNum("100"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Dev Energy",
+            currencyInternalName: "devenergy",
+                effect() 
+                {
+                     return player[this.layer].devenergy.add(1).mul(0.5).pow(0.5)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        16:
+        { 
+            title: "Aww Dang! You Found Me!",
+            description: "Boost Realm Power based on time after buying the upgrade",
+            unlocked() { return hasUpgrade("rg", 15) && inChallenge("rg", 12) && player.rg.points > 400 },
+            cost: new ExpantaNum("300"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Dev Energy",
+            currencyInternalName: "devenergy",
+                effect() 
+                {
+                     return player[this.layer].challengeupgradetime.add(1).pow(0.3)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        17:
+        { 
+            title: "Generate Supreme Coding Power",
+            description: "Gains 10% of Dev Energy per Second",
+            unlocked() { return hasUpgrade("rg", 16) },
+            cost: new ExpantaNum("1000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Dev Energy",
+            currencyInternalName: "devenergy",
+        },
+        18:
+        { 
+            title: "ALIGNMENTS?",
+            description: "Unlocks a New Tab",
+            unlocked() { return hasUpgrade("rg", 17) },
+            cost: new ExpantaNum("25000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Coins",
+            currencyInternalName: "coins",
+        },
     },
     achievements: {
 
     },
     clickables: {
     },
-    buyables:
-    {
-
+    challenges: {
+    12: {
+        name: "Code the Game",
+        challengeDescription: "Raises Realm Power Gain to the 0.5th power",
+        canComplete: function() {return player.rg.points.gte(10000)},
+        goal() { return new ExpantaNum("4000") },
+        currencyDisplayName: "Realm Power",
+        currencyInternalName: "points",
+        currencyLocation() { return player.rg },
+		rewardDescription: "Unlocks a lot of Stuff",
+        			onEnter() {
+						player.rg.codethegamechallengeeffect = new ExpantaNum(0.5);
+                        player.rg.points = new ExpantaNum(0)
+				},
+                    onExit() {
+						player.rg.codethegamechallengeeffect = new ExpantaNum(1);
+                        player.rg.points = new ExpantaNum(0)
+				},
     },
-    update(delta) {
+        }, 
+    update(delta) 
+    {
+       if (hasUpgrade("rg", 11)) player.rg.realmpowerpersecond = new ExpantaNum(1)
+       if (hasUpgrade("rg", 12)) player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(upgradeEffect("rg", 12))
+       if (hasUpgrade("rg", 14)) player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(upgradeEffect("rg", 14))
+       if (hasUpgrade("rg", 15)) player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(upgradeEffect("rg", 15))
+       player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.pow(player.rg.codethegamechallengeeffect)
+       player.rg.realmpowerpersecond = player.rg.realmpowerpersecond.mul(player.rg.coineffect)
+       player.rg.points = player.rg.points.add(player.rg.realmpowerpersecond.mul(delta))
+       let upgradetimepersecond = new ExpantaNum(0)
+       if (hasUpgrade("rg", 16)) upgradetimepersecond = new ExpantaNum(1)
+       player.rg.challengeupgradetime = player.rg.challengeupgradetime.add(upgradetimepersecond)
 
+       let devenergygain = new ExpantaNum(player.rg.points.pow(0.3))
+       if (hasUpgrade("rg", 17)) player.rg.devenergy = player.rg.devenergy.add(devenergygain.mul(delta))
+
+       player.rg.coinspersecond = buyableEffect("rg", 12)
+       player.rg.coinspersecond = player.rg.coinspersecond.add(buyableEffect("rg", 13))
+       player.rg.coinspersecond = player.rg.coinspersecond.add(buyableEffect("rg", 14))
+       player.rg.coinspersecond = player.rg.coinspersecond.mul(player.rg.assistanteffect)
+       player.rg.coinspersecond = player.rg.coinspersecond.mul(buyableEffect("rg", 15))
+       player.rg.coinspersecond = player.rg.coinspersecond.add(buyableEffect("rg", 16))
+       player.rg.coinspersecond = player.rg.coinspersecond.add(buyableEffect("rg", 17))
+       player.rg.coinspersecond = player.rg.coinspersecond.mul(player.rg.goblinboost)
+       player.rg.coinspersecond = player.rg.coinspersecond.mul(player.rg.undeadboost)
+       player.rg.coins = player.rg.coins.add(player.rg.coinspersecond.mul(delta))
+       player.rg.coineffect = player.rg.coins.pow(0.8).add(1)
+
+       player.rg.assistantspersecond = player.rg.coins.log10().floor().div(25)
+       player.rg.assistantspersecond = player.rg.assistantspersecond.mul(player.rg.angelboost)
+       player.rg.assistants = player.rg.assistants.add(player.rg.assistantspersecond.mul(delta))
+       player.rg.assistanteffect = player.rg.assistants.div(100).add(1)
+
+       let factioncointimegain = new ExpantaNum(1)
+       if (hasUpgrade("rg", 18))
+       {
+            player.rg.factioncointime = player.rg.factioncointime.add(factioncointimegain.mul(delta))
+	   }
+       player.rg.factioncoingain = new ExpantaNum(1)
+       player.rg.factioncoingain = player.rg.factioncoingain.mul(player.rg.elvenboost)
+       if (player.rg.factioncointime > 10)
+       {
+            player.rg.factioncointime = new ExpantaNum(0)
+            player.rg.factioncoins = player.rg.factioncoins.add(player.rg.factioncoingain)
+	   }
+       if (player.rg.goodalignment > 0)
+       {         
+            player.rg.building4 = "Cathedral"
+            player.rg.building5 = "Royal Castle"
+            player.rg.fairyboost = new ExpantaNum(5)
+            player.rg.elvenboost = new ExpantaNum(1.5)
+            player.rg.angelboost = new ExpantaNum(1.2)
+            player.rg.goblinboost = new ExpantaNum(1)
+            player.rg.undeadboost = new ExpantaNum(1)
+            player.rg.demonboost = new ExpantaNum(1)
+	   }
+       if (player.rg.evilalignment > 0)
+       {
+            player.rg.building4 = "Dark Temple"
+            player.rg.building5 = "Evil Fortress"
+            player.rg.fairyboost = new ExpantaNum(1)
+            player.rg.elvenboost = new ExpantaNum(1) 
+            player.rg.angelboost = new ExpantaNum(1)
+            player.rg.goblinboost = new ExpantaNum(2)
+            player.rg.undeadboost = player.rg.coins.pow(0.01).add(1)
+            player.rg.demonboost = new ExpantaNum(1.5)
+	   }
 	},
+                bars: {
+        factioncoinbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.rg.factioncointime.div(10)
+            },
+            fillStyle: {
+                "background-color": "red",
+            },
+            display() {
+                return "<h5>Time to get " + format(player.rg.factioncoingain) +" Faction Coins <br/>" + format(player.rg.factioncointime) + " / 10 Seconds</h5>";
+            },
+        },
+        },
     milestones: {
     },
 
@@ -8389,7 +8768,50 @@ addLayer("rg", {
           "Development": {
           content: [
           ["blank", "10px"],
-          ["display-text", () => "The End for Now!"],
+          ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13]]],
+          ["row", [["upgrade", 14], ["upgrade", 15], ["upgrade", 16], ["upgrade", 17]]],
+          ["blank", "10px"],
+          ["row", [["buyable", 11]]],
+          ["display-text", () => hasUpgrade("rg", 13) ? "You have " + format(player.rg.devenergy) + " Dev Energy" : ""],
+          ["blank", "10px"],
+          ["row", [["challenge", 12]]],
+          ]
+          },
+          "Realm Grinder": {
+          unlocked() { return maxedChallenge("rg", 12) },
+          content: [
+          ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power"],
+          ["display-text", () => "You are gaining " + format(player.rg.coinspersecond) + " Coins per Second"],
+          ["blank", "10px"],
+          ["display-text", () => "You have " + format(player.rg.assistants) + " Assistants a x" + format(player.rg.assistanteffect) + " boost to Coin Gain"],
+          ["display-text", () => "You are gaining " + format(player.rg.assistantspersecond) + " Assistants per Second"],
+          ["blank", "10px"],
+          ["row", [["buyable", 12], ["buyable", 13], ["buyable", 14]]],
+          ["row", [["buyable", 16], ["buyable", 17]]],
+          ["blank", "10px"],
+          ["row", [["upgrade", 18]]],
+          ]
+          },
+          "Alignments": {
+          unlocked() { return hasUpgrade("rg", 18) },
+          content: [
+          ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power"],
+          ["display-text", () => "You are gaining " + format(player.rg.coinspersecond) + " Coins per Second"],
+          ["blank", "10px"],
+          ["row", [["buyable", 21], ["buyable", 22]]],
+          ["display-text", () => player.rg.goodalignment >= 1 ? "You are Good" : ""],
+          ["display-text", () => player.rg.evilalignment >= 1 ? "You are Evil" : ""],
+          ["display-text", () => "You have " + format(player.rg.factioncoins) + " Faction Coins"],
+          ["row", [["buyable", 15]]],
+          ["row", [["bar", "factioncoinbar"]]],
+          ["blank", "10px"],
+          ["display-text", () => "Faction Boosts:"],
+          ["display-text", () => "Fairy: x" + format(player.rg.fairyboost) + " boost to the first 3 buildings"],
+          ["display-text", () => "Elven: x" + format(player.rg.elvenboost) + " boost to Faction Coin Gain"],
+          ["display-text", () => "Angel: x" + format(player.rg.angelboost) + " boost to Assistant Gain"],
+          ["display-text", () => "Goblin: x" + format(player.rg.goblinboost) + " boost to Coin Gain"],
+          ["display-text", () => "Undead: x" + format(player.rg.undeadboost) + " boost to Coin Gain based on Coins"],
+          ["display-text", () => "Demon: x" + format(player.rg.demonboost) + " boost to the last 3 buildings"],
           ]
           },
         },

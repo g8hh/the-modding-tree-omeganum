@@ -18,7 +18,6 @@ function startPlayerBase() {
 		timePlayed: 0,
 		keepGoing: false,
 		hasNaN: false,
-
 		points: modInfo.initialStartPoints,
 		isWarned: false,
 		subtabs: {},

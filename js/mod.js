@@ -13,15 +13,20 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.2.1",
-	name: "The Great Timewall Removal",
+	num: "1.3",
+	name: "Realm Grinder Update 1: The 6 Factions",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<br/>
+	<h3>v1.3</h3><br/>
+		- I will start to Update the game more often, releasing bits of each layer each update.<br/>
+		- Added the first 1/3 of the Realm Grinder layer, No Timewalls I promise!<br/>
+		- Changed endgame to around 1.6F7.<br/>
+	<br/>
 	<h3>v1.2.1</h3><br/>
 		- Makes the game a hell lot easier due to annoying complainers on discord. Adds a little bit content.<br/>
-		- Changed endgame to around 3F6.<br/>
+		- Changed endgame to around 5F6.<br/>
 	<br/>
 	<br/>
 	<h3>v1.2</h3><br/>
