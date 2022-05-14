@@ -7506,6 +7506,21 @@ addLayer("i2", {
             unlocked() { return hasUpgrade("rg", 16) },
             cost: new ExpantaNum("7e77777"),
         },
+        22:
+        { 
+            title: "最后让社会信用提升一些东西",
+            description: "基于社会信用提升增量石材的第三效应",
+            unlocked() { return hasUpgrade("h", 21) },
+            cost: new ExpantaNum("1e18"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+                effect() 
+                {
+                     return player.sc.points.pow(0.2)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"^+" }, // Add formatting to the effect
+        },
     },
     clickables: {
     },
@@ -7522,7 +7537,7 @@ addLayer("i2", {
             player.i2.incrementalritualtime = new ExpantaNum(360)
 		}
         },
-                 display() 
+         display() 
          { // Everything else displayed in the buyable button after the title
            let data = tmp[this.layer].buyables[this.id]
            return "+1 Incremental Blessing per ritual\n\
@@ -7610,6 +7625,7 @@ addLayer("i2", {
         let incrementalblessinggain = new ExpantaNum(0.00277777777778)
         incrementalblessinggain = incrementalblessinggain.mul(player.i2.cookieblessingeffect)
         incrementalblessinggain = incrementalblessinggain.mul(player.h.moonlighteffect)
+        incrementalblessinggain = incrementalblessinggain.mul(player.h.chinesetimeeffect)
         let incrementalritualtimesub = new ExpantaNum(1)
         let incrementalritualcooldownsub = new ExpantaNum(1)
         if (hasUpgrade("h", 17)) incrementalritualcooldownsub = incrementalritualcooldownsub.mul(player.h.timeeffect2)
@@ -7636,8 +7652,11 @@ addLayer("i2", {
 
         player.i2.incrementalstoneseffect1 = player.i2.points.pow(0.3).add(1)
         player.i2.incrementalstoneseffect2 = player.i2.points.plus(1).log10().pow(0.8)
-        player.i2.incrementalstoneseffect3 = player.i2.points.plus(1).log10().pow(0.2)
-        player.i2.incrementalstoneseffect4 = player.i2.points.plus(1).log10().pow(0.08).mul(100000)
+        let effect3add = new ExpantaNum(0)
+        let effect3base = new ExpantaNum(0.2)
+        if (hasUpgrade("i2", 22)) effect3add = upgradeEffect("i2", 22)
+        player.i2.incrementalstoneseffect3 = player.i2.points.plus(1).log10().pow(effect3base.add(effect3add))
+        player.i2.incrementalstoneseffect4 = player.i2.points.plus(100).log10().log10().log10().pow(0.08).mul(100000)
 
         let cookieblessinggain = new ExpantaNum(0.1)
         cookieblessinggain = cookieblessinggain.mul(player.i2.antimatterblessingeffect)
@@ -7732,7 +7751,7 @@ addLayer("i2", {
           "Incremental Ritual": {
           content: [
           ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15], ["upgrade", 16], ["upgrade", 17]]],
-          ["row", [["upgrade", 18], ["upgrade", 19], ["upgrade", 21]]],
+          ["row", [["upgrade", 18], ["upgrade", 19], ["upgrade", 21], ["upgrade", 22]]],
           ["display-text", () => hasUpgrade("i2", 12) ? "You have " + format(player.i2.incrementalblessings) + " Incremental Blessings, and a x" + format(player.i2.incrementalblessingeffect) + " boost to Incremental Stones" : ""],
           ["display-text", () => hasUpgrade("i2", 14) ? "You have " + format(player.i2.cookieblessings) + " Cookie Blessings, and a x" + format(player.i2.cookieblessingeffect) + " boost to Incremental Blessings" : ""],
           ["display-text", () => hasUpgrade("i2", 18) ? "You have " + format(player.i2.antimatterblessings) + " Antimatter Blessings, and a x" + format(player.i2.antimatterblessingeffect) + " boost to Cookie Blessings" : ""],
@@ -7779,6 +7798,8 @@ addLayer("h", {
         moonlight: new ExpantaNum(0),
         sunshineeffect: new ExpantaNum(0),
         moonlighteffect: new ExpantaNum(0),
+        chinesetime: new ExpantaNum(0),
+        chinesetimeeffect: new ExpantaNum(0),
     }},
             nodeStyle: 
             {
@@ -7906,6 +7927,16 @@ addLayer("h", {
             currencyLocation() { return player },
             currencyDisplayName: "Points",
             currencyInternalName: "points",
+        },
+        21:
+        { 
+            title: "社会信用",
+            description: "解锁一个新的迷你游戏（中国社会信用）",
+            unlocked() { return hasUpgrade("rg", 18) },
+            cost: new ExpantaNum("2e17"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
         },
     },
     achievements: {
@@ -8143,6 +8174,13 @@ addLayer("h", {
             onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
             unlocked() { return hasUpgrade("h", 18) },
         },
+        61: {
+            name: "Become Chinese",
+            done() {return player.sc.points.gte("1e10")},
+            tooltip: "Get 1e10 Social Credit", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
     },
     clickables: {
     },
@@ -8246,6 +8284,7 @@ addLayer("h", {
     player.h.timeplayed = player.timePlayed
     let sunshinegain = new ExpantaNum(1)
     let moonlightgain = new ExpantaNum(1)
+    player.h.sunshineeffect = player.h.sunshine.pow(0.1).add(1)
     if (player.h.time < 43200 && hasUpgrade("h", 18))
     {
         player.h.dayornight = 1
@@ -8256,8 +8295,13 @@ addLayer("h", {
         player.h.dayornight = 2
         player.h.moonlight = player.h.moonlight.add(moonlightgain.mul(delta))
 	}
-        player.h.sunshineeffect = player.h.sunshine.pow(0.1).add(1)
         player.h.moonlighteffect = player.h.moonlight.pow(0.5).add(1)
+
+            let chinesetimeincome = new ExpantaNum(0)
+            if (hasUpgrade("sc", 25)) chinesetimeincome = chinesetimeincome.add(1)
+            player.h.chinesetime = player.h.chinesetime.add(chinesetimeincome.mul(delta))
+
+            player.h.chinesetimeeffect = player.h.chinesetime.pow(100).add(1)
 	},
     milestones: {
     },
@@ -8305,15 +8349,32 @@ addLayer("h", {
           ["row", [["achievement", 41], ["achievement", 42], ["achievement", 43], ["achievement", 44], ["achievement", 45], ["achievement", 46]]],
           ["row", [["achievement", 47], ["achievement", 48], ["achievement", 49], ["achievement", 51], ["achievement", 52], ["achievement", 53]]],
           ["display-text", () => hasUpgrade("h", 18) ? "Miscellaneous Achievements" : ""],
-          ["row", [["achievement", 54], ["achievement", 55], ["achievement", 56], ["achievement", 57], ["achievement", 58], ["achievement", 59]]],
+          ["row", [["achievement", 54], ["achievement", 55], ["achievement", 56], ["achievement", 57], ["achievement", 58], ["achievement", 59], ["achievement", 61]]],
           ]
           },
+          "The Times (Post Clicker Heroes)": {
+                unlocked() { return hasUpgrade("l", 22) },
+                content: 
+                [
+                    ["blank", "15px"],
+                    ["display-text", () => "Cookie Clicker Time: " + formatTime(player.l.cookietime) + " -> x" + format(player.l.cookietimeeffect) + " boost to Points"],
+                    ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions Time: " + formatTime(player.l.antimattertime) + " -> x" + format(player.l.antimattertimeeffect) + " boost to Cookie Clicker Time" : ""],
+                    ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes Time: " + formatTime(player.l.clickerheroestime) + " -> x" + format(player.l.clickerheroestimeeffect) + " boost to Supermarket Time" : ""],
+                    ["blank", "25px"],
+                    ["display-text", () => hasUpgrade("m", 19) ? "The Minigames" : ""],
+                    ["blank", "15px"],
+                    ["display-text", () => hasUpgrade("m", 19) ? "Military Time: " + formatTime(player.l.militarytime) + " -> +^" + format(player.l.militarytimeeffect) + " to Clicker Heroes Gold Effect" : ""],
+                    ["display-text", () => hasUpgrade("l", 122) ? "Supermarket Time: " + formatTime(player.l.supermarkettime) + " -> x" + format(player.l.supermarkettimeeffect) + " boost to Military Time" : ""],
+                    ["display-text", () => hasUpgrade("sc", 24) ? "Chinese Time: " + formatTime(player.h.chinesetime) + " -> x" + format(player.h.chinesetimeeffect) + " boost to Incremental Blessings" : ""],
+                ]
+            },
         },
         willpower: 
         {
           "Unlockables": {
           content: [
           ["row", [["upgrade", 12], ["upgrade", 13], ["upgrade", 15], ["upgrade", 18], ["upgrade", 19]]],
+          ["row", [["upgrade", 21]]],
           ]
           },
           "The Clock": {
@@ -8833,3 +8894,513 @@ addLayer("rg", {
     layerShown(){return hasUpgrade("h", 19)}
 },
 )
+addLayer("sc", {
+    startData() { return {
+        unlocked: true,
+		points: new ExpantaNum(0),
+        socialcreditperclick: new ExpantaNum(1),
+        automationtime: new ExpantaNum(0),
+        yuan: new ExpantaNum(0),
+        distilledwater: new ExpantaNum(0),
+        distilledwatereffect: new ExpantaNum(0),
+        distilledwaterpersecond: new ExpantaNum(0),
+        bingchilling: new ExpantaNum(0),
+        bingchillingeffect: new ExpantaNum(0),
+        bingchillingpersecond: new ExpantaNum(0),
+        offbrandcost: new ExpantaNum(0),
+        publicdemand: new ExpantaNum(0),
+        offbranditem: new ExpantaNum(0),
+        offbranditempersecond: new ExpantaNum(0),
+        dollars: new ExpantaNum(0),
+        dollarseffect: new ExpantaNum(0),
+        dollarspersecond: new ExpantaNum(0),
+        itemssoldpersecond: new ExpantaNum(0),
+    }},
+    color: "red",
+    symbol: "<img src='https://tse1.mm.bing.net/th?id=OIP.2tRkujOAH3EzoPh1qMv_3wHaE7&pid=Api&rs=1&c=1&qlt=95&w=137&h=91' style='width:calc(150%);height:calc(120%);margin:-20%'></img>",
+    resource: " Social Credit", 
+    row: "side",
+    branches: ["m", "rg"],
+    automate()
+    {
+    },
+    buyables:
+    {
+        11: {
+        cost(x) { return new ExpantaNum(20).pow(x.div(20)).mul(20) },
+        title: "超级偶像的笑容都没你的甜. 八月正午的阳光都没你耀眼. 热爱105度的你 滴滴清纯的蒸馏水. <img src='resources/superidol.jpg'/img>",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].yuan.gte(this.cost()) },
+        buy() {
+            player[this.layer].yuan = player[this.layer].yuan.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "成本: " + format(data.cost) + " 元\n\
+           金额: " + player[this.layer].buyables[this.id] + " \n\
+           你有" + format(data.effect) + " 超级偶像，产生蒸馏水";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id]
+        },
+        },
+        12: {
+        cost(x) { return new ExpantaNum(20).pow(x.div(20)).mul(20) },
+        title: "约翰西娜速度与激情9 <img src='resources/bingchilling.jfif'/img>",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].yuan.gte(this.cost()) },
+        buy() {
+            player[this.layer].yuan = player[this.layer].yuan.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "成本: " + format(data.cost) + " 元\n\
+           金额: " + player[this.layer].buyables[this.id] + " \n\
+           你有" + format(data.effect) + " 生产的约翰西娜冰寒";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id]
+        },
+        },
+        13: {
+        cost(x) { return new ExpantaNum(300).pow(x.div(18)).mul(300) },
+        title: "投资者",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].yuan.gte(this.cost()) },
+        buy() {
+            player[this.layer].yuan = player[this.layer].yuan.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "成本: " + format(data.cost) + " 元\n\
+           金额: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " 推动公众需求";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].pow(0.7).add(1)
+        },
+        },
+        14: {
+        cost(x) { return new ExpantaNum(50).pow(x.div(18)).mul(50) },
+        title: "制造业",
+        unlocked() { return true },
+        canAfford() { return player[this.layer].dollars.gte(this.cost()) },
+        buy() {
+            player[this.layer].dollars = player[this.layer].dollars.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "成本: " + format(data.cost) + " $\n\
+           金额: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " 促进非品牌项目的创造";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].pow(0.6).add(1)
+        },
+        },
+    },    
+    upgrades: 
+    {
+        11:
+        {
+            title: "西京平祝福中华人民共和国",
+            description: "习近平是一位中国政治家，自2012年以来一直担任中国共产党总书记和中央军委主席，自2013年以来一直担任中华人民共和国主席。 也将社会信用收益乘以2倍",
+            cost: new ExpantaNum(100),
+        },
+        12:
+        {
+            title: "约翰西娜速度与激情9",
+            description: "#速度与激情9#早上好中国现在我有冰激淋 我很喜欢冰激淋但是《速度与激情9》比冰激淋…… 同时也提高了社会信用本身的收益。 别忘了赞美约翰西娜",
+            cost: new ExpantaNum(300),
+                unlocked() { return hasUpgrade("sc", 11) },
+                effect() 
+                {
+                     return player[this.layer].points.pow(0.2).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        13:
+        {
+            title: "雇用中国蛋工为你做社会信用",
+            description: "每10秒自动产生社交积分",
+            cost: new ExpantaNum(2500),
+                unlocked() { return hasUpgrade("sc", 12) },
+            effectDisplay() { return "1989年天纳门广场什么都没发生，我们也没做错中国是世界上最好的共和国（第二名是朝鲜）" }, // Add formatting to the effect
+        },
+        14:
+        {
+            title: "约翰西娜冰冰（冰淇淋）或超级偶像蒸馏水？",
+            description: "解锁一个非常新的标签。 （此特定升级不需要进一步解释）",
+            cost: new ExpantaNum(7500),
+            unlocked() { return hasUpgrade("sc", 13) },
+        },
+        15:
+        {
+            title: "让蛋人更强壮",
+            description: "X2社会信用自动化速度",
+            cost: new ExpantaNum(150),
+            unlocked() { return hasUpgrade("sc", 14) },
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "元",
+            currencyInternalName: "yuan",
+        },
+        16:
+        {
+            title: "中国蛋工的荣耀礼物",
+            description: "以人民币为基础提高社会信用收益",
+            cost: new ExpantaNum(300),
+                unlocked() { return hasUpgrade("sc", 15) },
+                effect() 
+                {
+                     return player[this.layer].yuan.pow(0.25).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "元",
+            currencyInternalName: "yuan",
+        },
+        17:
+        {
+            title: "证明你是一个真正的中国公民，你会使共和国比现在更好",
+            description: "解锁一个新标签，这是一个很棒的标签，因为你让美国人感到困惑",
+            cost: new ExpantaNum(100000),
+            unlocked() { return hasUpgrade("sc", 16) },
+        },
+        18:
+        {
+            title: "中国兄弟情谊",
+            description: "以美元为基础提升人民币",
+            cost: new ExpantaNum(750),
+                unlocked() { return hasUpgrade("sc", 17) },
+                effect() 
+                {
+                     return player[this.layer].dollars.pow(0.3).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "元",
+            currencyInternalName: "yuan",
+        },
+        19:
+        {
+            title: "让蛋人吃冰冰喝蒸馏水",
+            description: "提高自动化速度x5",
+            cost: new ExpantaNum(100),
+            unlocked() { return hasUpgrade("sc", 18) },
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "$",
+            currencyInternalName: "dollars",
+        },
+        21:
+        {
+            title: "圣主锅已经祝福你了",
+            description: "每秒获得100%的人民币收益",
+            cost: new ExpantaNum(2500),
+            unlocked() { return hasUpgrade("sc", 19) },
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "元",
+            currencyInternalName: "yuan",
+        },
+        22:
+        {
+            title: "美国人现在也使用中国货币",
+            description: "$效应也能提高人民币的收益",
+            cost: new ExpantaNum(25000),
+            unlocked() { return hasUpgrade("sc", 21) },
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "元",
+            currencyInternalName: "yuan",
+        },
+        23:
+        {
+            title: "锅祝福你的品牌外公司",
+            description: "以人民币为基础提高收益",
+            cost: new ExpantaNum(500),
+                unlocked() { return hasUpgrade("sc", 22) },
+                effect() 
+                {
+                     return player[this.layer].yuan.pow(0.25).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "$",
+            currencyInternalName: "dollars",
+        },
+        24:
+        {
+            title: "吃但是（耶稣基督我是如此种族主义我想知道创作者是否也是部分中国人）",
+            description: "基于社会信用促进公众需求",
+            cost: new ExpantaNum(5000),
+                unlocked() { return hasUpgrade("sc", 23) },
+                effect() 
+                {
+                     return player[this.layer].points.pow(0.2).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            currencyLocation() { return player.sc },
+            currencyDisplayName: "$",
+            currencyInternalName: "dollars",
+        },
+        25:
+        {
+            title: "成为有价值的中国公民",
+            description: "完成图层",
+            cost: new ExpantaNum(1e10),
+            unlocked() { return hasUpgrade("sc", 24) },
+        },
+    },
+    achievements: {
+
+    },
+    clickables: {
+    11: {
+        title() {return "赞美中华人民共和国"},
+        display() {return "既然你是中华人民共和国的公民，你就要赞美共产党，向我们的主、救主西景平鞠躬。 他是我们的最高领袖,他使伟大的事情发生了."},
+        tooltip: "约翰*费利克斯*安东尼*塞纳（John Felix Anthony Cena）（/ˈsiːnə/SEE-nə;出生于4月23，1977）是美国职业摔跤手，演员和前说唱歌手，目前签约WWE。 被广泛认为是有史以来最伟大的职业摔跤手之一，他与Ric天赋并列，成为职业摔跤历史上最大的世界冠军统治。[a] Cena在马萨诸塞州西纽伯里出生并长大，于1998年搬到加利福尼亚，从事健美运动员的职业生涯。 他在1999年为Ultimate Pro Wrestling（UPW）首次亮相时过渡到职业摔跤。 他于2001年与世界摔跤联合会（WWF，现在的WWE）签约，在那里他最初被分配到俄亥俄山谷摔跤（OVW）。 在采用了一个垃圾说话的说唱歌手的角色后，他在WWE中成名。[12][13]他在2004年赢得了他的第一个单打冠军，美国冠军。 第二年，他首次获得WWE冠军，他的角色随后转变为一个干净的超人般的英雄。[14]然后，他领导该公司作为其特许经营者，[15]和未来十年的公众面孔。[16]作为16次世界冠军的联合纪录，Cena已经赢得了WWE冠军13次，这是冠军的纪录。 他也是五次美国冠军，四次世界标签队冠军，两次皇家隆隆声比赛冠军，一次钱在银行比赛冠军，并在几个主要的WWE按次付费活动，包括其旗舰活动，WrestleMania，五次 他的职业摔跤生涯受到了混合批评和观众的欢迎，对他的角色工作和宣传技巧的赞扬，但对他相对于其他摔跤手的过度表现和屏幕放置的批评。[17][18] Cena首次出演The Marine（2006），并因其在Trainwreck（2015），Ferdinand（2017），Blocker和Bumblebee（均为2018）中的表演而获得赞誉。 他出演了F9，并在自杀小队（2021）和同名电视连续剧中描绘了和平缔造者。[19]他的首张录音室专辑，你看不到我（2005），被认证为白金。 除了他在娱乐方面的工作之外，Cena以参与众多慈善事业而闻名，即与Make-A-Wish基金会合作，在那里他在650上授予了最多的愿望。[20][21]",
+        canClick() {return true},
+        onClick()
+        {
+              player.sc.points = player.sc.points.add(player.sc.socialcreditperclick)
+		},
+    },
+    12: {
+        title() {return "不尊重中华人民共和国并赞扬美国总统乔拜登（为什么有人会这样做？)"},
+        display() {return "兄弟，如果你这样做，我向上帝发誓."},
+        canClick() {return true},
+        onClick()
+        {
+              player.sc.points = player.sc.points.mul(0)
+              makeParticles(bingbong, 3)
+		},
+    },
+    13: {
+        title() {return "增加你的非品牌产品的成本"},
+        canClick() {return true},
+        onClick()
+        {
+            player.sc.offbrandcost = player.sc.offbrandcost.add(1)
+		},
+    },
+    14: {
+        title() {return "降低品牌外商品的成本"},
+        canClick() {return true},
+        onClick()
+        {
+            if (player.sc.offbrandcost > 0)
+            {
+                player.sc.offbrandcost = player.sc.offbrandcost.sub(1)
+			}
+		},
+    },
+    },
+    challenges: {
+        }, 
+    update(delta) 
+    {
+        let socialcreditmult = new ExpantaNum(1)
+        if (hasUpgrade("sc", 11)) socialcreditmult = socialcreditmult.mul(2)
+        if (hasUpgrade("sc", 12)) socialcreditmult = socialcreditmult.mul(upgradeEffect("sc", 12))
+        if (hasUpgrade("sc", 16)) socialcreditmult = socialcreditmult.mul(upgradeEffect("sc", 16))
+        socialcreditmult = socialcreditmult.mul(player.sc.distilledwatereffect)
+        socialcreditmult = socialcreditmult.mul(player.sc.dollarseffect)
+        player.sc.socialcreditperclick = socialcreditmult
+
+        automationspeed = new ExpantaNum(1)
+        if (hasUpgrade("sc", 15)) automationspeed = automationspeed.mul(2)
+        if (hasUpgrade("sc", 19)) automationspeed = automationspeed.mul(5)
+        player.sc.automationtime = player.sc.automationtime.add(automationspeed.mul(delta))
+        if (player.sc.automationtime > 10)
+        {
+            if (hasUpgrade("sc", 13)) player.sc.points = player.sc.points.add(player.sc.socialcreditperclick.mul(10))  
+               player.sc.automationtime = new ExpantaNum(0)
+		}
+
+        player.sc.distilledwaterpersecond = buyableEffect("sc", 11)
+        if (hasUpgrade("sc", 18)) player.sc.distilledwaterpersecond = player.sc.distilledwaterpersecond.mul(upgradeEffect("sc", 18))
+        player.sc.distilledwater = player.sc.distilledwater.add(player.sc.distilledwaterpersecond.mul(delta))
+        player.sc.distilledwatereffect = player.sc.distilledwater.pow(0.3).add(1)
+
+        player.sc.bingchillingpersecond = buyableEffect("sc", 12)
+        if (hasUpgrade("sc", 18)) player.sc.bingchillingpersecond = player.sc.bingchillingpersecond.mul(upgradeEffect("sc", 18))
+        player.sc.bingchilling = player.sc.bingchilling.add(player.sc.bingchillingpersecond.mul(delta))
+        player.sc.bingchillingeffect = player.sc.bingchilling.pow(0.2).add(1)
+
+        let demandbase = new ExpantaNum(100)
+        if (player.sc.offbrandcost > 0)
+        {
+           player.sc.publicdemand = demandbase.div(player.sc.offbrandcost)
+           player.sc.publicdemand = player.sc.publicdemand.mul(buyableEffect("sc", 13))
+           if (hasUpgrade("sc", 24)) player.sc.publicdemand = player.sc.publicdemand.mul(upgradeEffect("sc", 24))
+		}
+        if (player.sc.offbrandcost <= 0)
+        {
+           player.sc.publicdemand = new ExpantaNum(0)
+		}
+        if (player.sc.publicdemand < 1)
+        {
+           player.sc.publicdemand = new ExpantaNum(0)
+		}
+        if (player.sc.offbranditem < 0)
+        {
+           player.sc.offbranditem = new ExpantaNum(0)
+		}
+        let offbranditemgain = new ExpantaNum(1)
+        if (hasUpgrade("sc", 17)) offbranditemgain = new ExpantaNum(1)
+        offbranditemgain = offbranditemgain.mul(buyableEffect("sc", 14))
+        player.sc.offbranditempersecond = offbranditemgain.sub(player.sc.itemssoldpersecond)
+        player.sc.offbranditem = player.sc.offbranditem.add(player.sc.offbranditempersecond.mul(delta))
+
+        let dollarmult = new ExpantaNum(1)
+        if (hasUpgrade("sc", 23)) dollarmult = dollarmult.mul(upgradeEffect("sc", 23))
+        player.sc.dollarspersecond = player.sc.itemssoldpersecond.mul(player.sc.offbrandcost.mul(dollarmult).pow(0.9))
+        player.sc.itemssoldpersecond = player.sc.publicdemand.div(100)
+        if (player.sc.offbranditem > 0)
+        {
+              player.sc.dollars = player.sc.dollars.add(player.sc.dollarspersecond.mul(delta))
+		}
+        player.sc.dollarseffect = player.sc.dollars.pow(0.3).add(1)
+
+        let yuanmult = new ExpantaNum(1)
+        if (hasUpgrade("sc", 22)) yuanmult = yuanmult.mul(player.sc.dollarseffect)
+        if (hasUpgrade("sc", 21)) player.sc.yuan = player.sc.yuan.add(player.sc.points.pow(0.3).mul(player.sc.bingchillingeffect.mul(yuanmult.mul(delta))))
+	},
+    tooltip() { // Optional, tooltip displays when the layer is locked
+        return ("中华人民共和国和主席景平和毛泽东的伟大土地我们神圣帝国的伟大领主")
+    },
+    bars: {
+        automationbar: {
+            direction: RIGHT,
+            unlocked() { return hasUpgrade("sc", 13) },
+            width: 476,
+            height: 50,
+            progress() {
+                return player.sc.automationtime.div(10)
+            },
+            fillStyle: {
+                "background-color": "red",
+            },
+            display() {
+                return "<h5>点击获得10x社会信用的时间<br/>" + format(player.sc.automationtime) + " / 10 秒数</h5>";
+            },
+        },
+            endgamebar: {
+            direction: RIGHT,
+            unlocked() { return hasUpgrade("sc", 13) },
+            width: 476,
+            height: 50,
+            progress() {
+                return player.sc.points.log10().div(10)
+            },
+            fillStyle: {
+                "background-color": "yellow",
+            },
+            display() {
+                return "<h5>社会信用，直到这个惊人的小游戏结束<br/>" + format(player.sc.points) + " / 1e10 社会信用</h5>";
+            },
+        },
+        },
+    convertsocialcredit()
+    {
+        player.sc.yuan = player.sc.yuan.add(player.sc.points.pow(0.3).mul(player.sc.bingchillingeffect))
+        player.sc.points = new ExpantaNum(0)
+	},
+    milestones: {
+    },
+
+        microtabs: 
+    {
+        stuff: 
+        {
+          "赞美圣主西京平和中华人民共和国": {
+          content: [
+          ["display-text", () => "你会得到的 " + format(player.sc.socialcreditperclick) + " 点击社会信用"],
+          ["blank", "25px"],
+          ["row", [["clickable", 11]]],
+          ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 17], ["upgrade", 25]]],
+          ["blank", "25px"],
+          ["row", [["bar", "automationbar"]]],
+          ["row", [["bar", "endgamebar"]]],
+          ]
+          },
+          "冰冷/蒸馏水": {
+          unlocked() { return hasUpgrade("sc", 14) },
+          content: [
+          ['display-image', 'resources/johnxina.jpg'],
+          ["display-text", () => "\"在我们的共和国,冷和蒸馏水是两个基本的东西!\""],
+          ["display-text", () => "-约翰西娜"],
+          ["row", [["clickable", 12]]],
+          ["blank", "25px"],
+          ["display-text", () => "你有 " + format(player.sc.yuan) + " 元"],
+          ["raw-html", function() {return "<button onclick='layers.sc.convertsocialcredit()'>将社会信用转化为人民币，用于购买冰凉和蒸馏水</button>"}],
+          ["blank", "25px"],
+          ["row", [["buyable", 11]]],
+          ["display-text", () => "你有 " + format(player.sc.distilledwater) + " 蒸馏水"],
+          ["display-text", () => "你正在获得 " + format(player.sc.distilledwaterpersecond) + " 每秒蒸馏水"],
+          ["display-text", () => "这给出了一个 x" + format(player.sc.distilledwatereffect) + " 促进点击社会信用收益"],
+          ["blank", "15px"],
+          ["row", [["buyable", 12]]],
+          ["display-text", () => "你有 " + format(player.sc.bingchilling) + " 冰寒"],
+          ["display-text", () => "你正在获得 " + format(player.sc.bingchillingpersecond) + " 冰寒每秒"],
+          ["display-text", () => "这给出了一个 x" + format(player.sc.bingchillingeffect) + " 促进人民币收益"],
+          ["row", [["upgrade", 15], ["upgrade", 16]]],
+          ]
+          },
+          "撕掉品牌": {
+          unlocked() { return hasUpgrade("sc", 17) },
+          content: [
+          ['display-image', 'resources/superidol.gif'],
+          ["blank", "25px"],
+          ["display-text", () => "你有 " + format(player.sc.yuan) + " 元"],
+          ["display-text", () => "你撕掉的品牌是: $" + format(player.sc.offbrandcost)],
+          ["display-text", () => "公众需求: " + format(player.sc.publicdemand) + "%"],
+          ["row", [["clickable", 13], ["clickable", 14]]],
+          ["display-text", () => "你有 " + format(player.sc.offbranditem) + " 关闭品牌项目"],
+          ["display-text", () => "你正在获得 " + format(player.sc.offbranditempersecond) + " 每秒关闭品牌项目"],
+          ["display-text", () => "你有 " + format(player.sc.dollars) + "$"],
+          ["display-text", () => "$给出一个 x" + format(player.sc.dollarseffect) + " 提升社会信用"],
+          ["display-text", () => "你正在获得 " + format(player.sc.dollarspersecond) + "$ 每秒"],
+          ["blank", "25px"],
+          ["row", [["buyable", 13], ["buyable", 14]]],
+          ["row", [["upgrade", 18], ["upgrade", 19], ["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24]]],
+          ]
+          },
+        },
+    },
+            tabFormat: [
+        "main-display",
+        ["microtabs", "stuff"],
+        ["blank", "25px"],
+    ],
+    layerShown(){return hasUpgrade("h", 21)}
+},
+)
+const chingchong  = {
+    image:"resources/socialcredit.jpg",
+    spread: 50,
+    gravity: 4,
+    time: 3,
+    speed() { // Randomize speed a bit
+        return (Math.random() + 1.2) * 16 
+    },
+}
+const bingbong  = {
+    image:"resources/badsocialcredit.png",
+    spread: 50,
+    gravity: 4,
+    time: 3,
+    speed() { // Randomize speed a bit
+        return (Math.random() + 1.2) * 16
+    },
+}
