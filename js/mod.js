@@ -13,11 +13,16 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.3",
-	name: "Realm Grinder Update 1: The 6 Factions",
+	num: "1.3.1",
+	name: "Realm Grinder Update 2: China",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<br/>
+	<h3>v1.3.1</h3><br/>
+		- Added a Social Credit Minigame, for Asian History Month (Not racist I promise the creator is Asian)<br/>
+		- Changed endgame to around 2.8F7.<br/>
+	<br/>
 	<br/>
 	<h3>v1.3</h3><br/>
 		- I will start to Update the game more often, releasing bits of each layer each update.<br/>
