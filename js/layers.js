@@ -7504,7 +7504,7 @@ addLayer("i2", {
             title: "Finally, another useful boost!",
             description: "Unlocks the fourth Incremental Stone effect",
             unlocked() { return hasUpgrade("rg", 16) },
-            cost: new ExpantaNum("7e77777"),
+            cost: new ExpantaNum("4e44444"),
         },
         22:
         { 

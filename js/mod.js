@@ -21,8 +21,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	<br/>
 	<h3>v1.3.1</h3><br/>
 		- Added a Social Credit Minigame, for Asian History Month (Not racist I promise the creator is Asian)<br/>
-		- Changed endgame to around 2.8F7.<br/>
-	<br/>
+		- Bumped endgame to around 2.8F7.<br/>
 	<br/>
 	<h3>v1.3</h3><br/>
 		- I will start to Update the game more often, releasing bits of each layer each update.<br/>
@@ -32,7 +31,6 @@ let changelog = `<h1>Changelog:</h1><br>
 	<h3>v1.2.1</h3><br/>
 		- Makes the game a hell lot easier due to annoying complainers on discord. Adds a little bit content.<br/>
 		- Changed endgame to around 5F6.<br/>
-	<br/>
 	<br/>
 	<h3>v1.2</h3><br/>
 		- Adds Clicker Heroes, Incremental^2, and the Hub.<br/>
@@ -44,6 +42,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Adds Antimatter Dimensions and Military Minigame.<br/>
 		- Added a Research Tree to the Life Layer and a lot of Content!<br/>
 		- Bumped Endgame to around ee1e11
+	<br/>
 	<br/>
 	<h3>v1.0</h3><br>
 		- Added The First and Second Layer, as well as a Special Layer<br>
