@@ -585,7 +585,7 @@ var cnItems = {
     "Unlocks the Ancient Treasure Skill": "解锁远古神器技能",
     "Bored, so Imma add a Minigame.": "无聊，所以我加了一个小游戏。",
     "Amenhotep": "阿蒙霍特普",
-    "": "",
+    "Ascension :(": "转生 :(",
     "": "",
     "": "",
     "": "",
