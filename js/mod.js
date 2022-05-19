@@ -13,11 +13,24 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.2",
-	name: "FEED THE GODS",
+	num: "1.3.1",
+	name: "Realm Grinder Update 2: China",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
+	<br/>
+	<h3>v1.3.1</h3><br/>
+		- Added a Social Credit Minigame, for Asian History Month (Not racist I promise the creator is Asian)<br/>
+		- Bumped endgame to around 2.8F7.<br/>
+	<br/>
+	<h3>v1.3</h3><br/>
+		- I will start to Update the game more often, releasing bits of each layer each update.<br/>
+		- Added the first 1/3 of the Realm Grinder layer, No Timewalls I promise!<br/>
+		- Changed endgame to around 1.6F7.<br/>
+	<br/>
+	<h3>v1.2.1</h3><br/>
+		- Makes the game a hell lot easier due to annoying complainers on discord. Adds a little bit content.<br/>
+		- Changed endgame to around 5F6.<br/>
 	<br/>
 	<h3>v1.2</h3><br/>
 		- Adds Clicker Heroes, Incremental^2, and the Hub.<br/>
@@ -30,16 +43,17 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added a Research Tree to the Life Layer and a lot of Content!<br/>
 		- Bumped Endgame to around ee1e11
 	<br/>
+	<br/>
 	<h3>v1.0</h3><br>
 		- Added The First and Second Layer, as well as a Special Layer<br>
 		- Added a lot of cool stuff! These layers are Packed with Content!<br/>
 		- Bumped Endgame to around 1e10000`
-
+		
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "convertsocialcredit"]
 
 function getStartPoints(){
     return new ExpantaNum(modInfo.initialStartPoints)
@@ -77,6 +91,7 @@ function getPointGen() {
 	if (hasUpgrade('l', 25)) gain = gain.times(upgradeEffect('l', 25))
 	gain = gain.times(player.l.cookietimeeffect)
 	return gain
+	showNavTab("tree-tab")
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -89,7 +104,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte([80000000, 2, 0, 1])
+	return false
 }
 
 
