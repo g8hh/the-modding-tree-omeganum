@@ -14,7 +14,7 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "1.3.1",
-	name: "Realm Grinder Update 2: China",
+	name: "Realm Grinder Update 2: 丑国",
 }
 
 let changelog = `<h1>Changelog:</h1><br>

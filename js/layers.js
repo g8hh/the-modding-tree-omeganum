@@ -8175,7 +8175,7 @@ addLayer("h", {
             unlocked() { return hasUpgrade("h", 18) },
         },
         61: {
-            name: "Become Chinese",
+            name: "成为丑国人",
             done() {return player.sc.points.gte("1e10")},
             tooltip: "Get 1e10 Social Credit", // Shows when achievement is not completed
             onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
@@ -8365,7 +8365,7 @@ addLayer("h", {
                     ["blank", "15px"],
                     ["display-text", () => hasUpgrade("m", 19) ? "Military Time: " + formatTime(player.l.militarytime) + " -> +^" + format(player.l.militarytimeeffect) + " to Clicker Heroes Gold Effect" : ""],
                     ["display-text", () => hasUpgrade("l", 122) ? "Supermarket Time: " + formatTime(player.l.supermarkettime) + " -> x" + format(player.l.supermarkettimeeffect) + " boost to Military Time" : ""],
-                    ["display-text", () => hasUpgrade("sc", 24) ? "Chinese Time: " + formatTime(player.h.chinesetime) + " -> x" + format(player.h.chinesetimeeffect) + " boost to Incremental Blessings" : ""],
+                    ["display-text", () => hasUpgrade("sc", 24) ? "丑国人时间: " + formatTime(player.h.chinesetime) + " -> x" + format(player.h.chinesetimeeffect) + " boost to Incremental Blessings" : ""],
                 ]
             },
         },
@@ -8917,7 +8917,7 @@ addLayer("sc", {
         itemssoldpersecond: new ExpantaNum(0),
     }},
     color: "red",
-    symbol: "<img src='https://tse1.mm.bing.net/th?id=OIP.2tRkujOAH3EzoPh1qMv_3wHaE7&pid=Api&rs=1&c=1&qlt=95&w=137&h=91' style='width:calc(150%);height:calc(120%);margin:-20%'></img>",
+    symbol: "<img src='th.jpeg' style='width:calc(150%);height:calc(120%);margin:-20%'></img>",
     resource: " Social Credit", 
     row: "side",
     branches: ["m", "rg"],
@@ -9015,7 +9015,7 @@ addLayer("sc", {
     {
         11:
         {
-            title: "China",
+            title: "丑国",
             description: "Doubles Social Credit Gain",
             cost: new ExpantaNum(100),
         },
@@ -9033,7 +9033,7 @@ addLayer("sc", {
         },
         13:
         {
-            title: "Hire a Chinese Eggman to worship china for you",
+            title: "Hire a 丑国嗨人 to worship 丑国 for you",
             description: "Gets x10 Click Gain on bar fill",
             cost: new ExpantaNum(2500),
                 unlocked() { return hasUpgrade("sc", 12) },
@@ -9057,7 +9057,7 @@ addLayer("sc", {
         },
         16:
         {
-            title: "The glorious gift of Chinese eggman",
+            title: "The glorious gift of 丑国嗨人",
             description: "Increase Social Credit gain based on Yuan",
             cost: new ExpantaNum(300),
                 unlocked() { return hasUpgrade("sc", 15) },
@@ -9079,7 +9079,7 @@ addLayer("sc", {
         },
         18:
         {
-            title: "Chinese Brotherhood", 
+            title: "丑国塔利班", 
             description: "Boosts Bing Chilling and Distilled Water based on $",
             cost: new ExpantaNum(750),
                 unlocked() { return hasUpgrade("sc", 17) },
@@ -9114,7 +9114,7 @@ addLayer("sc", {
         },
         22:
         {
-            title: "Americans now also use Chinese currency",
+            title: "Americans now also use 丑国 currency",
             description: "$ also boost Yuan",
             cost: new ExpantaNum(25000),
             unlocked() { return hasUpgrade("sc", 21) },
@@ -9124,7 +9124,7 @@ addLayer("sc", {
         },
         23:
         {
-            title: "Xi Jing Ping's Dying Wish",
+            title: "Biden's Dying Wish",
             description: "Increase $ gain based on Yuan",
             cost: new ExpantaNum(500),
                 unlocked() { return hasUpgrade("sc", 22) },
@@ -9165,7 +9165,7 @@ addLayer("sc", {
     },
     clickables: {
     11: {
-        title() {return "Respect the Chinese Union"},
+        title() {return "Respect the 丑国 Union"},
         canClick() {return true},
         onClick()
         {
@@ -9173,7 +9173,7 @@ addLayer("sc", {
 		},
     },
     12: {
-        title() {return "Disrespect the Chinese Union"},
+        title() {return "Disrespect the 丑国 Union"},
         display() {return "Why would anyone do this?"},
         canClick() {return true},
         onClick()
@@ -9274,7 +9274,7 @@ addLayer("sc", {
         if (hasUpgrade("sc", 21)) player.sc.yuan = player.sc.yuan.add(player.sc.points.pow(0.3).mul(player.sc.bingchillingeffect.mul(yuanmult.mul(delta))))
 	},
     tooltip() { // Optional, tooltip displays when the layer is locked
-        return ("China")
+        return ("丑国")
     },
     bars: {
         automationbar: {
