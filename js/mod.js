@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "增量开发树 - The Incremental Dev Tree",
+	name: "The Incremental Dev Tree",
 	id: "ictree",
 	author: "Icecreamdude",
 	pointsName: "points",
@@ -13,25 +13,34 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.3.1",
-	name: "Realm Grinder Update 2: 丑国",
+	num: "1.3.2",
+	name: "Realm Grinder Update 3: Factions, Reincarnations and More!",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<br/>
+		<br/>
+	<h3>v1.3.2</h3><br/>
+		- Added more content in the Realm Grinder layer, you will see for yourself!<br/>
+		- Bumped endgame to around 3.6F7.<br/>
+	<br/>
+		<br/>
 	<h3>v1.3.1</h3><br/>
 		- Added a Social Credit Minigame, for Asian History Month (Not racist I promise the creator is Asian)<br/>
 		- Bumped endgame to around 2.8F7.<br/>
 	<br/>
+		<br/>
 	<h3>v1.3</h3><br/>
 		- I will start to Update the game more often, releasing bits of each layer each update.<br/>
 		- Added the first 1/3 of the Realm Grinder layer, No Timewalls I promise!<br/>
 		- Changed endgame to around 1.6F7.<br/>
 	<br/>
+		<br/>
 	<h3>v1.2.1</h3><br/>
 		- Makes the game a hell lot easier due to annoying complainers on discord. Adds a little bit content.<br/>
 		- Changed endgame to around 5F6.<br/>
 	<br/>
+		<br/>
 	<h3>v1.2</h3><br/>
 		- Adds Clicker Heroes, Incremental^2, and the Hub.<br/>
 		- Added a lot more stuff!<br/>
