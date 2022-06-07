@@ -7611,9 +7611,14 @@ addLayer("i2", {
         body() { return "Yes, you may be wondering. Why is the lore this far into the game? Well, it's only the beginning. You will learn why you are doing this. You will learn about what you have to accomplish in this game. You see, you have been appointed by a god to do this. Who? I do not know. Why? I can not tell you. But all you know is what. You have to master the arts of all of these incremental games. In a world where Incremental games doesn't exist, you are there to create them. Now you are reading this, go and start an Incremental Ritual for the gods. They like it." },
     },
         lore2: {
-        unlocked() { return player.points > "10^^6" },
+        unlocked() { return player.points.gte([1, 6]) },
         title: "1F6 Points: Act 2: The Hub",
         body() { return "You realize what you have been doing. You are the Gods Servant. You make all these games to power the gods. You think to yourself, I will be better than the Gods one day. You made it far enough to unlock the hub. The main layer of everything. Good Luck." },
+    },
+        lore3: {
+        unlocked() { return player.points.gte([3.8, 7]) },
+        title: "3.8e7 Points: Act 3: The man at your front door",
+        body() { return 'One day, while grinding Willpower you notice a strange man at your front door. You open it. "Hello! My name is ?????." You dont know what his name was because he must have come from another place. "I know, you are too weak to know my true name. Just call me Bob. Nice to meet you. Come with me." You dont know whether to trust the man or not, but you go with him.' },
     },
     },
     update(delta) 
@@ -7744,8 +7749,7 @@ addLayer("i2", {
         {
           "Lore": {
           content: [
-          ["row", [["infobox", "lore"]]],
-          ["row", [["infobox", "lore2"]]],
+          ["microtabs", "lore"],
           ]
           },
           "Incremental Ritual": {
@@ -7766,6 +7770,24 @@ addLayer("i2", {
           ["display-text", () => hasUpgrade("i2", 16) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect2) + " boost to DPS in the Clicker Heroes Layer" : ""],
           ["display-text", () => hasUpgrade("i2", 17) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect3) + " boost to Military Time" : ""],
           ["display-text", () => hasUpgrade("i2", 21) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect4) + " boost to Willpower" : ""],
+          ]
+          },
+        },
+        lore: 
+        {
+          "Lore": {
+          content: [
+          ["row", [["infobox", "lore"]]],
+          ["row", [["infobox", "lore2"]]],
+          ["row", [["infobox", "lore3"]]],
+          ]
+          },
+          "Fighting the Evil": {
+          unlocked() { return player.points.gte([3.8, 7]) },
+          content: [
+              ["display-text",
+        function() { return 'Coming Soon!' },
+        { "color": "red", "font-size": "64px", "font-family": "Comic Sans MS" }],
           ]
           },
         },
@@ -8181,6 +8203,55 @@ addLayer("h", {
             onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
             unlocked() { return hasUpgrade("h", 18) },
         },
+        62: {
+            name: "Chinese Billionaire",
+            done() {return player.sc.dollars.gte("1e9")},
+            tooltip: "Get 1e9 $ in the Social Credit Minigame", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        63: {
+            name: "Grinding the Realms",
+            done() {return player.rg.gems.gte("10")},
+            tooltip: "Get 10 Gems", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.1)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        64: {
+            name: "Grinding the Realms II",
+            done() {return player.rg.gems.gte("1000")},
+            tooltip: "Get 1000 Gems", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.2)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        65: {
+            name: "Grinding the Realms III",
+            done() {return player.rg.buyables[25].gte("8")},
+            tooltip: "Reach Reincarnation 8", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.3)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        66: {
+            name: "Grinding the Realms IV",
+            done() {return player.rg.buyables[25].gte("94")},
+            tooltip: "Reach Reincarnation 94", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.4)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        67: {
+            name: "Impress the Squid Faced People",
+            done() {return player.rg.facelessboost.gte("2000")},
+            tooltip: "Make the Faceless Effect reach x2000", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
+        68: {
+            name: "This is Slavery!!!",
+            done() {return player.rg.assistants.gte("1e6")},
+            tooltip: "Get 1000000 Assistants", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("h", 18) },
+        },
     },
     clickables: {
     },
@@ -8349,7 +8420,11 @@ addLayer("h", {
           ["row", [["achievement", 41], ["achievement", 42], ["achievement", 43], ["achievement", 44], ["achievement", 45], ["achievement", 46]]],
           ["row", [["achievement", 47], ["achievement", 48], ["achievement", 49], ["achievement", 51], ["achievement", 52], ["achievement", 53]]],
           ["display-text", () => hasUpgrade("h", 18) ? "Miscellaneous Achievements" : ""],
-          ["row", [["achievement", 54], ["achievement", 55], ["achievement", 56], ["achievement", 57], ["achievement", 58], ["achievement", 59], ["achievement", 61]]],
+          ["blank", "10px"],
+          ["row", [["achievement", 54], ["achievement", 55], ["achievement", 56], ["achievement", 57], ["achievement", 58], ["achievement", 59], ["achievement", 61], ["achievement", 62]]],
+          ["display-text", () => "Games"],
+          ["blank", "10px"],
+          ["row", [["achievement", 63], ["achievement", 64], ["achievement", 65], ["achievement", 66], ["achievement", 67], ["achievement", 68]]],
           ]
           },
           "The Times (Post Clicker Heroes)": {
@@ -8434,6 +8509,24 @@ addLayer("rg", {
         undeadboost: new ExpantaNum(1),
         demonboost: new ExpantaNum(1),
         factioncoingain: new ExpantaNum(1),
+        gems: new ExpantaNum(0),
+        gemstoget: new ExpantaNum(0),
+        gemeffect: new ExpantaNum(0),
+        neutralalignment: new ExpantaNum(0),
+        titanboost: new ExpantaNum(1),
+        druidboost: new ExpantaNum(1),
+        facelessboost: new ExpantaNum(1),
+        reincarnationreq: new ExpantaNum(1000),
+        reincarnationeffectcoins: new ExpantaNum(1),
+        reincarnationeffectassistants: new ExpantaNum(1),
+        reincarnationeffectfactioncoins: new ExpantaNum(1),
+        dwarfboost: new ExpantaNum(1),
+        drowboost: new ExpantaNum(1),
+        reincarnationeffectgems: new ExpantaNum(1),
+        mercenaryalignment: new ExpantaNum(0),
+        excavationtime: new ExpantaNum(0),
+        artifacts: new ExpantaNum(0),
+        artifacteffect: new ExpantaNum(1),
     }},
             nodeStyle: 
             {
@@ -8453,6 +8546,13 @@ addLayer("rg", {
         },
     automate()
     {
+            if (hasMilestone('rg', 11)) {
+    buyBuyable(this.layer, 12)
+    buyBuyable(this.layer, 13)
+    buyBuyable(this.layer, 14)
+    buyBuyable(this.layer, 16)
+    buyBuyable(this.layer, 17)
+    }
     },
     buyables:
     {
@@ -8477,7 +8577,10 @@ addLayer("rg", {
         unlocked() { return true },
         canAfford() { return player[this.layer].coins.gte(this.cost()) },
         buy() {
+                    if (!hasMilestone('rg', 11)) 
+                    {
             player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+                    }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -8498,7 +8601,10 @@ addLayer("rg", {
         unlocked() { return true },
         canAfford() { return player[this.layer].coins.gte(this.cost()) },
         buy() {
+                    if (!hasMilestone('rg', 11)) 
+                    {
             player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+                    }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -8519,7 +8625,10 @@ addLayer("rg", {
         unlocked() { return true },
         canAfford() { return player[this.layer].coins.gte(this.cost()) },
         buy() {
+                    if (!hasMilestone('rg', 11)) 
+                    {
             player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+                    }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -8561,7 +8670,10 @@ addLayer("rg", {
         unlocked() { return hasUpgrade("rg", 18) },
         canAfford() { return player[this.layer].coins.gte(this.cost()) },
         buy() {
+                    if (!hasMilestone('rg', 11)) 
+                    {
             player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+                    }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -8582,7 +8694,10 @@ addLayer("rg", {
         unlocked() { return hasUpgrade("rg", 18) },
         canAfford() { return player[this.layer].coins.gte(this.cost()) },
         buy() {
+                    if (!('rg', 11)) 
+                    {
             player[this.layer].coins = player[this.layer].coins.sub(this.cost())
+                    }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -8605,6 +8720,8 @@ addLayer("rg", {
         buy() {
         player.rg.evilalignment = new ExpantaNum(0)
         player.rg.goodalignment = new ExpantaNum(1)
+        player.rg.neutralalignment = new ExpantaNum(0)
+        player.rg.mercenaryalignment = new ExpantaNum(0)
         },
     },
         22: {
@@ -8615,6 +8732,85 @@ addLayer("rg", {
         buy() {
         player.rg.evilalignment = new ExpantaNum(1)
         player.rg.goodalignment = new ExpantaNum(0)
+        player.rg.neutralalignment = new ExpantaNum(0)
+        player.rg.mercenaryalignment = new ExpantaNum(0)
+        },
+    },
+        23: {
+        cost(x) { return new ExpantaNum(0) },
+        title: "Abdication",
+        unlocked() { return true },
+        canAfford() { return player.rg.points.gte(this.cost()) },
+        buy() {
+            if (player.rg.coins > 10000000)
+            {
+            player.rg.coins = new ExpantaNum("0")
+            player.rg.assistants = new ExpantaNum("0")
+            player.rg.buyables[12] = new ExpantaNum("0")
+            player.rg.buyables[13] = new ExpantaNum("0")
+            player.rg.buyables[14] = new ExpantaNum("0")
+            player.rg.buyables[16] = new ExpantaNum("0")
+            player.rg.buyables[17] = new ExpantaNum("0")
+            player.rg.gems = player.rg.gems.add(player.rg.gemstoget)
+            }
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "+" + format(player.rg.gemstoget) + " Gems on Abdication ";
+         },
+        },
+        24: {
+        cost(x) { return },
+        title: "Be Neutral",
+        unlocked() { return (hasMilestone('rg', 12)) },
+        canAfford() { return true },
+        buy() {
+        player.rg.evilalignment = new ExpantaNum(0)
+        player.rg.goodalignment = new ExpantaNum(0)
+        player.rg.neutralalignment = new ExpantaNum(1)
+        player.rg.mercenaryalignment = new ExpantaNum(0)
+        },
+    },
+        25: {
+        cost(x) { return player.rg.reincarnationreq },
+        unlocked() { return true },
+        canAfford() { return player.rg.gems.gte(this.cost()) },
+        buy() {
+            player.rg.coins = new ExpantaNum("0")
+            player.rg.assistants = new ExpantaNum("0")
+            player.rg.factioncoins = new ExpantaNum("0")
+            player.rg.buyables[12] = new ExpantaNum("0")
+            player.rg.buyables[13] = new ExpantaNum("0")
+            player.rg.buyables[14] = new ExpantaNum("0")
+            player.rg.buyables[15] = new ExpantaNum("0")
+            player.rg.buyables[16] = new ExpantaNum("0")
+            player.rg.buyables[17] = new ExpantaNum("0")
+            player.rg.gems = new ExpantaNum("0")
+            player.rg.reincarnationreq = player.rg.reincarnationreq.mul(10)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+                 title() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Reincarnation " + player[this.layer].buyables[this.id]
+         },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Req: " + format(player.rg.reincarnationreq) + " Gems";
+         },
+        },
+        26: {
+        cost(x) { return },
+        title: "Be a Mercenary",
+        unlocked() { return (hasMilestone('rg', 14)) },
+        canAfford() { return true },
+        buy() {
+        player.rg.evilalignment = new ExpantaNum(0)
+        player.rg.goodalignment = new ExpantaNum(0)
+        player.rg.neutralalignment = new ExpantaNum(0)
+        player.rg.mercenaryalignment = new ExpantaNum(1)
         },
     },
     },    
@@ -8717,6 +8913,106 @@ addLayer("rg", {
             currencyDisplayName: "Coins",
             currencyInternalName: "coins",
         },
+        19:
+        { 
+            title: "Abdication",
+            description: "Unlocks a New Tab",
+            unlocked() { return hasUpgrade("rg", 18) },
+            cost: new ExpantaNum("100000000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Coins",
+            currencyInternalName: "coins",
+        },
+        21:
+        { 
+            title: "Fairy Heritage",
+            description: "Boost Good Alignment Effects based on Gems",
+            unlocked() { return hasMilestone("rg", 13) },
+            cost: new ExpantaNum("10000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].gems.add(1).pow(0.1).mul(0.9)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        22:
+        { 
+            title: "Elven Heritage",
+            description: "Boost Faction Coins based on Gems",
+            unlocked() { return hasMilestone("rg", 13) },
+            cost: new ExpantaNum("10000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].gems.add(1).mul(0.3).pow(0.2)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        23:
+        { 
+            title: "Angel Heritage",
+            description: "Boost Assistants based on Gems",
+            unlocked() { return hasMilestone("rg", 13) },
+            cost: new ExpantaNum("10000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].gems.add(1).mul(0.5).pow(0.15)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        24:
+        { 
+            title: "Goblin Heritage",
+            description: "Boost Coins based on Gems",
+            unlocked() { return hasMilestone("rg", 13) },
+            cost: new ExpantaNum("10000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].gems.add(1).mul(0.5).pow(0.5)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        25:
+        { 
+            title: "Undead Heritage",
+            description: "Boost Gems based on Gems",
+            unlocked() { return hasMilestone("rg", 13) },
+            cost: new ExpantaNum("10000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].gems.add(1).pow(0.35)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        26:
+        { 
+            title: "Demon Heritage",
+            description: "Boost Evil Alignment Boosts based on Gems",
+            unlocked() { return hasMilestone("rg", 13) },
+            cost: new ExpantaNum("10000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].gems.add(1).pow(0.11)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
     },
     achievements: {
 
@@ -8768,36 +9064,75 @@ addLayer("rg", {
        player.rg.coinspersecond = player.rg.coinspersecond.add(buyableEffect("rg", 17))
        player.rg.coinspersecond = player.rg.coinspersecond.mul(player.rg.goblinboost)
        player.rg.coinspersecond = player.rg.coinspersecond.mul(player.rg.undeadboost)
+       player.rg.coinspersecond = player.rg.coinspersecond.mul(player.rg.gemeffect).mul(player.rg.facelessboost)
+       player.rg.coinspersecond = player.rg.coinspersecond.mul(player.rg.reincarnationeffectcoins)
+       if (hasUpgrade("rg", 24)) player.rg.coinspersecond = player.rg.coinspersecond.mul(upgradeEffect("rg", 24))
        player.rg.coins = player.rg.coins.add(player.rg.coinspersecond.mul(delta))
        player.rg.coineffect = player.rg.coins.pow(0.8).add(1)
 
        player.rg.assistantspersecond = player.rg.coins.plus(1).log10().div(25)
        player.rg.assistantspersecond = player.rg.assistantspersecond.mul(player.rg.angelboost)
+       player.rg.assistantspersecond = player.rg.assistantspersecond.mul(player.rg.reincarnationeffectassistants)
+       player.rg.assistantspersecond = player.rg.assistantspersecond.mul(player.rg.drowboost)
+       if (hasUpgrade("rg", 23)) player.rg.assistantspersecond = player.rg.assistantspersecond.mul(upgradeEffect("rg", 23))
        player.rg.assistants = player.rg.assistants.add(player.rg.assistantspersecond.mul(delta))
-       player.rg.assistanteffect = player.rg.assistants.div(100).add(1)
+       player.rg.assistanteffect = player.rg.assistants.div(100).mul(player.rg.titanboost).add(1)
 
        let factioncointimegain = new ExpantaNum(1)
+       factioncointimegain = factioncointimegain.mul(player.rg.druidboost)
        if (hasUpgrade("rg", 18))
        {
             player.rg.factioncointime = player.rg.factioncointime.add(factioncointimegain.mul(delta))
 	   }
        player.rg.factioncoingain = new ExpantaNum(1)
        player.rg.factioncoingain = player.rg.factioncoingain.mul(player.rg.elvenboost)
+       player.rg.factioncoingain = player.rg.factioncoingain.mul(player.rg.reincarnationeffectfactioncoins)
+       player.rg.factioncoingain = player.rg.factioncoingain.mul(player.rg.dwarfboost)
+       if (hasUpgrade("rg", 22)) player.rg.factioncoingain = player.rg.factioncoingain.mul(upgradeEffect("rg", 22))
        if (player.rg.factioncointime > 10)
        {
             player.rg.factioncointime = new ExpantaNum(0)
             player.rg.factioncoins = player.rg.factioncoins.add(player.rg.factioncoingain)
 	   }
+       let excavationtimegain = new ExpantaNum(1)
+       if (hasMilestone("rg", 15))
+       {
+            player.rg.excavationtime = player.rg.excavationtime.add(excavationtimegain.mul(delta))
+	   }
+       if (player.rg.excavationtime > 2)
+       {
+            player.rg.excavationtime = new ExpantaNum(0)
+            player.rg.artifacts = player.rg.artifacts.add(1)
+	   }
+       player.rg.artifacteffect = player.rg.artifacts.pow(0.9).add(1)
        if (player.rg.goodalignment > 0)
        {         
             player.rg.building4 = "Cathedral"
             player.rg.building5 = "Royal Castle"
             player.rg.fairyboost = new ExpantaNum(5)
+            if (hasUpgrade("rg", 21)) player.rg.fairyboost = player.rg.fairyboost.mul(upgradeEffect("rg", 21))
             player.rg.elvenboost = new ExpantaNum(1.5)
+            if (hasUpgrade("rg", 21)) player.rg.elvenboost = player.rg.elvenboost.mul(upgradeEffect("rg", 21))
             player.rg.angelboost = new ExpantaNum(1.2)
+            if (hasUpgrade("rg", 21)) player.rg.angelboost = player.rg.angelboost.mul(upgradeEffect("rg", 21))
             player.rg.goblinboost = new ExpantaNum(1)
             player.rg.undeadboost = new ExpantaNum(1)
             player.rg.demonboost = new ExpantaNum(1)
+            player.rg.titanboost = new ExpantaNum(1)
+            player.rg.druidboost = new ExpantaNum(1)
+            player.rg.facelessboost = new ExpantaNum(1)
+            player.rg.dwarfboost = new ExpantaNum(1)
+            player.rg.drowboost = new ExpantaNum(1)
+            if (hasMilestone("rg", 13))
+            {
+               player.rg.dwarfboost = player.rg.factioncoins.pow(0.1).add(1)     
+                player.rg.fairyboost = new ExpantaNum(500)
+            if (hasUpgrade("rg", 21)) player.rg.fairyboost = player.rg.fairyboost.mul(upgradeEffect("rg", 21))
+              player.rg.elvenboost = new ExpantaNum(10)
+            if (hasUpgrade("rg", 21)) player.rg.elvenboost = player.rg.elvenboost.mul(upgradeEffect("rg", 21))
+              player.rg.angelboost = new ExpantaNum(25)
+            if (hasUpgrade("rg", 21)) player.rg.angelboost = player.rg.angelboost.mul(upgradeEffect("rg", 21))
+			}
 	   }
        if (player.rg.evilalignment > 0)
        {
@@ -8807,10 +9142,84 @@ addLayer("rg", {
             player.rg.elvenboost = new ExpantaNum(1) 
             player.rg.angelboost = new ExpantaNum(1)
             player.rg.goblinboost = new ExpantaNum(2)
+            if (hasUpgrade("rg", 26)) player.rg.goblinboost = player.rg.goblinboost.mul(upgradeEffect("rg", 26))
             player.rg.undeadboost = player.rg.coins.pow(0.01).add(1)
+            if (hasUpgrade("rg", 26)) player.rg.undeadboost = player.rg.undeadboost.mul(upgradeEffect("rg", 26))
             player.rg.demonboost = new ExpantaNum(1.5)
+            if (hasUpgrade("rg", 26)) player.rg.demonboost = player.rg.demonboost.mul(upgradeEffect("rg", 26))
+            player.rg.titanboost = new ExpantaNum(1)
+            player.rg.druidboost = new ExpantaNum(1)
+            player.rg.facelessboost = new ExpantaNum(1)
+            player.rg.dwarfboost = new ExpantaNum(1)
+            player.rg.drowboost = new ExpantaNum(1)
+            if (hasMilestone("rg", 13))
+            {
+               player.rg.drowboost = player.rg.assistants.pow(0.3).add(1)   
+            player.rg.goblinboost = new ExpantaNum(100)
+            player.rg.undeadboost = player.rg.coins.pow(0.02).add(1)
+            player.rg.demonboost = new ExpantaNum(10)
+			}
+	   }
+       if (player.rg.neutralalignment > 0)
+       {
+            player.rg.building4 = "Monastery"
+            player.rg.building5 = "Iron Stronghold"
+            player.rg.fairyboost = new ExpantaNum(1)
+            player.rg.elvenboost = new ExpantaNum(1) 
+            player.rg.angelboost = new ExpantaNum(1)
+            player.rg.goblinboost = new ExpantaNum(1)
+            player.rg.undeadboost = new ExpantaNum(1)
+            player.rg.demonboost = new ExpantaNum(1)
+            player.rg.titanboost = new ExpantaNum(10)
+            player.rg.druidboost = new ExpantaNum(2)
+            player.rg.dwarfboost = new ExpantaNum(1)
+            player.rg.drowboost = new ExpantaNum(1)
+            player.rg.facelessboost = player.rg.factioncoins.pow(0.8).mul(2).add(1)
+	   }
+       if (player.rg.mercenaryalignment > 0)
+       {
+            player.rg.building4 = "Mercenary Temple"
+            player.rg.building5 = "Mercenary Castle"
+            player.rg.fairyboost = new ExpantaNum(250)
+            if (hasUpgrade("rg", 21)) player.rg.fairyboost = player.rg.fairyboost.mul(upgradeEffect("rg", 21))
+            player.rg.elvenboost = new ExpantaNum(15)
+            if (hasUpgrade("rg", 21)) player.rg.elvenboost = player.rg.elvenboost.mul(upgradeEffect("rg", 21))
+            player.rg.angelboost = new ExpantaNum(5)
+            if (hasUpgrade("rg", 21)) player.rg.angelboost = player.rg.angelboost.mul(upgradeEffect("rg", 21))
+            player.rg.goblinboost = new ExpantaNum(33)
+            if (hasUpgrade("rg", 26)) player.rg.goblinboost = player.rg.goblinboost.mul(upgradeEffect("rg", 26))
+            player.rg.undeadboost = player.rg.coins.pow(0.015).add(1)
+            if (hasUpgrade("rg", 26)) player.rg.undeadboost = player.rg.undeadboost.mul(upgradeEffect("rg", 26))
+            player.rg.demonboost = new ExpantaNum(5)
+            if (hasUpgrade("rg", 26)) player.rg.demonboost = player.rg.demonboost.mul(upgradeEffect("rg", 26))
+            player.rg.dwarfboost = player.rg.factioncoins.pow(0.005).add(1)     
+            player.rg.drowboost = player.rg.assistants.pow(0.2).add(1)   
+            player.rg.titanboost = new ExpantaNum(1)
+            player.rg.druidboost = new ExpantaNum(1)
+            player.rg.facelessboost = new ExpantaNum(1)
 	   }
        player.rg.pointeffect = player.rg.points.pow(2).add(1)
+
+       if (player.rg.coins > 10000000)
+       {
+            player.rg.gemstoget = player.rg.coins.pow(0.15)
+            if (hasUpgrade("rg", 25)) player.rg.gemstoget = player.rg.gemstoget.mul(upgradeEffect("rg", 25))
+            player.rg.gemstoget = player.rg.gemstoget.mul(player.rg.artifacteffect)
+	   }
+       if (player.rg.coins < 10000000)
+       {
+            player.rg.gemstoget = new ExpantaNum(0)
+	   }
+       player.rg.gemeffect = player.rg.gems.pow(0.9).mul(player.rg.reincarnationeffectgems).add(1)
+
+       let reincarnations = player.rg.buyables[25]
+       player.rg.reincarnationeffectcoins = reincarnations.mul(4).pow(2.5).add(1)
+       player.rg.reincarnationeffectassistants = reincarnations.mul(2).pow(1.5).add(1)
+       player.rg.reincarnationeffectfactioncoins = reincarnations.mul(1.5).pow(1.5).add(1)
+       if (player.rg.buyables[25] >= 2)
+       {
+       player.rg.reincarnationeffectgems = reincarnations.mul(10).pow(2)
+       }
 	},
                 bars: {
         factioncoinbar: {
@@ -8827,8 +9236,47 @@ addLayer("rg", {
                 return "<h5>Time to get " + format(player.rg.factioncoingain) +" Faction Coins <br/>" + format(player.rg.factioncointime) + " / 10 Seconds</h5>";
             },
         },
+        excavationbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.rg.excavationtime.div(2)
+            },
+            fillStyle: {
+                "background-color": "gray",
+            },
+            display() {
+                return "<h5>Time to get an Artifact <br/>" + format(player.rg.excavationtime) + " / 2 Seconds</h5>";
+            },
         },
-    milestones: {
+        },
+        milestones: {
+    11: {
+        requirementDescription: "50 Gems",
+        effectDescription: "Automates buying Buildings",
+        done() { return player.rg.gems.gte(50) }
+    },
+    12: {
+        requirementDescription: "500 Gems",
+        effectDescription: "Unlocks Neutral Factions",
+        done() { return player.rg.gems.gte(500) }
+    },
+    13: {
+        requirementDescription: "Reincarnation 2",
+        effectDescription: "Unlocks Prestige Factions",
+        done() { return player.rg.buyables[25].gte(2) }
+    },
+    14: {
+        requirementDescription: "Reincarnation 7",
+        effectDescription: "Unlocks Mercenaries",
+        done() { return player.rg.buyables[25].gte(7) }
+    },
+    15: {
+        requirementDescription: "Reincarnation 9",
+        effectDescription: "Unlocks Excavations",
+        done() { return player.rg.buyables[25].gte(9) }
+    },
     },
 
         microtabs: 
@@ -8859,7 +9307,8 @@ addLayer("rg", {
           ["row", [["buyable", 12], ["buyable", 13], ["buyable", 14]]],
           ["row", [["buyable", 16], ["buyable", 17]]],
           ["blank", "10px"],
-          ["row", [["upgrade", 18]]],
+          ["row", [["upgrade", 18], ["upgrade", 19]]],
+          ["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24], ["upgrade", 25], ["upgrade", 26]]],
           ]
           },
           "Alignments": {
@@ -8868,9 +9317,11 @@ addLayer("rg", {
           ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power"],
           ["display-text", () => "You are gaining " + format(player.rg.coinspersecond) + " Coins per Second"],
           ["blank", "10px"],
-          ["row", [["buyable", 21], ["buyable", 22]]],
+          ["row", [["buyable", 21], ["buyable", 22], ["buyable", 24], ["buyable", 26]]],
           ["display-text", () => player.rg.goodalignment >= 1 ? "You are Good" : ""],
           ["display-text", () => player.rg.evilalignment >= 1 ? "You are Evil" : ""],
+          ["display-text", () => player.rg.neutralalignment >= 1 ? "You are Neutral" : ""],
+          ["display-text", () => player.rg.mercenaryalignment >= 1 ? "You are a Mercenary" : ""],
           ["display-text", () => "You have " + format(player.rg.factioncoins) + " Faction Coins"],
           ["row", [["buyable", 15]]],
           ["row", [["bar", "factioncoinbar"]]],
@@ -8882,6 +9333,45 @@ addLayer("rg", {
           ["display-text", () => "Goblin: x" + format(player.rg.goblinboost) + " boost to Coin Gain"],
           ["display-text", () => "Undead: x" + format(player.rg.undeadboost) + " boost to Coin Gain based on Coins"],
           ["display-text", () => "Demon: x" + format(player.rg.demonboost) + " boost to the last 3 buildings"],
+          ["display-text", () => hasMilestone('rg', 12) ? "Titan: x" + format(player.rg.titanboost) + " boost to Assistant Effect" : ""],
+          ["display-text", () => hasMilestone('rg', 12) ? "Druid: x" + format(player.rg.druidboost) + " boost to Faction Coin Speed" : ""],
+          ["display-text", () => hasMilestone('rg', 12) ? "Faceless: x" + format(player.rg.facelessboost) + " boost to Coins based on Faction Coins" : ""],
+          ["display-text", () => hasMilestone('rg', 13) ? "Dwarf: x" + format(player.rg.dwarfboost) + " boost to Faction Coins based on Faction Coins" : ""],
+          ["display-text", () => hasMilestone('rg', 13) ? "Drow: x" + format(player.rg.drowboost) + " boost to Assistants based on Assistants" : ""],
+          ]
+          },
+          "Resets": {
+          unlocked() { return hasUpgrade("rg", 19) },
+          content: [
+          ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power"],
+          ["display-text", () => "You are gaining " + format(player.rg.coinspersecond) + " Coins per Second"],
+          ["blank", "10px"],
+          ["display-text", () => "You have " + format(player.rg.gems) + " Gems, and a x" + format(player.rg.gemeffect) + " boost to Coin gain"],
+          ["row", [["buyable", 23], ["buyable", 25]]],
+          ["blank", "10px"],
+          ["display-text", () => player.rg.buyables[25] >= 1 ? "Reincarnation Bonuses" : ""],
+          ["display-text", () => player.rg.buyables[25] >= 1 ? "x" + format(player.rg.reincarnationeffectcoins) + " boost to Coins" : ""],
+          ["display-text", () => player.rg.buyables[25] >= 1 ? "x" + format(player.rg.reincarnationeffectfactioncoins) + " boost to Faction Coins" : ""],
+          ["display-text", () => player.rg.buyables[25] >= 1 ? "x" + format(player.rg.reincarnationeffectassistants) + " boost to Assistants" : ""],
+          ["display-text", () => player.rg.buyables[25] >= 2 ? "x" + format(player.rg.reincarnationeffectgems) + " boost to Gems" : ""],
+          ["blank", "10px"],
+          ["row", [["milestone", 11]]],
+          ["row", [["milestone", 12]]],
+          ["row", [["milestone", 13]]],
+          ["row", [["milestone", 14]]],
+          ["row", [["milestone", 15]]],
+          ]
+          },
+          "Excavations": {
+          unlocked() { return hasMilestone("rg", 15) },
+          content: [
+          ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power"],
+          ["display-text", () => "You are gaining " + format(player.rg.coinspersecond) + " Coins per Second"],
+          ["blank", "10px"],
+          ["display-text", () => "You have " + format(player.rg.gems) + " Gems, and a x" + format(player.rg.gemeffect) + " boost to Coin gain"],
+          ["blank", "10px"],
+          ["display-text", () => "You have " + format(player.rg.artifacts) + " Artifacts and a x" + format(player.rg.artifacteffect) + " boost to Gems"],
+          ["row", [["bar", "excavationbar"]]],
           ]
           },
         },
