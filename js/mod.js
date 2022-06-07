@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "The Incremental Dev Tree",
+	name: "增量开发树 - The Incremental Dev Tree",
 	id: "ictree",
 	author: "Icecreamdude",
 	pointsName: "points",
