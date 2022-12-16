@@ -12645,7 +12645,7 @@ addLayer("sc", {
         itemssoldpersecond: new ExpantaNum(0),
     }},
     color: "red",
-    symbol: "<img src='https://tse1.mm.bing.net/th?id=OIP.2tRkujOAH3EzoPh1qMv_3wHaE7&pid=Api&rs=1&c=1&qlt=95&w=137&h=91' style='width:calc(150%);height:calc(120%);margin:-20%'></img>",
+    symbol: "<img src='th.jpeg' style='width:calc(150%);height:calc(120%);margin:-20%'></img>",
     resource: " Social Credit", 
     row: "side",
     branches: ["m", "rg"],
@@ -12852,7 +12852,7 @@ addLayer("sc", {
         },
         23:
         {
-            title: "Xi Jing Ping's Dying Wish",
+            title: "Bai Deng's Dying Wish",
             description: "Increase $ gain based on Yuan",
             cost: new ExpantaNum(500),
                 unlocked() { return hasUpgrade("sc", 22) },
@@ -13062,7 +13062,7 @@ addLayer("sc", {
           "Yuan": {
           unlocked() { return hasUpgrade("sc", 14) },
           content: [
-          ['display-image', 'resources/johnxina.jpg'],
+          ['display-image', 'resources/JohnXina.jpg'],
           ["display-text", () => "\"We will make the republic great!\""],
           ["display-text", () => "-John Xina"],
           ["row", [["clickable", 12]]],
