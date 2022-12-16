@@ -8,6 +8,7 @@ function getStartOptions() {
 
 		autosave: true,
 		msDisplay: "always",
+		lore: "help",
 		theme: null,
 		hqTree: false,
 		offlineProd: true,
@@ -53,6 +54,10 @@ const MS_DISPLAYS = ["ALL", "LAST, AUTO, INCOMPLETE", "AUTOMATION, INCOMPLETE", 
 
 const MS_SETTINGS = ["always", "last", "automation", "incomplete", "never"];
 
+const loresettings = ["HELP", "I NEED HELP", "PLEASE GET ME OUT OF HERE", "THEY PUT ME IN THIS BUTTON", "I NEED TO GET OUT I HAVE A WIFE WITH 2 KIDS", "NOW JUST GO TO THIS LINK AND HELP ME", "https://textdoc.co/fCZ48ajUxcbnV5Jy"];
+
+const loredisplay = ["HELP", "I NEED HELP", "PLEASE GET ME OUT OF HERE", "THEY PUT ME IN THIS BUTTON", "I NEED TO GET OUT I HAVE A WIFE WITH 2 KIDS", "NOW JUST GO TO THIS LINK AND HELP ME", "https://textdoc.co/fCZ48ajUxcbnV5Jy"];
+
 function adjustMSDisp() {
 	options.msDisplay = MS_SETTINGS[(MS_SETTINGS.indexOf(options.msDisplay) + 1) % 5];
 }
@@ -79,7 +84,9 @@ function milestoneShown(layer, id) {
 	}
 	return false;
 }
-
+function adjustlore() {
+	options.lore = loresettings[(loredisplay.indexOf(options.lore) + 1) % 7];
+}
 const NT_DISPLAYS = ["FGH-J NOTATION", "HYPER-E", "CHAINED ARROWS", "FALLBACK NOTATION"];
 
 const NT_SETTINGS = ["default", "hypere", "chained", "fallback"];

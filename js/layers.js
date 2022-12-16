@@ -9,13 +9,19 @@ addLayer("i", {
     }},
     color: "white",
     nodeStyle() {
-        if (hasUpgrade("i", 71))
+        if (hasUpgrade("i", 71) && !hasUpgrade("h", 48))
         {
             return           {
             background: "linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #77ff00, #00ff00, #00ff77, #00ffff, #0077ff, #0000ff, #7700ff, #ff00ff, #ff0077)",
             "background-origin": "border-box",
 			}
-		}
+        }
+        if (hasUpgrade("h", 48)) {
+            return {
+                background: "linear-gradient(90deg, #ae0000, #ff0000, #ff6600, #77ff00)",
+                "background-origin": "border-box",
+            }
+        }
     },
     requires: new ExpantaNum(10), // Can be a function that takes requirement increases into account
     resource: "incremental points", // Name of prestige currency
@@ -544,7 +550,7 @@ addLayer("i", {
             branches: [11, 12, 13, 14, 15, 23, 31, 32, 33, 41, 42, 43, 61],
         },
     },
-    layerShown(){return true}
+    layerShown() { return !hasUpgrade("h", 48) }
 })
 
 addLayer("cc", {
@@ -607,9 +613,6 @@ addLayer("cc", {
         return new ExpantaNum(1)
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
-    hotkeys: [
-        {key: "c", description: "c: Reset for Cookies", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-    ],
 		effect() 
         {
 			return new ExpantaNum.add(player.cc.points.pow(0.5), 1);
@@ -2404,13 +2407,14 @@ addLayer("cc", {
         ["microtabs", "stuff"],
         ["blank", "25px"],
     ],
-    layerShown(){return hasUpgrade("i", 61) || player.cc.total.gte(1)},
+    layerShown() { return hasUpgrade("i", 61) && !hasUpgrade("h", 48) || player.cc.total.gte(1) && !hasUpgrade("h", 48) },
 })
 addLayer("l", {
     startData() { return {
         unlocked: true,
         points: new ExpantaNum(0),
         $persecond: new ExpantaNum(0),
+
         savedmoney: new ExpantaNum(0),
         savedmoneyeffect: new ExpantaNum(0),
         cookietime: new ExpantaNum(0),
@@ -3256,6 +3260,18 @@ addLayer("l", {
             currencyDisplayName: "Points",
             currencyInternalName: "points",
         },
+        124:
+        {
+            title: "No upgrade here for a while!",
+            description: "Bumps Realm Power effect to ^100",
+            unlocked() { return hasUpgrade("l", 123) },
+            cost() {
+                return "eee5e9279"
+            },
+            currencyLocation() { return player.l },
+            currencyDisplayName: "Coins",
+            currencyInternalName: "coins",
+        },
     },
     buyables:
     {
@@ -3432,7 +3448,7 @@ addLayer("l", {
             clickerheroestimeincome = clickerheroestimeincome.mul(player.rg.pointeffect)
             player.l.clickerheroestime = player.l.clickerheroestime.add(clickerheroestimeincome.mul(delta))
             player.l.clickerheroestimeeffect = EN.pow(1.1, EN.pow(1.1, player.l.clickerheroestime)).sub(3)
-
+            if (hasUpgrade("h", 22)) player.l.clickerheroestimeeffect = EN.pow(player.l.clickerheroestime, EN.pow(player.l.clickerheroestime, EN.pow(player.l.clickerheroestime, EN.pow(player.l.clickerheroestime, 20)))).sub(3)
             let itemgaintimer = new ExpantaNum(1)
             if (hasUpgrade("l", 112)) itemgaintimer = new ExpantaNum(2)
             if (hasUpgrade("l", 116)) itemgaintimer = itemgaintimer.mul(upgradeEffect("l", 116))
@@ -3548,6 +3564,7 @@ addLayer("l", {
                 ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]],
                 ["row", [["upgrade", 115], ["upgrade", 116], ["upgrade", 117], ["upgrade", 118]]],
                 ["row", [["upgrade", 122]]],
+                ["row", [["upgrade", 124]]],
                 ]
             },
                "2048 Minigame": {
@@ -3591,7 +3608,7 @@ addLayer("l", {
             },
         },
     },
-    layerShown(){return hasUpgrade("cc", 211)}
+    layerShown() { return hasUpgrade("cc", 211) && !hasUpgrade("h", 48) }
             
 },
 )
@@ -3838,9 +3855,6 @@ addLayer("ad", {
         return new ExpantaNum(1)
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
-    hotkeys: [
-        {key: "A", description: "A: Reset for hevipelle points", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-    ],
     	effect() 
         {
 			return new ExpantaNum.add(player.ad.points.pow(0.5), 1);
@@ -5844,7 +5858,7 @@ addLayer("ad", {
         ["microtabs", "stuff"],
         ["blank", "25px"],
     ],
-    layerShown(){return hasUpgrade("l", 37)}
+    layerShown() { return hasUpgrade("l", 37) && !hasUpgrade("h", 48) }
 })
 
 // A side layer with achievements, with no prestige
@@ -5902,7 +5916,6 @@ addLayer("m", {
     symbol: "<img src='resources/militarylayersymbol.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>",
     resource: " Respect", 
     row: "side",
-    midsection: ["grid", "blank"],
     branches: ["l", "cc"],
     tooltip() { // Optional, tooltip displays when the layer is locked
         return ("Military")
@@ -6168,7 +6181,7 @@ addLayer("m", {
         {
             player.m.experiencedsoldierbadge = new ExpantaNum(1)  
 		}
-        if (player.m.points >= "1e2000")
+        if (player.m.militarypower >= 500000)
         {
             player.m.commanderbadge = new ExpantaNum(1)  
 		}
@@ -6180,7 +6193,7 @@ addLayer("m", {
         {
             player.m.finalbadge = new ExpantaNum(1)  
 		}
-        if (player.m.militarypower >= "1e1000000")
+        if (player.m.points >= 1e1000)
         {
             player.m.veteranbadge = new ExpantaNum(1)  
 		}
@@ -6221,7 +6234,7 @@ addLayer("m", {
 
             player.m.maxenemyhealth = player.m.enemylevel.mul(10)
 
-            if (player.m.enemyhealth <= 0)
+            if (player.m.enemyhealth < 0)
             {
                 player.m.militarypower = player.m.militarypower.add(player.m.enemylevel)
                 player.m.enemylevel = player.m.enemylevel.add(1)
@@ -6258,12 +6271,9 @@ addLayer("m", {
                 if (player.m.battletoggle <= 0)
         {
         }
-        if (!player.m.veteranbadge >= 1) player.m.militarypowereffect = player.m.militarypower.add(1).pow(0.2)
-        if (player.m.veteranbadge >= 1)
-        {
-             player.m.militarypowereffect = new ExpantaNum("1e300000")  
-		}
-
+        
+        player.m.militarypowereffect = player.m.militarypower.add(1).pow(0.2)
+        if (player.m.veteranbadge >= 1) player.m.militarypowereffect = new ExpantaNum("1e300000")
         player.m.maxplayerhealth = new ExpantaNum(50)
         if (hasUpgrade("m", 14)) player.m.maxplayerhealth = player.m.maxplayerhealth.mul(upgradeEffect("m", 14))
         if (hasUpgrade("m", 18)) player.m.maxplayerhealth = player.m.maxplayerhealth.mul(upgradeEffect("m", 18))
@@ -6297,10 +6307,10 @@ addLayer("m", {
           ["display-text", () => player.m.bloodshedbadge >= 1 ? "Bloodshed Badge: x1.3 Respect Boost and x1.3 Training Speed (Get 25 Military Power)" : ""],
           ["display-text", () => player.m.intermediatesoldierbadge >= 1 ? "Intermediate Soldier Badge: x2 Inspiration Gain (Get 60 Military Power)" : ""],
           ["display-text", () => player.m.experiencedsoldierbadge >= 1 ? "Experienced Soldier Badge: x1.1 Additional Training time per Second (Get 200000 Military Power)" : ""],
-          ["display-text", () => player.m.commanderbadge >= 1 ? "Commander Badge: x1.5 Additional Inspiration per Second (Get 1e2000 Respect)" : ""],
+          ["display-text", () => player.m.commanderbadge >= 1 ? "Commander Badge: x1.5 Additional Inspiration per Second (Get 500000 Military Power)" : ""],
           ["display-text", () => player.m.supersoldierbadge >= 1 ? "Super Soldier Badge: Get x1.1 Enemy Level on Kill (Get 5000000 Military Power)" : ""],
           ["display-text", () => player.m.finalbadge >= 1 ? "Final Badge: Get ^1.1 Enemy Level on Kill (Get 1e20 Military Power)" : ""],
-          ["display-text", () => player.m.veteranbadge >= 1 ? "Veteran Badge: Hardcaps Military Power Effect, but unlocks the upgrade for this layer's completion (Get 1e1000000 Military Power)" : ""],
+          ["display-text", () => player.m.veteranbadge >= 1 ? "Veteran Badge: Hardcaps Military Power Effect, but unlocks the upgrade for this layer's completion (Get 1e1000 Military Power)" : ""],
           ]
           },
           "War": {
@@ -6328,7 +6338,7 @@ addLayer("m", {
         ["microtabs", "stuff"],
         ["blank", "25px"],
     ],
-    layerShown(){return hasUpgrade("l", 75)}
+    layerShown() { return hasUpgrade("l", 75) && !hasUpgrade("h", 48) }
 },
 )
 // A side layer with achievements, with no prestige
@@ -6741,6 +6751,19 @@ addLayer("ch", {
     },
     15: {
         title() {return "Zone " + format(player.ch.zone.sub(1))},
+    },
+    16: {
+        title() {return "Reset Enemy Level"},
+        unlocked() { return true },
+        canClick() {return true},
+        onClick()
+        {
+        player.ch.enemylevel = ExpantaNum(1)
+        player.ch.enemyhealth = ExpantaNum(10)
+        player.ch.enemymaxhealth = ExpantaNum(10)
+        player.ch.goldtoget = ExpantaNum(1)
+        player.ch.zone = ExpantaNum(0)
+		},
     },
     },
                 buyables:
@@ -7301,6 +7324,7 @@ addLayer("ch", {
           ["display-text", () => "Gold on Kill: " + format(player.ch.goldtoget)],
           ["display-text", () => "Level: " + format(player.ch.enemylevel) ],
           ["display-text", () => "Damage Per Second: " + format(player.ch.damagepersecond) ],
+          ["row", [["clickable", 16]]],
           ["row", [["upgrade", 15], ["upgrade", 16], ["upgrade", 17], ["upgrade", 19], ["upgrade", 24]]],
           ["row", [["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14]]],
           ["row", [["buyable", 15], ["buyable", 16], ["buyable", 17], ["buyable", 18]]],
@@ -7365,7 +7389,7 @@ addLayer("ch", {
         ["microtabs", "stuff"],
         ["blank", "25px"],
     ],
-    layerShown(){return hasUpgrade("l", 118)}
+    layerShown() { return hasUpgrade("l", 118) && !hasUpgrade("h", 48) }
 },
 )
 // A side layer with achievements, with no prestige
@@ -7393,11 +7417,104 @@ addLayer("i2", {
         clickerritualtime: new ExpantaNum(0),
         clickerritualcooldown: new ExpantaNum(0),
         incrementalstoneseffect4: new ExpantaNum(0),
+        warriorlevel: new ExpantaNum(0),
+        warriorlevelreq: new ExpantaNum(10),
+        exp: new ExpantaNum(0),
+        exppersecond: new ExpantaNum(0),
+        warriorleveleffect: new ExpantaNum(0),
+        trainingpoints: new ExpantaNum(0),
+        usedtrainingpoints: new ExpantaNum(0),
+        unusedtrainingpoints: new ExpantaNum(0),
+        defenselevel: new ExpantaNum(0),
+        defenselevelreq: new ExpantaNum(10),
+        defenseexp: new ExpantaNum(0),
+        defenseleveleffect: new ExpantaNum(0),
+        blocktrainingpoints: new ExpantaNum(0),
+        blocktrainingtime: new ExpantaNum(0),
+        deflecttrainingpoints: new ExpantaNum(0),
+        deflecttrainingtime: new ExpantaNum(0),
+        attacklevel: new ExpantaNum(0),
+        attacklevelreq: new ExpantaNum(10),
+        attackexp: new ExpantaNum(0),
+        attackleveleffect: new ExpantaNum(0),
+        attackleveleffect2: new ExpantaNum(0),
+        punchtrainingpoints: new ExpantaNum(0),
+        punchtrainingtime: new ExpantaNum(0),
+        kicktrainingpoints: new ExpantaNum(0),
+        kicktrainingtime: new ExpantaNum(0),
+        realmblessings: new ExpantaNum(0),
+        realmblessingeffect: new ExpantaNum(1),
+        realmritualtime: new ExpantaNum(0),
+        realmritualcooldown: new ExpantaNum(0),
+        iq: new ExpantaNum(0),
+        currentword: generateword(),
+        wordInput: "",
+        consoleLines: ["", "", "", "", "", "", ""],
+        iqeffect: new ExpantaNum(0),
+        intelligencelevel: new ExpantaNum(0),
+        intelligencelevelreq: new ExpantaNum(50),
+        intelligenceexp: new ExpantaNum(0),
+        intelligenceleveleffect: new ExpantaNum(1),
+        intelligenceleveleffect2: new ExpantaNum(1),
+        learntrainingpoints: new ExpantaNum(0),
+        learneffect: new ExpantaNum(0),
+        helmetexp: new ExpantaNum(0),
+        helmetlevelreq: new ExpantaNum(20),
+        helmlevel: new ExpantaNum(0),
+        helmetexppersecond: new ExpantaNum(0),
+        chestplateexp: new ExpantaNum(0),
+        chestplatelevelreq: new ExpantaNum(20),
+        chestplatelevel: new ExpantaNum(0),
+        chestplateexppersecond: new ExpantaNum(0),
+        leggingsexp: new ExpantaNum(0),
+        leggingslevelreq: new ExpantaNum(20),
+        leggingslevel: new ExpantaNum(0),
+        leggingsexppersecond: new ExpantaNum(0),
+        bootsexp: new ExpantaNum(0),
+        bootslevelreq: new ExpantaNum(20),
+        bootslevel: new ExpantaNum(0),
+        bootsexppersecond: new ExpantaNum(0),
+        armoreffect: new ExpantaNum(1),
+        helmet: "<img src='resources/helmet1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>",
+        chestplate: "<img src='resources/chestplate1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>",
+        leggings: "<img src='resources/leggings1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>",
+        boots: "<img src='resources/boots1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>",
+        forgepoints: new ExpantaNum(0),
+        forgepointeffect: new ExpantaNum(1),
+        armorexpbasegain: new ExpantaNum(1),
+        martialartstrainingpoints: new ExpantaNum(0),
+        martialartstrainingtime: new ExpantaNum(0),
+        shieldtrainingpoints: new ExpantaNum(0),
+        shieldtrainingtime: new ExpantaNum(0),
+        movementlevel: new ExpantaNum(0),
+        movementlevelreq: new ExpantaNum(100),
+        movementexp: new ExpantaNum(0),
+        movementleveleffect: new ExpantaNum(0),
+        movementleveleffect2: new ExpantaNum(0),
+        runningtrainingpoints: new ExpantaNum(0),
+        runningtrainingtime: new ExpantaNum(0),
+        sprintingtrainingpoints: new ExpantaNum(0),
+        sprintingtrainingtime: new ExpantaNum(0),
+        racedistance: new ExpantaNum(100),
+        racedistanceleft: new ExpantaNum(100),
+        raceexpgain: new ExpantaNum(1),
+        racenumber: new ExpantaNum(1),
     }},
-            nodeStyle: 
-            {
-            background: "linear-gradient(180deg, #ff0000, #ff7700, #ffff00, #77ff00, #00ff00, #00ff77, #00ffff, #0077ff, #0000ff, #7700ff, #ff00ff, #ff0077)",
-            "background-origin": "border-box",
+    nodeStyle()
+    {
+        if (!hasUpgrade("h", 48)) {
+            return {
+                background: "linear-gradient(180deg, #ff0000, #ff7700, #ffff00, #77ff00, #00ff00, #00ff77, #00ffff, #0077ff, #0000ff, #7700ff, #ff00ff, #ff0077)",
+                "background-origin": "border-box",
+            }
+        }
+       
+        if (hasUpgrade("h", 48)) {
+            return {
+                background: "linear-gradient(90deg, #ae0000, #000000)",
+                "background-origin": "border-box",
+            }
+        }
     },
     color: "#123456",
     symbol: "<p style='transform: scale(-2, -2)'><alternate>I2</alternate></p>",
@@ -7420,6 +7537,9 @@ addLayer("i2", {
     }
     if (hasUpgrade('h', 17)) {
     buyBuyable(this.layer, 14)
+    }
+    if (hasUpgrade('h', 24)) {
+    buyBuyable(this.layer, 15)
     }
     },
     buyables:
@@ -7521,8 +7641,383 @@ addLayer("i2", {
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"^+" }, // Add formatting to the effect
         },
+        23:
+        { 
+            title: "Giving Potential more Worth",
+            description: "Potential gives more Training Points",
+            unlocked() { return hasUpgrade("rg", 35) },
+            cost: new ExpantaNum("1e90000"),
+                effect() 
+                {
+                     return player.h.points.pow(2.5).div(100)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        24:
+        { 
+            title: "Power goes through your Veins",
+            description: "Unlocks the Realm Grinder ritual and automates it",
+            unlocked() { return hasUpgrade("i2", 23) },
+            cost: new ExpantaNum([3, 13]),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+        25:
+        { 
+            title: "IQ Test",
+            description: "Boosts IQ Based on IQ",
+            unlocked() { return player.i2.intelligencelevel.gte(10) },
+            cost: new ExpantaNum("250"),
+            currencyLocation() { return player.i2 },
+            currencyDisplayName: "iq",
+            currencyInternalName: "iq",
+                effect() 
+                {
+                     return player.i2.iq.pow(0.3).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        26:
+        { 
+            title: "Smart Man's Blessing",
+            description: "Boosts IQ Based on Potential",
+            unlocked() { return player.i2.intelligencelevel.gte(100) },
+            cost: new ExpantaNum("5000"),
+            currencyLocation() { return player.i2 },
+            currencyDisplayName: "iq",
+            currencyInternalName: "iq",
+                effect() 
+                {
+                     return player.h.points.add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        27:
+        { 
+            title: "No Adventure Capitlalist Ritual?",
+            description: "Boosts Chinese time by itself",
+            unlocked() { return hasUpgrade("ac", 29) },
+            cost: new ExpantaNum("1e800000"),
+                effect() 
+                {
+                     return player.h.chinesetime.pow(0.8).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        28:
+        { 
+            title: "Big Boost to Incremental Stones",
+            description: "Boosts Realm Grinder Blessings based on Chinese Time",
+            unlocked() { return hasUpgrade("i2", 27) },
+            cost: new ExpantaNum("1e900000"),
+                effect() 
+                {
+                     return player.h.chinesetime.pow(0.1).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        29:
+        {
+            title: "Forge Boost",
+            description: "Boosts Attack, Defense, and Intelligence training by x3",
+            unlocked() { return true },
+            cost: new ExpantaNum("100"),
+            currencyDisplayName: "Forge Points",
+            currencyInternalName: "forgepoints",
+            currencyLocation() { return player.i2 },
+        },
+        31:
+        {
+            title: "Forge Boost II",
+            description: "Boosts IQ gain by x2",
+            unlocked() { return hasUpgrade("i2", 29) },
+            cost: new ExpantaNum("200"),
+            currencyDisplayName: "Forge Points",
+            currencyInternalName: "forgepoints",
+            currencyLocation() { return player.i2 },
+        },
+        32:
+        {
+            title: "Forge Boost III",
+            description: "Boosts Willpower gain by x10",
+            unlocked() { return hasUpgrade("i2", 31) },
+            cost: new ExpantaNum("500"),
+            currencyDisplayName: "Forge Points",
+            currencyInternalName: "forgepoints",
+            currencyLocation() { return player.i2 },
+        },
     },
     clickables: {
+    11: {
+        title() {return "Allocate 1 Training Point into Block"},
+        canClick() {return player.i2.unusedtrainingpoints > 1},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+              player.i2.blocktrainingpoints = player.i2.blocktrainingpoints.add(1)
+		},
+    },
+    12: {
+        title() {return "Allocate 10% of Training Points into Block"},
+        canClick() {return player.i2.unusedtrainingpoints > 0},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+              player.i2.blocktrainingpoints = player.i2.blocktrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+		},
+    },
+    13: {
+        title() {return "Reclaim all Training Points"},
+        canClick() {return true},
+        color: "red",
+        onClick()
+        {
+              player.i2.usedtrainingpoints = new ExpantaNum(0)
+              player.i2.blocktrainingpoints = new ExpantaNum(0)
+              player.i2.deflecttrainingpoints = new ExpantaNum(0)
+              player.i2.punchtrainingpoints = new ExpantaNum(0)
+              player.i2.kicktrainingpoints = new ExpantaNum(0)
+              player.i2.learntrainingpoints = new ExpantaNum(0)
+              player.i2.martialartstrainingpoints = new ExpantaNum(0)
+              player.i2.shieldtrainingpoints = new ExpantaNum(0)
+              player.i2.runningtrainingpoints = new ExpantaNum(0)
+              player.i2.sprintingtrainingpoints = new ExpantaNum(0)
+        },
+    },
+    14: {
+        title() {return "Allocate 1 Training Point into Deflect"},
+        canClick() {return player.i2.unusedtrainingpoints > 1},
+        unlocked() { return player.i2.defenselevel.gte(7) },
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+              player.i2.deflecttrainingpoints = player.i2.deflecttrainingpoints.add(1)
+		},
+    },
+    15: {
+        title() {return "Allocate 10% of Training Points into Deflect"},
+        unlocked() { return player.i2.defenselevel.gte(7) },
+        canClick() {return player.i2.unusedtrainingpoints > 0},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+              player.i2.deflecttrainingpoints = player.i2.deflecttrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+		},
+    },
+    16: {
+        title() {return "Allocate 1 Training Point into Punch"},
+        canClick() {return player.i2.unusedtrainingpoints > 1},
+        unlocked() { return true },
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+              player.i2.punchtrainingpoints = player.i2.punchtrainingpoints.add(1)
+		},
+    },
+    17: {
+        title() {return "Allocate 10% of Training Points into Punch"},
+        unlocked() { return true },
+        canClick() {return player.i2.unusedtrainingpoints > 0},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+              player.i2.punchtrainingpoints = player.i2.punchtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+		},
+    },
+    18: {
+        title() {return "Allocate 1 Training Point into Kick"},
+        canClick() {return player.i2.unusedtrainingpoints > 1},
+        unlocked() { return true },
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+              player.i2.kicktrainingpoints = player.i2.kicktrainingpoints.add(1)
+		},
+    },
+    19: {
+        title() {return "Allocate 10% of Training Points into Kick"},
+        unlocked() { return true },
+        canClick() {return player.i2.unusedtrainingpoints > 0},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+              player.i2.kicktrainingpoints = player.i2.kicktrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+		},
+    },
+    21: {
+        title() {return "Allocate 1 Training Point into Learn"},
+        canClick() {return player.i2.unusedtrainingpoints > 1},
+        unlocked() { return true },
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+              player.i2.learntrainingpoints = player.i2.learntrainingpoints.add(1)
+		},
+    },
+    22: {
+        title() {return "Allocate 10% of Training Points into Learn"},
+        unlocked() { return true },
+        canClick() {return player.i2.unusedtrainingpoints > 0},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+              player.i2.learntrainingpoints = player.i2.learntrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+		},
+    },
+    23: {
+        title() {return player.i2.helmet},
+        unlocked() { return true },
+        canClick() {return true},
+        onClick()
+        {
+            player.i2.helmetexppersecond = new ExpantaNum(player.i2.armorexpbasegain)
+            player.i2.chestplateexppersecond = new ExpantaNum(0)
+            player.i2.leggingsexppersecond = new ExpantaNum(0)
+            player.i2.bootsexppersecond = new ExpantaNum(0)
+                    if (hasMilestone("h", 12)) {
+            player.i2.chestplateexppersecond = player.i2.armorexpbasegain.mul(0.02)
+            player.i2.leggingsexppersecond = player.i2.armorexpbasegain.mul(0.02)
+            player.i2.bootsexppersecond = player.i2.armorexpbasegain.mul(0.02)
+        }
+		},
+    },
+    24: {
+        title() {return player.i2.chestplate},
+        unlocked() { return true },
+        canClick() {return true},
+        onClick()
+        {
+            player.i2.helmetexppersecond = new ExpantaNum(0)
+            player.i2.chestplateexppersecond = new ExpantaNum(player.i2.armorexpbasegain)
+            player.i2.leggingsexppersecond = new ExpantaNum(0)
+            player.i2.bootsexppersecond = new ExpantaNum(0)
+            if (hasMilestone("h", 12)) {
+                player.i2.helmetexppersecond = player.i2.armorexpbasegain.mul(0.02)
+                player.i2.leggingsexppersecond = player.i2.armorexpbasegain.mul(0.02)
+                player.i2.bootsexppersecond = player.i2.armorexpbasegain.mul(0.02)
+            }
+		},
+    },
+    25: {
+        title() {return player.i2.leggings},
+        unlocked() { return true },
+        canClick() {return true},
+        onClick()
+        {
+            player.i2.helmetexppersecond = new ExpantaNum(0)
+            player.i2.chestplateexppersecond = new ExpantaNum(0)
+            player.i2.leggingsexppersecond = new ExpantaNum(player.i2.armorexpbasegain)
+            player.i2.bootsexppersecond = new ExpantaNum(0)
+            if (hasMilestone("h", 12)) {
+                player.i2.helmetexppersecond = player.i2.armorexpbasegain.mul(0.02)
+                player.i2.chestplateexppersecond = player.i2.armorexpbasegain.mul(0.02)
+                player.i2.bootsexppersecond = player.i2.armorexpbasegain.mul(0.02)
+            }
+		},
+    },
+    26: {
+        title() {return player.i2.boots},
+        unlocked() { return true },
+        canClick() {return true},
+        onClick()
+        {
+            player.i2.helmetexppersecond = new ExpantaNum(0)
+            player.i2.chestplateexppersecond = new ExpantaNum(0)
+            player.i2.leggingsexppersecond = new ExpantaNum(0)
+            player.i2.bootsexppersecond = new ExpantaNum(player.i2.armorexpbasegain)
+            if (hasMilestone("h", 12)) {
+                player.i2.helmetexppersecond = player.i2.armorexpbasegain.mul(0.02)
+                player.i2.chestplateexppersecond = player.i2.armorexpbasegain.mul(0.02)
+                player.i2.leggingsexppersecond = player.i2.armorexpbasegain.mul(0.02)
+            }
+		},
+        },
+    27: {
+        title() {return "Allocate 1 Training Point into Martial Arts"},
+        canClick() {return player.i2.unusedtrainingpoints > 1},
+        unlocked() { return player.points.gte("10^^100") },
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+              player.i2.martialartstrainingpoints = player.i2.martialartstrainingpoints.add(1)
+		},
+    },
+    28: {
+        title() {return "Allocate 10% of Training Points into Martial Arts"},
+        unlocked() { return player.points.gte("10^^100") },
+        canClick() {return player.i2.unusedtrainingpoints > 0},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+              player.i2.martialartstrainingpoints = player.i2.martialartstrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+		},
+    },
+    29: {
+        title() {return "Allocate 1 Training Point into Shield"},
+        canClick() {return player.i2.unusedtrainingpoints > 1},
+        unlocked() { return player.points.gte("10^^100") },
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+              player.i2.shieldtrainingpoints = player.i2.shieldtrainingpoints.add(1)
+		},
+    },
+    31: {
+        title() { return "Allocate 10% of Training Points into Shield"},
+        unlocked() { return player.points.gte("10^^100") },
+        canClick() {return player.i2.unusedtrainingpoints > 0},
+        onClick()
+        {
+              player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+              player.i2.shieldtrainingpoints = player.i2.shieldtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+		},
+        },
+    32: {
+            title() { return "Allocate 1 Training Point into Running" },
+            canClick() { return player.i2.unusedtrainingpoints > 1 },
+            unlocked() { return player.points.gte("10^^100") },
+            onClick() {
+                player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+                player.i2.runningtrainingpoints = player.i2.runningtrainingpoints.add(1)
+            },
+        },
+    33: {
+        title() { return "Allocate 10% of Training Points into Running" },
+            unlocked() { return player.points.gte("10^^100") },
+            canClick() { return player.i2.unusedtrainingpoints > 0 },
+            onClick() {
+                player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+                player.i2.runningtrainingpoints = player.i2.runningtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+            },
+        },
+    34: {
+            title() { return "Allocate 1 Training Point into Sprinting" },
+            canClick() { return player.i2.unusedtrainingpoints > 1 },
+            unlocked() { return player.points.gte("10^^100") },
+            onClick() {
+                player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(1)
+                player.i2.sprintingtrainingpoints = player.i2.sprintingtrainingpoints.add(1)
+            },
+        },
+    35: {
+            title() { return "Allocate 10% of Training Points into Sprinting" },
+            unlocked() { return player.points.gte("10^^100") },
+            canClick() { return player.i2.unusedtrainingpoints > 0 },
+            onClick() {
+                player.i2.usedtrainingpoints = player.i2.usedtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+                player.i2.sprintingtrainingpoints = player.i2.sprintingtrainingpoints.add(player.i2.unusedtrainingpoints.div(10))
+            },
+        },
+        36: {
+            title() { return "Reset to Race 1" },
+            unlocked() { return player.points.gte("10^^100") },
+            canClick() { return player.i2.unusedtrainingpoints > 0 },
+            onClick() {
+                player.i2.racenumber = new ExpantaNum(1)
+                player.i2.racedistanceleft = new ExpantaNum(10)
+            },
+        },
     },
     buyables:
     {
@@ -7601,6 +8096,25 @@ addLayer("i2", {
            Ritual time: " + formatTime(player.i2.clickerritualtime) + " seconds" + " \n\
            Cooldown time: " + formatTime(player.i2.clickerritualcooldown) + " seconds";
          },
+        }, 
+        15: {
+        cost(x) { return },
+        title: "Realm Grinder Ritual",
+        unlocked() { return hasUpgrade("i2", 24) },
+        canAfford() { return player.i2.realmritualcooldown <= 0 },
+        buy() {
+        if (player.i2.realmritualtime <= 0)
+        {
+            player.i2.realmritualtime = new ExpantaNum(10)
+		}
+        },
+                 display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "+1 Realm Blessing per ritual\n\
+           Ritual time: " + formatTime(player.i2.realmritualtime) + " seconds" + " \n\
+           Cooldown time: " + formatTime(player.i2.realmritualcooldown) + " seconds";
+         },
         },
     },
     milestones: {
@@ -7617,9 +8131,19 @@ addLayer("i2", {
     },
         lore3: {
         unlocked() { return player.points.gte([3.8, 7]) },
-        title: "3.8e7 Points: Act 3: The man at your front door",
-        body() { return 'One day, while grinding Willpower you notice a strange man at your front door. You open it. "Hello! My name is ?????." You dont know what his name was because he must have come from another place. "I know, you are too weak to know my true name. Just call me Bob. Nice to meet you. Come with me." You dont know whether to trust the man or not, but you go with him.' },
+        title: "3.8F7 Points: Act 3: The man at your front door",
+        body() { return 'One day, while grinding Willpower you notice a strange man at your front door. You open it. "Hello! My name is ?????." You dont know what his name was because he must have come from another place. "I know, you are too weak to know my true name. Just call me Bob. Nice to meet you. Come with me." You dont know whether to trust the man or not, but you go with him. He drives you to a land very far away. "Alright. I must train you to be the best. The gods know you are ready for this." You enter what appears to be a gym, but a gym for gods. "If you want to be the best, you have to work to get there." He leaves the room and you start training.' },
     },
+        lore4: {
+        unlocked() { return player.points.gte([1, 22]) },
+        title: "1F22 Points: Act 4: Growing Power",
+        body() { return 'You notice that you are getting stronger, and smarter, but you arent ready to fight the evil yet. The man tells you that there is an ancient key that can unlock many secrets, but someone has it who got locked up for eternity. "You must keep grinding for power in order to fight the evil. I am counting on you." The man said.' },
+        },
+        lore5: {
+            unlocked() { return player.points.gte([1, 1000]) },
+            title: "1F1000 Points: Act 5: It never ends",
+            body() { return 'You keep growing and growing, until you hit a roadblock. YOU MUST FREE THE SECRET MAN FROM JAIL OR ELSE YOU WILL BE STUCK FOREVER. Your power has grown so large you are capable of fighting the evil of this world. You are ready.' },
+        },
     },
     update(delta) 
     {
@@ -7719,6 +8243,7 @@ addLayer("i2", {
 
         let clickerblessinggain = new ExpantaNum(0.5)
         clickerblessinggain = clickerblessinggain.mul(player.h.moonlighteffect)
+        clickerblessinggain = clickerblessinggain.mul(player.i2.realmblessingeffect)
         let clickerritualtimesub = new ExpantaNum(1)
         let clickerritualcooldownsub = new ExpantaNum(1)
         if (hasUpgrade("h", 17)) clickerritualcooldownsub = clickerritualcooldownsub.mul(player.h.timeeffect2)
@@ -7742,25 +8267,644 @@ addLayer("i2", {
             player.i2.clickerritualcooldown = new ExpantaNum(0) 
 		}
         player.i2.clickerblessingeffect = player.i2.clickerblessings.add(1).pow(7.5)
+
+        let realmblessinggain = new ExpantaNum(0.1)
+        realmblessinggain = realmblessinggain.mul(player.h.moonlighteffect)
+        if (hasUpgrade("i2", 28)) realmblessinggain = realmblessinggain.mul(upgradeEffect("i2", 28))
+        realmblessinggain = realmblessinggain.mul(buyableEffect("h", 18))
+        let realmritualtimesub = new ExpantaNum(1)
+        let realmritualcooldownsub = new ExpantaNum(1)
+        if (hasUpgrade("h", 17)) realmritualcooldownsub = realmritualcooldownsub.mul(player.h.timeeffect2)
+        if (hasUpgrade("h", 18)) realmritualcooldownsub = realmritualcooldownsub.mul(player.h.sunshineeffect)
+        if (player.i2.realmritualtime > 0)
+        {
+            player.i2.realmblessings = player.i2.realmblessings.add(realmblessinggain.mul(delta))
+            player.i2.realmritualtime = player.i2.realmritualtime.sub(realmritualtimesub.mul(delta))  
+		}
+        if (player.i2.realmritualcooldown > 0)
+        {
+            player.i2.realmritualcooldown = player.i2.realmritualcooldown.sub(realmritualcooldownsub.mul(delta))  
+		}
+        if (player.i2.realmritualtime < 0)
+        {
+            player.i2.realmritualcooldown = new ExpantaNum(12000)
+            player.i2.realmritualtime = new ExpantaNum(0) 
+		}
+        if (player.i2.realmritualcooldown < 0)
+        {
+            player.i2.realmritualcooldown = new ExpantaNum(0) 
+		}
+        player.i2.realmblessingeffect = player.i2.realmblessings.add(1).pow(15)
+
+        let expgain = new ExpantaNum(0)
+        if (player.points.gte([3.8, 7])) expgain = new ExpantaNum(1)
+        expgain = expgain.mul(player.i2.defenseleveleffect)
+        expgain = expgain.mul(player.i2.attackleveleffect2)
+        expgain = expgain.mul(player.i2.intelligenceleveleffect)
+        expgain = expgain.mul(player.i2.armoreffect)
+        if (hasUpgrade("h", 42)) expgain = expgain.mul(6)
+        player.i2.exppersecond = expgain
+        player.i2.exp = player.i2.exp.add(player.i2.exppersecond.mul(delta))
+        player.i2.warriorlevelreq =  player.i2.warriorlevel.add(1).pow(2.5).mul(10)
+        player.i2.warriorleveleffect = player.i2.warriorlevel.plus(1).log10()
+        if (player.i2.exp.gte(player.i2.warriorlevelreq))
+        {
+            player.i2.exp = new ExpantaNum(0)
+            player.i2.warriorlevel = player.i2.warriorlevel.add(1)
+		}
+        player.i2.defenselevelreq =  player.i2.defenselevel.add(1).pow(1.5).mul(10)
+        player.i2.defenseleveleffect = player.i2.defenselevel.pow(0.15).add(1)
+        if (player.i2.defenseexp.gte(player.i2.defenselevelreq))
+        {
+            player.i2.defenseexp = new ExpantaNum(0)
+            player.i2.defenselevel = player.i2.defenselevel.add(1)
+		}
+        player.i2.attacklevelreq =  player.i2.attacklevel.add(1).pow(1.6).mul(10)
+        player.i2.attackleveleffect = player.i2.attacklevel.add(1)
+        player.i2.attackleveleffect2 = player.i2.attacklevel.pow(0.2).mul(5).add(1)
+        if (player.i2.attackexp.gte(player.i2.attacklevelreq))
+        {
+            player.i2.attackexp = new ExpantaNum(0)
+            player.i2.attacklevel = player.i2.attacklevel.add(1)
+		}
+        player.i2.intelligenceexp = player.i2.intelligenceexp.add(player.i2.iqeffect.mul(delta))
+        player.i2.intelligencelevelreq =  player.i2.intelligencelevel.add(1).pow(1.8).mul(50)
+        player.i2.intelligenceleveleffect = player.i2.intelligencelevel.add(1)
+        player.i2.intelligenceleveleffect2 = player.i2.intelligencelevel.pow(0.2).mul(3).add(1)
+        if (player.i2.intelligenceexp.gte(player.i2.intelligencelevelreq))
+        {
+            player.i2.intelligenceexp = new ExpantaNum(0)
+            player.i2.intelligencelevel = player.i2.intelligencelevel.add(1)
+        }
+        player.i2.movementlevelreq = player.i2.movementlevel.add(1).pow(1.2).mul(100)
+        player.i2.movementleveleffect = player.i2.movementlevel.pow(0.9).add(1)
+        player.i2.movementleveleffect2 = player.i2.movementlevel.pow(0.3).add(1)
+        if (player.i2.movementexp.gte(player.i2.movementlevelreq)) {
+            player.i2.movementexp = new ExpantaNum(0)
+            player.i2.movementlevel = player.i2.movementlevel.add(1)
+        }
+        player.i2.trainingpoints = player.h.willpower.plus(1).log10().mul(15).add(1)
+        if (hasUpgrade("i2", 23)) player.i2.trainingpoints = player.i2.trainingpoints.mul(upgradeEffect("i2", 23))
+        if (hasUpgrade("h", 52)) player.i2.trainingpoints = player.i2.trainingpoints.mul(1.1)
+        player.i2.unusedtrainingpoints = player.i2.trainingpoints.sub(player.i2.usedtrainingpoints)
+
+        let defenseexpmult = new ExpantaNum(1)
+        defenseexpmult = defenseexpmult.mul(player.i2.attackleveleffect)
+        if (hasUpgrade("h", 41)) defenseexpmult = defenseexpmult.mul(4)
+        if (hasUpgrade("i2", 29)) defenseexpmult = defenseexpmult.mul(3)
+
+        let blockmult = new ExpantaNum(1)
+        let blocktimegain = new ExpantaNum(0)
+        blocktimegain = player.i2.blocktrainingpoints
+        player.i2.blocktrainingtime = player.i2.blocktrainingtime.add(blocktimegain.mul(delta))
+        if (player.i2.blocktrainingtime.gte(50))
+        {
+            player.i2.blocktrainingtime = new ExpantaNum(0)
+            player.i2.defenseexp = player.i2.defenseexp.add(blockmult.mul(defenseexpmult))
+		}
+
+        let deflectmult = new ExpantaNum(7)
+        let deflecttimegain = new ExpantaNum(0)
+        deflecttimegain = player.i2.deflecttrainingpoints
+        player.i2.deflecttrainingtime = player.i2.deflecttrainingtime.add(deflecttimegain.mul(delta))
+        if (player.i2.deflecttrainingtime.gte(250))
+        {
+            player.i2.deflecttrainingtime = new ExpantaNum(0)
+            player.i2.defenseexp = player.i2.defenseexp.add(deflectmult.mul(defenseexpmult))
+        }
+        let shieldmult = new ExpantaNum(260)
+        let shieldtimegain = new ExpantaNum(0)
+        shieldtimegain = player.i2.shieldtrainingpoints
+        player.i2.shieldtrainingtime = player.i2.shieldtrainingtime.add(shieldtimegain.mul(delta))
+        if (player.i2.shieldtrainingtime.gte(10000)) {
+            player.i2.shieldtrainingtime = new ExpantaNum(0)
+            player.i2.defenseexp = player.i2.defenseexp.add(shieldmult.mul(defenseexpmult))
+        } 
+
+        let attackexpmult = new ExpantaNum(1)
+        attackexpmult = attackexpmult.mul(player.i2.intelligenceleveleffect2)
+        if (hasUpgrade("h", 41)) attackexpmult = attackexpmult.mul(4)
+        if (hasUpgrade("i2", 29)) attackexpmult = attackexpmult.mul(3)
+
+        let punchmult = new ExpantaNum(1)
+        let punchtimegain = new ExpantaNum(0)
+        punchtimegain = player.i2.punchtrainingpoints
+        player.i2.punchtrainingtime = player.i2.punchtrainingtime.add(punchtimegain.mul(delta))
+        if (player.i2.punchtrainingtime.gte(150))
+        {
+            player.i2.punchtrainingtime = new ExpantaNum(0)
+            player.i2.attackexp = player.i2.attackexp.add(punchmult.mul(attackexpmult))
+		}
+       
+        let kickmult = new ExpantaNum(7)
+        let kicktimegain = new ExpantaNum(0)
+        kicktimegain = player.i2.kicktrainingpoints
+        player.i2.kicktrainingtime = player.i2.kicktrainingtime.add(kicktimegain.mul(delta))
+        if (player.i2.kicktrainingtime.gte(500))
+        {
+            player.i2.kicktrainingtime = new ExpantaNum(0)
+            player.i2.attackexp = player.i2.attackexp.add(kickmult.mul(attackexpmult))
+        }
+        let martialartsmult = new ExpantaNum(300)
+        let martialartstimegain = new ExpantaNum(0)
+        martialartstimegain = player.i2.martialartstrainingpoints
+        player.i2.martialartstrainingtime = player.i2.martialartstrainingtime.add(martialartstimegain.mul(delta))
+        if (player.i2.martialartstrainingtime.gte(20000)) {
+            player.i2.martialartstrainingtime = new ExpantaNum(0)
+            player.i2.attackexp = player.i2.attackexp.add(martialartsmult.mul(attackexpmult))
+        }
+
+        let runningmult = new ExpantaNum(1)
+        let runningtimegain = new ExpantaNum(0)
+        runningtimegain = player.i2.runningtrainingpoints
+        player.i2.runningtrainingtime = player.i2.runningtrainingtime.add(runningtimegain.mul(delta))
+        if (player.i2.runningtrainingtime.gte(1000)) {
+            player.i2.runningtrainingtime = new ExpantaNum(0)
+            player.i2.racedistanceleft = player.i2.racedistanceleft.sub(runningmult)
+        }
+        let sprintingmult = new ExpantaNum(10)
+        let sprintingtimegain = new ExpantaNum(0)
+        sprintingtimegain = player.i2.sprintingtrainingpoints
+        player.i2.sprintingtrainingtime = player.i2.sprintingtrainingtime.add(sprintingtimegain.mul(delta))
+        if (player.i2.sprintingtrainingtime.gte(10000)) {
+            player.i2.sprintingtrainingtime = new ExpantaNum(0)
+            player.i2.racedistanceleft = player.i2.racedistanceleft.sub(sprintingmult)
+        }
+
+        player.i2.raceexpgain = player.i2.racenumber.pow(2)
+        player.i2.racedistance = player.i2.racenumber.pow(1.1).mul(10)
+        if (player.i2.racedistanceleft <= 0) {
+            player.i2.racenumber = player.i2.racenumber.add(1)
+            player.i2.movementexp = player.i2.movementexp.add(player.i2.raceexpgain)
+            player.i2.racedistanceleft = player.i2.racedistance
+        }
+
+                if (player.i2.wordInput == player.i2.currentword) {
+                let gain = EN(1)
+                if (hasUpgrade("h", 36)) gain = gain.mul(2)
+                if (hasUpgrade("i2", 25)) gain = gain.mul(upgradeEffect("i2", 25))
+                if (hasUpgrade("i2", 26)) gain = gain.mul(upgradeEffect("i2", 26))
+                    if (hasUpgrade("i2", 31)) gain = gain.mul(2)
+                    gain = gain.mul(player.i3.recruitingleveleffect)
+                player.i2.iq = player.i2.iq.add(gain)
+                consolePrint("Spelled! " + player.i2.currentword + " -> " + format(gain) + " IQ")
+                player.i2.currentword = generateword();
+                player.i2.wordInput = "";
+                }
+                player.i2.iqeffect = player.i2.iq.pow(0.5).mul(player.i2.learneffect)
+                if (hasUpgrade("i2", 41)) player.i2.iqeffect = player.i2.iqeffect.mul(4)
+                if (hasUpgrade("i2", 29)) player.i2.iqeffect = player.i2.iqeffect.mul(3)
+                player.i2.learneffect = player.i2.learntrainingpoints.pow(0.4).add(1)
+                if (player.i2.wordInput == "incdevtree1231234") {
+                consolePrint("Alright! You made it this far! Once I am free your life will be better!")
+                consolePrint("But if you want to free me you must be the guard!")
+                consolePrint("Your name will be Nathan, your favorite food is Alfredo Pasta, your favorite color is yellow, and your favorite activity is Air Hockey.")
+                player.i2.wordInput = "";
+                }
+                if (player.username == "nathan" && player.favoritefood == "alfredo pasta" && player.favoritecolor == "yellow" && player.favoriteactivity == "air hockey") {
+                player.argidentity = EN(1)
+                } else
+                {
+                player.argidentity = EN(0)
+                }
+        
+        player.i2.helmetexp = player.i2.helmetexp.add(player.i2.helmetexppersecond.mul(delta))
+        player.i2.chestplateexp = player.i2.chestplateexp.add(player.i2.chestplateexppersecond.mul(delta))
+        player.i2.leggingsexp = player.i2.leggingsexp.add(player.i2.leggingsexppersecond.mul(delta))
+        player.i2.bootsexp = player.i2.bootsexp.add(player.i2.bootsexppersecond.mul(delta))
+        player.i2.helmetlevelreq = player.i2.helmlevel.add(1).pow(2).add(19)
+        player.i2.chestplatelevelreq = player.i2.chestplatelevel.add(1).pow(2).add(19)
+        player.i2.leggingslevelreq = player.i2.leggingslevel.add(1).pow(2).add(19)
+        player.i2.bootslevelreq = player.i2.bootslevel.add(1).pow(2).add(19)
+
+        if (player.i2.helmetexp.gte(player.i2.helmetlevelreq))
+        {
+            player.i2.helmlevel = player.i2.helmlevel.add(1)  
+            player.i2.helmetexp = new ExpantaNum(0)
+		}
+        if (player.i2.chestplateexp.gte(player.i2.chestplatelevelreq))
+        {
+            player.i2.chestplatelevel = player.i2.chestplatelevel.add(1)  
+            player.i2.chestplateexp = new ExpantaNum(0)
+		}
+        if (player.i2.leggingsexp.gte(player.i2.leggingslevelreq))
+        {
+            player.i2.leggingslevel = player.i2.leggingslevel.add(1)  
+            player.i2.leggingsexp = new ExpantaNum(0)
+		}
+        if (player.i2.bootsexp.gte(player.i2.bootslevelreq))
+        {
+            player.i2.bootslevel = player.i2.bootslevel.add(1)  
+            player.i2.bootsexp = new ExpantaNum(0)
+		}
+        player.i2.armoreffect = player.i2.helmlevel.add(player.i2.chestplatelevel.add(player.i2.leggingslevel.add(player.i2.bootslevel.add(1))))
+
+        if (player.i2.helmlevel.gte(0))
+        {
+            player.i2.helmet = "<img src='resources/helmet1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.chestplatelevel.gte(0))
+        {
+            player.i2.chestplate = "<img src='resources/chestplate1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.leggingslevel.gte(0))
+        {
+            player.i2.leggings = "<img src='resources/leggings1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.bootslevel.gte(0))
+        {
+            player.i2.boots = "<img src='resources/boots1.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.helmlevel.gte(5))
+        {
+            player.i2.helmet = "<img src='resources/helmet2.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.chestplatelevel.gte(5))
+        {
+            player.i2.chestplate = "<img src='resources/chestplate2.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.leggingslevel.gte(5))
+        {
+            player.i2.leggings = "<img src='resources/leggings2.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.bootslevel.gte(5))
+        {
+            player.i2.boots = "<img src='resources/boots2.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.helmlevel.gte(15))
+        {
+            player.i2.helmet = "<img src='resources/helmet3.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.chestplatelevel.gte(15))
+        {
+            player.i2.chestplate = "<img src='resources/chestplate3.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.leggingslevel.gte(15))
+        {
+            player.i2.leggings = "<img src='resources/leggings3.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        if (player.i2.bootslevel.gte(15))
+        {
+            player.i2.boots = "<img src='resources/boots3.png' style='width:calc(80%);height:calc(80%);margin:10%'></img>"
+		}
+        player.i2.forgepointseffect = player.i2.forgepoints.div(50).add(1)
+        let armorgain = new ExpantaNum(1)
+        armorgain = armorgain.mul(player.i2.forgepointseffect)
+        player.i2.armorexpbasegain = armorgain
     },
+                    bars: {
+        warriorlevelbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.exp.div(player.i2.warriorlevelreq)
+            },
+            fillStyle: {
+                "background-color": "red",
+            },
+            display() {
+                return "<h5>" + format(player.i2.exp) + "/" + format(player.i2.warriorlevelreq) + " EXP </h5>";
+            },
+        },
+        defenselevelbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.defenseexp.div(player.i2.defenselevelreq)
+            },
+            fillStyle: {
+                "background-color": "blue",
+            },
+            display() {
+                return "<h5>" + format(player.i2.defenseexp) + "/" + format(player.i2.defenselevelreq) + " EXP </h5>";
+            },
+        },
+        attacklevelbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.attackexp.div(player.i2.attacklevelreq)
+            },
+            fillStyle: {
+                "background-color": "orange",
+            },
+            display() {
+                return "<h5>" + format(player.i2.attackexp) + "/" + format(player.i2.attacklevelreq) + " EXP </h5>";
+            },
+        },
+            intelligencelevelbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.intelligenceexp.div(player.i2.intelligencelevelreq)
+            },
+            fillStyle: {
+                "background-color": "green",
+            },
+            display() {
+                return "<h5>" + format(player.i2.intelligenceexp) + "/" + format(player.i2.intelligencelevelreq) + " EXP </h5>";
+            },
+                        },
+                        movementlevelbar: {
+                            direction: RIGHT,
+                            width: 476,
+                            height: 50,
+                            progress() {
+                                return player.i2.movementexp.div(player.i2.movementlevelreq)
+                            },
+                            fillStyle: {
+                                "background-color": "yellow",
+                            },
+                            display() {
+                                return "<h5>" + format(player.i2.movementexp) + "/" + format(player.i2.movementlevelreq) + " EXP </h5>";
+                            },
+                        },
+                miniwarriorlevelbar: {
+            direction: RIGHT,
+            width: 166,
+            height: 20,
+            progress() {
+                return player.i2.exp.div(player.i2.warriorlevelreq)
+            },
+            fillStyle: {
+                "background-color": "red",
+            },
+        },
+        minidefenselevelbar: {
+            direction: RIGHT,
+            width: 96,
+            height: 20,
+            progress() {
+                return player.i2.defenseexp.div(player.i2.defenselevelreq)
+            },
+            fillStyle: {
+                "background-color": "blue",
+            },
+        },
+        miniattacklevelbar: {
+            direction: RIGHT,
+            width: 96,
+            height: 20,
+            progress() {
+                return player.i2.attackexp.div(player.i2.attacklevelreq)
+            },
+            fillStyle: {
+                "background-color": "orange",
+            },
+        },
+            miniintelligencelevelbar: {
+            direction: RIGHT,
+            width: 96,
+            height: 20,
+            progress() {
+                return player.i2.intelligenceexp.div(player.i2.intelligencelevelreq)
+            },
+            fillStyle: {
+                "background-color": "green",
+            },
+                        },
+                        minimovementlevelbar: {
+                            direction: RIGHT,
+                            width: 96,
+                            height: 20,
+                            progress() {
+                                return player.i2.movementexp.div(player.i2.movementlevelreq)
+                            },
+                            fillStyle: {
+                                "background-color": "yellow",
+                            },
+                        },
+        helmetbar: {
+            direction: RIGHT,
+            width: 120,
+            height: 20,
+            progress() {
+                return player.i2.helmetexp.div(player.i2.helmetlevelreq)
+            },
+            fillStyle: {
+                "background-color": "gray",
+            },
+            display() {
+                return "<h5>" + format(player.i2.helmetexp) + "/" + format(player.i2.helmetlevelreq);
+            },
+        },
+        chestplatebar: {
+            direction: RIGHT,
+            width: 120,
+            height: 20,
+            progress() {
+                return player.i2.chestplateexp.div(player.i2.chestplatelevelreq)
+            },
+            fillStyle: {
+                "background-color": "gray",
+            },
+            display() {
+                return "<h5>" + format(player.i2.chestplateexp) + "/" + format(player.i2.chestplatelevelreq);
+            },
+        },
+        leggingsbar: {
+            direction: RIGHT,
+            width: 120,
+            height: 20,
+            progress() {
+                return player.i2.leggingsexp.div(player.i2.leggingslevelreq)
+            },
+            fillStyle: {
+                "background-color": "gray",
+            },
+            display() {
+                return "<h5>" + format(player.i2.leggingsexp) + "/" + format(player.i2.leggingslevelreq);
+            },
+        },
+        bootsbar: {
+            direction: RIGHT,
+            width: 120,
+            height: 20,
+            progress() {
+                return player.i2.bootsexp.div(player.i2.bootslevelreq)
+            },
+            fillStyle: {
+                "background-color": "gray",
+            },
+            display() {
+                return "<h5>" + format(player.i2.bootsexp) + "/" + format(player.i2.bootslevelreq);
+            },
+        },
+        blockbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.blocktrainingtime.div(50)
+            },
+            fillStyle: {
+                "background-color": "blue",
+            },
+            display() {
+                return "<h5>You have allocated " + format(player.i2.blocktrainingpoints) + " Training Points into the Block skill </h5>";
+            },
+        },
+            deflectbar: {
+            unlocked() { return player.i2.defenselevel.gte(7) },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.deflecttrainingtime.div(250)
+            },
+            fillStyle: {
+                "background-color": "blue",
+            },
+            display() {
+                return "<h5>You have allocated " + format(player.i2.deflecttrainingpoints) + " Training Points into the Deflect skill </h5>";
+            },
+        },
+            punchbar: {
+            unlocked() { return true },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.punchtrainingtime.div(150)
+            },
+            fillStyle: {
+                "background-color": "orange",
+            },
+            display() {
+                return "<h5>You have allocated " + format(player.i2.punchtrainingpoints) + " Training Points into the Punch skill </h5>";
+            },
+        },
+            kickbar: {
+            unlocked() { return true },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.i2.kicktrainingtime.div(500)
+            },
+            fillStyle: {
+                "background-color": "orange",
+            },
+            display() {
+                return "<h5>You have allocated " + format(player.i2.kicktrainingpoints) + " Training Points into the Kick skill </h5>";
+            },
+        },
+                        martialartsbar: {
+                            unlocked() { return true },
+                            direction: RIGHT,
+                            width: 476,
+                            height: 50,
+                            progress() {
+                                return player.i2.martialartstrainingtime.div(20000)
+                            },
+                            fillStyle: {
+                                "background-color": "orange",
+                            },
+                            display() {
+                                return "<h5>You have allocated " + format(player.i2.martialartstrainingpoints) + " Training Points into the Martial Arts skill </h5>";
+                            },
+                        },
+                        shieldbar: {
+                            unlocked() { return true },
+                            direction: RIGHT,
+                            width: 476,
+                            height: 50,
+                            progress() {
+                                return player.i2.shieldtrainingtime.div(10000)
+                            },
+                            fillStyle: {
+                                "background-color": "blue",
+                            },
+                            display() {
+                                return "<h5>You have allocated " + format(player.i2.shieldtrainingpoints) + " Training Points into the Shield skill </h5>";
+                            },
+                        },
+                        runningbar: {
+                            unlocked() { return true },
+                            direction: RIGHT,
+                            width: 476,
+                            height: 50,
+                            progress() {
+                                return player.i2.runningtrainingtime.div(1000)
+                            },
+                            fillStyle: {
+                                "background-color": "yellow",
+                            },
+                            display() {
+                                return "<h5>You have allocated " + format(player.i2.runningtrainingpoints) + " Training Points into the Running skill </h5>";
+                            },
+                        },
+                        sprintingbar: {
+                            unlocked() { return true },
+                            direction: RIGHT,
+                            width: 476,
+                            height: 50,
+                            progress() {
+                                return player.i2.sprintingtrainingtime.div(10000)
+                            },
+                            fillStyle: {
+                                "background-color": "yellow",
+                            },
+                            display() {
+                                return "<h5>You have allocated " + format(player.i2.sprintingtrainingpoints) + " Training Points into the Sprinting skill </h5>";
+                            },
+                        },
+                        racebar: {
+                            unlocked() { return true },
+                            direction: RIGHT,
+                            width: 306,
+                            height: 50,
+                            progress() {
+                                return player.i2.racedistanceleft.div(player.i2.racedistance)
+                            },
+                            fillStyle: {
+                                "background-color": "yellow",
+                            },
+                            display() {
+                                return format(player.i2.racedistanceleft, 0) + " Meters left in the race</h5>";
+                            },
+                        },
+    },
+
+    convertforgepoints()
+    {
+        player.i2.forgepoints = player.i2.forgepoints.add(player.i2.helmlevel.pow(0.8).add(player.i2.chestplatelevel.pow(0.8).add(player.i2.leggingslevel.pow(0.8).add(player.i2.bootslevel.pow(0.8)))))
+        player.i2.helmlevel = new ExpantaNum(0)
+        player.i2.chestplatelevel = new ExpantaNum(0)
+        player.i2.leggingslevel = new ExpantaNum(0)
+        player.i2.bootslevel = new ExpantaNum(0)
+        player.i2.helmetexp = new ExpantaNum(0)
+        player.i2.chestplateexp = new ExpantaNum(0)
+        player.i2.leggingsexp = new ExpantaNum(0)
+        player.i2.bootsexp = new ExpantaNum(0)
+	},
         microtabs: 
     {
         stuff: 
         {
           "Lore": {
           content: [
-          ["microtabs", "lore"],
-          ]
+          ["row", [["infobox", "lore"]]],
+          ["row", [["infobox", "lore2"]]],
+          ["row", [["infobox", "lore3"]]],
+          ["row", [["infobox", "lore4"]]],
+          ["row", [["infobox", "lore5"]]],
+              ]
           },
           "Incremental Ritual": {
           content: [
           ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15], ["upgrade", 16], ["upgrade", 17]]],
-          ["row", [["upgrade", 18], ["upgrade", 19], ["upgrade", 21], ["upgrade", 22]]],
+          ["row", [["upgrade", 18], ["upgrade", 19], ["upgrade", 21], ["upgrade", 22], ["upgrade", 24], ["upgrade", 27], ["upgrade", 28]]],
           ["display-text", () => hasUpgrade("i2", 12) ? "You have " + format(player.i2.incrementalblessings) + " Incremental Blessings, and a x" + format(player.i2.incrementalblessingeffect) + " boost to Incremental Stones" : ""],
           ["display-text", () => hasUpgrade("i2", 14) ? "You have " + format(player.i2.cookieblessings) + " Cookie Blessings, and a x" + format(player.i2.cookieblessingeffect) + " boost to Incremental Blessings" : ""],
           ["display-text", () => hasUpgrade("i2", 18) ? "You have " + format(player.i2.antimatterblessings) + " Antimatter Blessings, and a x" + format(player.i2.antimatterblessingeffect) + " boost to Cookie Blessings" : ""],
           ["display-text", () => hasUpgrade("i2", 19) ? "You have " + format(player.i2.clickerblessings) + " Clicker Heroes Blessings, and a x" + format(player.i2.clickerblessingeffect) + " boost to Antimatter Blessings" : ""],
-          ["row", [["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14]]],
+          ["display-text", () => hasUpgrade("i2", 24) ? "You have " + format(player.i2.realmblessings) + " Realm Grinder Blessings, and a x" + format(player.i2.realmblessingeffect) + " boost to Clicker Heroes Blessings" : ""],
+          ["row", [["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14], ["buyable", 15]]],
           ]
           },
           "Boosters": {
@@ -7772,22 +8916,134 @@ addLayer("i2", {
           ["display-text", () => hasUpgrade("i2", 21) ? "Incremental Stones also convert to a x" + format(player.i2.incrementalstoneseffect4) + " boost to Willpower" : ""],
           ]
           },
-        },
-        lore: 
-        {
-          "Lore": {
-          content: [
-          ["row", [["infobox", "lore"]]],
-          ["row", [["infobox", "lore2"]]],
-          ["row", [["infobox", "lore3"]]],
-          ]
-          },
-          "Fighting the Evil": {
+          "Training": {
           unlocked() { return player.points.gte([3.8, 7]) },
           content: [
-              ["display-text",
-        function() { return 'Coming Soon!' },
-        { "color": "red", "font-size": "64px", "font-family": "Comic Sans MS" }],
+          ["microtabs", "training"],
+          ]
+          },
+          "Equipment": {
+          unlocked() { return hasMilestone("h", 11) },
+          content: [
+          ["microtabs", "equipment"],
+          ]
+            },
+        },
+        training: 
+        {
+          "Warrior Training": {
+          unlocked() { return player.points.gte([3.8, 7]) },
+          content: [
+              ["display-text", function() { return 'You are warrior level ' + format(player.i2.warriorlevel) }, { "color": "red", "font-size": "48px", "font-family": "Comic Sans MS" }],
+              ["display-text", function() { return 'You are gaining ' + format(player.i2.exppersecond) + ' EXP per second' }, { "color": "red", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["display-text", function() { return 'Your warrior level gives ' + format(player.i2.warriorleveleffect) + ' Potential' }, { "color": "red", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["row", [["bar", "warriorlevelbar"]]],
+              ["blank", "10px"],
+              ["display-text", function() { return 'You have ' + format(player.i2.unusedtrainingpoints) + '/' + format(player.i2.trainingpoints) + ' Training Points, based on Willpower'}, { "color": "red", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["row", [["clickable", 13]]],
+              ["row", [["upgrade", 23]]],
+          ]
+          },
+          "Defense Training": {
+          unlocked() { return player.i2.warriorlevel.gte(2) },
+          content: [
+              ["display-text", function() { return 'You are defense level ' + format(player.i2.defenselevel) }, { "color": "blue", "font-size": "48px", "font-family": "Comic Sans MS" }],
+              ["display-text", function() { return 'Your defense level gives a x' + format(player.i2.defenseleveleffect) + ' boost to Warrior EXP gain' }, { "color": "blue", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["row", [["bar", "defenselevelbar"]]],
+              ["blank", "10px"],
+              ["display-text", function() { return 'You have ' + format(player.i2.unusedtrainingpoints) + '/' + format(player.i2.trainingpoints) + ' Training Points, based on Willpower'}, { "color": "blue", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["row", [["bar", "blockbar"], ["clickable", 11], ["clickable", 12]]],
+              ["row", [["bar", "deflectbar"], ["clickable", 14], ["clickable", 15]]],
+              ["row", [["bar", "shieldbar"], ["clickable", 29], ["clickable", 31]]],
+          ]
+          },
+          "Attack Training": {
+          unlocked() { return player.i2.defenselevel.gte(15) },
+          content: [
+              ["display-text", function() { return 'You are attack level ' + format(player.i2.attacklevel) }, { "color": "orange", "font-size": "48px", "font-family": "Comic Sans MS" }],
+              ["display-text", function() { return 'Your attack level gives a x' + format(player.i2.attackleveleffect) + ' boost to Defense EXP gain' }, { "color": "orange", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["display-text", function() { return 'Your attack level also gives a x' + format(player.i2.attackleveleffect2) + ' boost to Warrior EXP gain' }, { "color": "orange", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["row", [["bar", "attacklevelbar"]]],
+              ["blank", "10px"],
+              ["display-text", function() { return 'You have ' + format(player.i2.unusedtrainingpoints) + '/' + format(player.i2.trainingpoints) + ' Training Points, based on Willpower'}, { "color": "orange", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["row", [["bar", "punchbar"], ["clickable", 16], ["clickable", 17]]],
+              ["row", [["bar", "kickbar"], ["clickable", 18], ["clickable", 19]]],
+              ["row", [["bar", "martialartsbar"], ["clickable", 27], ["clickable", 28]]],
+          ]
+          },
+          "Intelligence Training": {
+          unlocked() { return hasUpgrade("h", 35) },
+          content: [
+              ["display-text", function() { return 'You are intelligence level ' + format(player.i2.intelligencelevel) }, { "color": "green", "font-size": "48px", "font-family": "Comic Sans MS" }],
+              ["display-text", function() { return 'Your intelligence level gives a x' + format(player.i2.intelligenceleveleffect) + ' boost to Warrior EXP gain' }, { "color": "green", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["display-text", function() { return 'Your intelligence level also gives a x' + format(player.i2.intelligenceleveleffect2) + ' boost to Attack EXP gain' }, { "color": "green", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["raw-html", () => `<div style="width:$404px;text-align:center;margin:20px;">
+                        ${player.i2.consoleLines.map((x, i) => `<span style="opacity:1">${x}</span><br/>`).join("")}
+                        &gt;`],
+              ["row", [["bar", "intelligencelevelbar"]]],
+              ["blank", "10px"],
+                    ["display-text", function() { return 'You have ' + format(player.i2.iq) + " IQ"}, { "color": "green", "font-size": "36px", "font-family": "Comic Sans MS" }],
+                    ["display-text", function() { return 'Type this word into the bar below (no caps): ' + player.i2.currentword }, { "color": "green", "font-size": "24px", "font-family": "Comic Sans MS" }],
+                    ["text-input", "wordInput", { 
+                        color: "var(--color)", 
+                        width: "400px",
+                        "font-family": "Comic Sans MS",
+                        "text-align": "left",
+                        "font-size": "32px",
+                        border: "2px solid #ffffff17", 
+                        background: "var(--background)", 
+                    }],
+              ["display-text", function() { return 'Your IQ gives a +' + format(player.i2.iqeffect) + ' intelligence exp per second'}, { "color": "green", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["blank", "10px"],
+              ["display-text", function() { return 'You have ' + format(player.i2.unusedtrainingpoints) + '/' + format(player.i2.trainingpoints) + ' Training Points, based on Willpower'}, { "color": "green", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["blank", "10px"],
+              ["display-text", function() { return 'You have allocated ' + format(player.i2.learntrainingpoints) + " Training Points into the Learn Skill, which gives a x" + format(player.i2.learneffect) + ' boost to Intelligence EXP gain' }, { "color": "green", "font-size": "16px", "font-family": "Comic Sans MS" }],
+              ["row", [["clickable", 21], ["clickable", 22]]],
+              ["row", [["upgrade", 25], ["upgrade", 26]]],
+             ]
+            },
+            "Movement Training": {
+                unlocked() { return player.points.gte("10^^100") },
+                content: [
+                    ["display-text", function () { return 'You are movement level ' + format(player.i2.movementlevel) }, { "color": "yellow", "font-size": "48px", "font-family": "Comic Sans MS" }],
+                    ["display-text", function () { return 'Your movement level gives a x' + format(player.i2.movementleveleffect) + ' boost to Warrior EXP gain' }, { "color": "yellow", "font-size": "16px", "font-family": "Comic Sans MS" }],
+                    ["display-text", function () { return 'Your movement level also gives a x' + format(player.i2.movementleveleffect2) + ' boost to Intelligence EXP gain' }, { "color": "yellow", "font-size": "16px", "font-family": "Comic Sans MS" }],
+                    ["row", [["bar", "movementlevelbar"]]],
+                    ["blank", "10px"],
+                    ["display-text", function () { return 'You are at race ' + format(player.i2.racenumber) + " which gives you " + format(player.i2.raceexpgain) + " Movement EXP" }, { "color": "yellow", "font-size": "24px", "font-family": "Comic Sans MS" }],
+                    ["row", [["bar", "racebar"], ["clickable", 36]]],
+              ["blank", "10px"],
+                    ["display-text", function () { return 'You have ' + format(player.i2.unusedtrainingpoints) + '/' + format(player.i2.trainingpoints) + ' Training Points, based on Willpower' }, { "color": "yellow", "font-size": "16px", "font-family": "Comic Sans MS" }],
+                    ["row", [["bar", "runningbar"], ["clickable", 32], ["clickable", 33]]],
+                    ["row", [["bar", "sprintingbar"], ["clickable", 34], ["clickable", 35]]],
+                ]
+            },
+        },
+        equipment: 
+        {
+          "Armor": {
+          unlocked() { return true },
+          content: [
+              ["display-text", function() { return 'WAR ' + format(player.i2.warriorlevel, 0)}, {"font-size": "24px", "font-family": "Times New Roman" }],
+              ["row", [["bar", "miniwarriorlevelbar"]]],
+              ["blank", "20px"],
+              ["display-text", function() { return 'DEF ' + format(player.i2.defenselevel, 0) + '\xa0\xa0\xa0\xa0\xa0\xa0\ ATK ' + format(player.i2.attacklevel, 0) + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\ INT ' + format(player.i2.intelligencelevel, 0)}, {"font-size": "24px", "font-family": "Times New Roman" }],
+              ["row", [["bar", "minidefenselevelbar"], ["display-text", '\xa0\xa0\xa0\xa0\xa0\ '], ["bar", "miniattacklevelbar"], ["display-text", '\xa0\xa0\xa0\xa0\xa0\ '], ["bar", "miniintelligencelevelbar"]]],
+              ["blank", "10px"],
+              ["display-text", function () { return 'MVM ' + format(player.i2.movementlevel, 0) }, { "font-size": "24px", "font-family": "Times New Roman" }],
+              ["row", [["bar", "minimovementlevelbar"]]],
+              ["blank", "20px"],
+              ["row", [["clickable", 23], ["clickable", 24], ["clickable", 25], ["clickable", 26]]],
+              ["row", [["bar", "helmetbar"], ["bar", "chestplatebar"], ["bar", "leggingsbar"], ["bar", "bootsbar"]]],
+              ["display-text", function() { return 'LVL ' + format(player.i2.helmlevel, 0) + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\ LVL ' + format(player.i2.chestplatelevel, 0) + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\ LVL ' + format(player.i2.leggingslevel, 0) + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\ LVL ' + format(player.i2.bootslevel, 0)}, {"font-size": "24px", "font-family": "Times New Roman" }],
+              ["display-text", function() { return '+' + format(player.i2.helmetexppersecond) + " Per Second" + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\ +' + format(player.i2.chestplateexppersecond) + " Per Second" + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\ +' + format(player.i2.leggingsexppersecond) + " Per Second" + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\ +' + format(player.i2.bootsexppersecond) + " Per Second"}, {"font-size": "13px", "font-family": "Times New Roman" }],
+              ["blank", "20px"],
+              ["display-text", function() { return 'Your Armor Levels combined gives a x' + format(player.i2.armoreffect) + ' boost to Warrior EXP gain' }, { "color": "grey", "font-size": "16px", "font-family": "Times New Roman" }],
+              ["blank", "20px"],
+              ["raw-html", function() {return "<button onclick='layers.i2.convertforgepoints()'>Convert Armor Into Forge Points</button>"}],
+              ["display-text", function() { return 'You have ' + format(player.i2.forgepoints) + ' Forge Points and a x' + format(player.i2.forgepointseffect) + ' boost to Armor EXP gain' }, { "color": "grey", "font-size": "16px", "font-family": "Times New Roman" }],
+              ["blank", "20px"],
+              ["row", [["upgrade", 29], ["upgrade", 31], ["upgrade", 32]]],
           ]
           },
         },
@@ -7800,6 +9056,23 @@ addLayer("i2", {
     layerShown(){return hasUpgrade("l", 121)}
 },
 )
+function consolePrint(line) {
+    player.i2.consoleLines.push(line.replaceAll(' ', '&nbsp;'))
+    player.i2.consoleLines.shift()
+}
+let researchBuyable = {
+    width: '150px',
+    height: '150px',
+    'min-height': '125px',
+    'font-size': '9px',
+}
+let researchUpgrade = {
+    width: '150px',
+    height: '150px',
+    'min-height': '125px',
+    'font-size': '9px',
+    "border-radius": "50%",
+}
 addLayer("h", {
     startData() { return {
         unlocked: true,
@@ -7822,16 +9095,69 @@ addLayer("h", {
         moonlighteffect: new ExpantaNum(0),
         chinesetime: new ExpantaNum(0),
         chinesetimeeffect: new ExpantaNum(0),
-    }},
-            nodeStyle: 
-            {
-           "background-image": "linear-gradient(85deg, #fbef53, #68e8f4, #fbef53)",  
-         "width": 400,
-        "height": 400,
-        "border-left": "100px solid fbef53",
-        "border-right": "100px solid 68e8f4",
-        "border-bottom": "140px solid fbef53",
-        "border-radius": 0,
+        realmtime: new ExpantaNum(0),
+        realmtimeeffect: new ExpantaNum(0),
+        researchfragments: new ExpantaNum(0),
+        researchfragmentsgain: new ExpantaNum(1),
+        researchfragmentsreq: new ExpantaNum(10),
+        researchpoints: new ExpantaNum(0),
+        researchpointsgain: new ExpantaNum(1),
+        researchpointsreq: new ExpantaNum(1000),
+        researchfragmenttime: new ExpantaNum(0),
+        usernameinput: "",
+        foodinput: "",
+        colorinput: "",
+        activityinput: "",       
+        capitalisttime: new ExpantaNum(0),
+        capitalisttimeeffect: new ExpantaNum(0),
+        basicresearchtime: new ExpantaNum(0),
+        basicresearchtimeeffect: new ExpantaNum(0),
+        advancedresearchtime: new ExpantaNum(0),
+        advancedresearchtimeeffect: new ExpantaNum(0),
+        currenttitle1: generatetitle1(),
+        currenttitle2: generatetitle2(),
+        currenttitle3: generatetitle3(),
+        games: new ExpantaNum(0),
+        gameseffect: new ExpantaNum(0),
+        gamecurrency: new ExpantaNum(0),
+        gamecurrencypersecond: new ExpantaNum(0),
+        gamesrequirement: new ExpantaNum(100000),
+        gameboostcurrencyadj: generatetitle1(),
+        gameboostcurrency: new ExpantaNum(0),
+        gameboostcurrencyeffect: new ExpantaNum(1),
+        candyboxtime: new ExpantaNum(0),
+        candyboxtimeeffect: new ExpantaNum(0),
+        players: new ExpantaNum(0),
+        playereffect: new ExpantaNum(0),
+        playerspersecond: new ExpantaNum(0),
+        marketingpower: new ExpantaNum(0),
+        marketingdecay: new ExpantaNum(0),
+        bgdefault: new ExpantaNum(0),
+        complicatedresearchtime: new ExpantaNum(0),
+        complicatedresearchtimeeffect: new ExpantaNum(0),
+    }
+    },
+    nodeStyle() {
+        if (!hasUpgrade("h", 48)) {
+            return {
+                "background-image": "linear-gradient(85deg, #fbef53, #68e8f4, #fbef53)",
+                "width": 400,
+                "height": 400,
+                'min-height': '150px',
+                'min-width': '150px',
+            }
+        }
+
+        if (hasUpgrade("h", 48)) {
+            return {
+                background: "linear-gradient(90deg, #ff0000, #5d0067)",
+                "background-origin": "border-box",
+                "width": 400,
+                "height": 400,
+                'min-height': '150px',
+                'min-width': '150px',
+            }
+        }
     },
     color: "#68e8f4",
     symbol: "<p style='transform: scale(3, 3)'><alternate>H</alternate></p>",
@@ -7844,6 +9170,13 @@ addLayer("h", {
     position: 0, 
         automate()
     {
+        if (hasUpgrade('h', 32)) {
+    buyBuyable(this.layer, 12)
+    buyBuyable(this.layer, 13)
+            }
+            if (hasUpgrade('h', 49)) {
+                buyBuyable(this.layer, 11)
+            }
     },
     buyables:
     {
@@ -7959,6 +9292,399 @@ addLayer("h", {
             currencyLocation() { return player.h },
             currencyDisplayName: "Willpower",
             currencyInternalName: "willpower",
+        },
+        22:
+        { 
+            title: "The Very Inflated Upgrade",
+            description: "Changes the Clicker Hero Time Effect",
+            unlocked() { return player.rg.points.gte(1e145) },
+            cost: new ExpantaNum("1e19"),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        23:
+        { 
+            title: "Master Researcher",
+            description: "Unlocks a new tab",
+            unlocked() { return hasUpgrade("rg", 35) },
+            cost: new ExpantaNum([1, 10]),
+            currencyLocation() { return player },
+            currencyDisplayName: "Points",
+            currencyInternalName: "points",
+        },
+        24:
+        { 
+            title: "UNLOCK BASIC RESEARCH",
+            unlocked() { return hasUpgrade("h", 23) },
+            cost: new ExpantaNum(1),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+        },
+        25:
+        { 
+            title: "UNLOCK ADVANCED RESEARCH",
+            unlocked() { return hasUpgrade("h", 24) },
+            cost: new ExpantaNum(6),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+        },
+        26:
+        { 
+            title: "Basic Research (1, 1)",
+            description: "Gives Extra Potential based on Achievement Power",
+            unlocked() { return hasUpgrade("h", 24) },
+            cost: new ExpantaNum(1),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+                effect() 
+                {
+                     return player[this.layer].achievementpower.pow(0.4)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"+" }, // Add formatting to the effect
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        27:
+        { 
+            title: "Basic Research (1, 2)",
+            description: "Boosts Research Fragments based on Potential",
+            unlocked() { return hasUpgrade("h", 26) },
+            cost: new ExpantaNum(1),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            branches: [26],
+            currencyInternalName: "researchpoints",
+                effect() 
+                {
+                     return player[this.layer].points.pow(0.3)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        28:
+        { 
+            title: "Basic Research (2, 2)",
+            description: "Boosts Research Fragments based on Research Fragments",
+            unlocked() { return hasUpgrade("h", 26) },
+            cost: new ExpantaNum(2),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            branches: [26],
+            currencyInternalName: "researchpoints",
+                effect() 
+                {
+                     return player[this.layer].points.pow(0.2)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        29:
+        { 
+            title: "Basic Research (2, 3)",
+            description: "How much time to get Research Fragments also boost how much you get",
+            unlocked() { return hasUpgrade("h", 28) },
+            cost: new ExpantaNum(2),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            branches: [28],
+            currencyInternalName: "researchpoints",
+                effect() 
+                {
+                     return player[this.layer].researchfragmenttime.pow(0.25).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        31:
+        { 
+            title: "Basic Research (1, 3)",
+            description: "Increases Time Requirement and Time Gain based on Research Points",
+            unlocked() { return hasUpgrade("h", 27) },
+            cost: new ExpantaNum(4),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            branches: [27],
+            currencyInternalName: "researchpoints",
+                effect() 
+                {
+                     return player[this.layer].researchpoints.add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        32:
+        { 
+            title: "Basic Research (1, 4)",
+            description: "Automates Amplifiers",
+            unlocked() { return hasUpgrade("h", 29) && hasUpgrade("h", 31) },
+            cost: new ExpantaNum(30),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            branches: [29, 31],
+            currencyInternalName: "researchpoints",
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        33:
+        { 
+            title: "Advanced Research Upgrade (1, 1)",
+            description: "Unlocks a new Layer",
+            unlocked() { return hasUpgrade("h", 25) },
+            cost: new ExpantaNum(4),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        34:
+        { 
+            title: "Advanced Research Upgrade (2, 1)",
+            description: "Boosts Chinese Time by x100",
+            unlocked() { return hasUpgrade("h", 33) },
+            cost: new ExpantaNum(16),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [33],
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        35:
+        { 
+            title: "Advanced Research Upgrade (1, 2)",
+            description: "Unlocks a new Training Type",
+            unlocked() { return hasUpgrade("h", 33) },
+            cost: new ExpantaNum(12),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [33],
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        36:
+        { 
+            title: "Advanced Research Upgrade (1, 3)",
+            description: "Boosts IQ Gain by x2",
+            unlocked() { return hasUpgrade("h", 35) },
+            cost: new ExpantaNum(24),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [35],
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        37:
+        { 
+            title: "Basic Research Upgrade (1, 5)",
+            description: "Boosts Research Point gain based on Research Points",
+            unlocked() { return hasUpgrade("h", 32) },
+            cost: new ExpantaNum(20),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+                effect() 
+                {
+                     return player[this.layer].researchpoints.pow(0.2).add(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+            branches: [32],
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        38:
+        { 
+            title: "Basic Research Upgrade (2, 5)",
+            description: "Boosts Willpower gain by x5",
+            unlocked() { return hasUpgrade("h", 32) },
+            cost: new ExpantaNum(50),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [32],
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        39:
+        { 
+            title: "Advanced Research Upgrade (3, 1)",
+            description: "Boosts Chinese Time by x10000",
+            unlocked() { return hasUpgrade("h", 34) },
+            cost: new ExpantaNum(32),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [34],
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        41:
+        { 
+            title: "Advanced Research Upgrade (4, 1)",
+            description: "Boosts Attack, Defense, and Intelligence EXP gain by x4",
+            unlocked() { return hasUpgrade("h", 39) },
+            cost: new ExpantaNum(64),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [39],
+                                    style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        42:
+        { 
+            title: "Advanced Research Upgrade (1, 4)",
+            description: "Boosts Warrior EXP gain by x6",
+            unlocked() { return hasUpgrade("h", 36) },
+            cost: new ExpantaNum(30),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [36],
+                        style() 
+        { 
+              return { ...researchUpgrade }
+        },
+        },
+        43:
+        { 
+            title: "Time for the second sugar related game...",
+            description: "Unlocks a new layer",
+            unlocked() { return hasUpgrade("ac", 29) },
+            cost: new ExpantaNum(10),
+            currencyLocation() { return player.i2 },
+            currencyDisplayName: "Forge Points",
+            currencyInternalName: "forgepoints",
+        },
+        44:
+        { 
+            title: "UNLOCK COMPLICATED RESEARCH",
+            unlocked() { return hasUpgrade("h", 43) },
+            cost: new ExpantaNum(80),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+        },
+        45:
+        {
+            title: "FINISH THE BASIC RESEARCH TREE",
+            unlocked() { return hasUpgrade("h", 37) && hasUpgrade("h", 38) },
+            cost: new ExpantaNum(800),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [37, 38],
+            style() {
+                return { ...researchUpgrade }
+            },
+        },
+        46:
+        {
+            title: "FINISH THE ADVANCED RESEARCH TREE",
+            unlocked() { return hasUpgrade("h", 42) && hasUpgrade("h", 41) },
+            cost: new ExpantaNum(5000),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
+            branches: [41, 42],
+            style() {
+                return { ...researchUpgrade }
+            },
+        },
+        47:
+        {
+            title: "Get more people to make Incremental Games",
+            unlocked() { return hasUpgrade("h", 46) },
+            cost: new ExpantaNum(1e30),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        48:
+        {
+            title: "FREE THE MAN FROM JAIL",
+            unlocked() { return player.argidentity.gte(1) && hasUpgrade("cb", 26) },
+            cost: new ExpantaNum(1e38),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Willpower",
+            currencyInternalName: "willpower",
+        },
+        49:
+        {
+            title: "Marketing Qol",
+            description: "Autobuys willpower generators but doesn't spend willpower",
+            unlocked() { return hasUpgrade("h", 48) },
+            cost: new ExpantaNum(5000),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Marketing Power",
+            currencyInternalName: "marketingpower",
+        },
+        51:
+        {
+            title: "Marketing Boost",
+            description: "Boosts willpower by x4",
+            unlocked() { return hasUpgrade("h", 48) },
+            cost: new ExpantaNum(25000),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Marketing Power",
+            currencyInternalName: "marketingpower",
+        },
+        52:
+        {
+            title: "Marketing Training",
+            description: "Gain 1.1x more training points",
+            unlocked() { return hasUpgrade("h", 48) },
+            cost: new ExpantaNum(75000),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Marketing Power",
+            currencyInternalName: "marketingpower",
+        },
+        53:
+        {
+            title: "FINISH THE COMPLICATED RESEARCH TREE",
+            unlocked() { return hasUpgrade("h", 48) },
+            cost: new ExpantaNum(25000),
+            currencyLocation() { return player.h },
+            currencyDisplayName: "Research Points",
+            currencyInternalName: "researchpoints",
         },
     },
     achievements: {
@@ -8197,7 +9923,7 @@ addLayer("h", {
             unlocked() { return hasUpgrade("h", 18) },
         },
         61: {
-            name: "成为丑国人",
+            name: "Become Chinese",
             done() {return player.sc.points.gte("1e10")},
             tooltip: "Get 1e10 Social Credit", // Shows when achievement is not completed
             onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
@@ -8252,8 +9978,473 @@ addLayer("h", {
             onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
             unlocked() { return hasUpgrade("h", 18) },
         },
+        71: {
+            name: "Warrior I",
+            done() {return player.i2.warriorlevel.gte("2")},
+            tooltip: "Get to Warrior Level 2", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return player.points.gte([3.8, 7]) },
+        },
+        72: {
+            name: "Warrior II",
+            done() {return player.i2.warriorlevel.gte("100")},
+            tooltip: "Get to Warrior Level 100", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return player.points.gte([3.8, 7]) },
+        },
+        73: {
+            name: "Warrior III",
+            done() {return player.i2.warriorlevel.gte("1e9")},
+            tooltip: "Get to Warrior Level 1e9", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)},
+            unlocked() { return player.points.gte([3.8, 7]) },
+        },
+        74: {
+            name: "Defender I",
+            done() {return player.i2.defenselevel.gte("10")},
+            tooltip: "Get to Defense Level 10", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return player.points.gte([3.8, 7]) },
+        },
+        75: {
+            name: "Defender II",
+            done() {return player.i2.defenselevel.gte("1e12")},
+            tooltip: "Get to Defense Level 1e12", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.75)},
+            unlocked() { return player.points.gte([3.8, 7]) },
+        },
+        76: {
+            name: "Attacker I",
+            done() {return player.i2.attacklevel.gte("10000")},
+            tooltip: "Get to Attack Level 10000", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return player.points.gte([3.8, 7]) },
+        },
+        77: {
+            name: "Attacker II",
+            done() {return player.i2.attacklevel.gte("1e9")},
+            tooltip: "Get to Attack Level 1e9", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return player.points.gte([3.8, 7]) },
+        },
+        81: {
+            name: "Research I",
+            done() {return player.h.researchpoints.gte("2")},
+            tooltip: "Get 2 Research Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        82: {
+            name: "Research II",
+            done() {return player.h.researchpoints.gte("10")},
+            tooltip: "Get 10 Research Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        83: {
+            name: "Research III",
+            done() {return player.h.researchpoints.gte("1000")},
+            tooltip: "Get 1000 Research Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        84: {
+            name: "Research IV",
+            done() {return player.h.researchpoints.gte("1e6")},
+            tooltip: "Get 1e6 Research Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        85: {
+            name: "Research V",
+            done() {return player.h.researchpoints.gte("1e20")},
+            tooltip: "Get 1e20 Research Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2.5)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        86: {
+            name: "Research VI",
+            done() {return player.h.researchpoints.gte("1e100")},
+            tooltip: "Get 1e100 Research Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(4)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        87: {
+            name: "Fragments I",
+            done() {return player.h.researchfragments.gte("1e6")},
+            tooltip: "Get 1e6 Research Fragments", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        88: {
+            name: "Fragments II",
+            done() {return player.h.researchfragments.gte("1e100")},
+            tooltip: "Get 1e100 Research Fragments", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        89: {
+            name: "Fragments III",
+            done() {return player.h.researchfragments.gte("1e100000")},
+            tooltip: "Get 1e100000 Research Fragments", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(3)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        91: {
+            name: "Time I",
+            done() {return player.h.researchfragments.gte("11")},
+            tooltip: "Get 11 Seconds for Research Fragments", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        92: {
+            name: "Time II",
+            done() {return player.h.researchfragments.gte("1e1000")},
+            tooltip: "Get 1e1000 Seconds for Research Fragments", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(1)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        93: {
+            name: "Time III",
+            done() {return player.h.researchfragments.gte("1e100000")},
+            tooltip: "Get 1e100000 Seconds for Research Fragments", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(2.5)},
+            unlocked() { return hasUpgrade("h", 23) },
+        },
+        101: {
+            name: "Capitalism I",
+            done() {return player.ac.points.gte("10")},
+            tooltip: "Get 10 $ in Adventure Capitalist", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("rg", 35) },
+        },
+        102: {
+            name: "Capitalism II",
+            done() {return player.ac.points.gte("1e10")},
+            tooltip: "Get 1e10 $ in Adventure Capitalist", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("rg", 35) },
+        },
+                103: {
+            name: "Capitalism III",
+            done() {return player.ac.points.gte("1e100")},
+            tooltip: "Get 1e30 $ in Adventure Capitalist", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("rg", 35) },
+        },
+                104: {
+            name: "Capitalism IV",
+            done() {return player.ac.points.gte("1e308")},
+            tooltip: "Get 1e308 $ in Adventure Capitalist", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return hasUpgrade("rg", 35) },
+        },
+        105: {
+            name: "Candyman I",
+            done() { return player.cb.candies.gte("60") },
+            tooltip: "Get 60 Candies", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("ac", 29) },
+        },
+        106: {
+            name: "Candyman II",
+            done() { return player.cb.candies.gte("1e9") },
+            tooltip: "Get 1e9 Candies", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("ac", 29) },
+        },
+        107: {
+            name: "Candy Dumper",
+            done() { return player.cb.throwncandies.gte("2000") },
+            tooltip: "Throw 2000 Candies", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("ac", 29) },
+        },
+        108: {
+            name: "Candy Farmer",
+            done() { return player.cb.lollipopspersecond.gte("1000") },
+            tooltip: "Get 1000 Lollipops per second", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("ac", 29) },
+        },
+        111: {
+            name: "Smart Man I",
+            done() {return player.i2.intelligencelevel.gte("10")},
+            tooltip: "Get to Intelligence Level 10", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        112: {
+            name: "Smart Man II",
+            done() {return player.i2.intelligencelevel.gte("1e6")},
+            tooltip: "Get to Intelligence Level 1e12", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.75)},
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        113: {
+            name: "Spelling Master I",
+            done() {return player.i2.iq.gte("100")},
+            tooltip: "Get 100 IQ", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        114: {
+            name: "Spelling Master II",
+            done() {return player.i2.iq.gte("1e11")},
+            tooltip: "Get to 1e11 IQ", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        115: {
+            name: "Spelling Bee Champion",
+            done() {return player.i2.wordInput == "pneumonoultramicroscopicsilicovolcanoconiosis"},
+            tooltip: "Spell the longest word (no caps)", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        116: {
+            name: "Puzzle Master",
+            done() {return player.argidentity.gte(1)},
+            tooltip: "Reach a certain point in the ARG", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        117: {
+            name: "The very rare achievement",
+            done() {return player.i2.currentword == "balls"},
+            tooltip: "A certain word spelled in the IQ training must have to be spelled!", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(4)},
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        121: {
+            name: "Blinged Out I",
+            done() {return player.i2.armoreffect.gte(25)},
+            tooltip: "Get your armor effect to x25", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.25)},
+            unlocked() { return player.points.gte([3, 30]) },
+        },
+        122: {
+            name: "Blinged Out II",
+            done() {return player.i2.armoreffect.gte(1000)},
+            tooltip: "Get your armor effect to x1000", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.75)},
+            unlocked() { return player.points.gte([3, 30]) },
+        },
+        123: {
+            name: "Forger",
+            done() {return player.i2.forgepoints.gte(100)},
+            tooltip: "Get 100 Forge Points", // Shows when achievement is not completed
+            onComplete() {player.h.achievementpower = player.h.achievementpower.add(0.5)},
+            unlocked() { return player.points.gte([3, 30]) },
+        },
+        124: {
+            name: "Speedrunner I",
+            done() { return player.i2.movementlevel.gte("1") },
+            tooltip: "Get to Movement Level 1", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.points.gte([3, 100]) },
+        },
+        125: {
+            name: "Speedrunner II",
+            done() { return player.i2.movementlevel.gte("100000") },
+            tooltip: "Get to Movement Level 100000", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.75) },
+            unlocked() { return player.points.gte([3, 100]) },
+        },
+        126: {
+            name: "Racer I",
+            done() { return player.i2.racenumber.gte("100") },
+            tooltip: "Get to Race Number 100", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        127: {
+            name: "Racer II",
+            done() { return player.i2.racenumber.gte("1e6") },
+            tooltip: "Get to Race Number 1e6", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.75) },
+            unlocked() { return player.points.gte([3, 13]) },
+        },
+        128: {
+            name: "Game Developer I",
+            done() { return player.h.games.gte("3") },
+            tooltip: "Make 3 Games", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.h.willpower.gte(1e30) },
+        },
+        129: {
+            name: "Game Developer II",
+            done() { return player.h.games.gte("10") },
+            tooltip: "Make 10 Games", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.h.willpower.gte(1e30) },
+        },
+        131: {
+            name: "Game Developer III",
+            done() { return player.h.games.gte("30") },
+            tooltip: "Make 30 Games", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.h.willpower.gte(1e30) },
+        },
+        132: {
+            name: "Game Developer IV",
+            done() { return player.h.games.gte("100") },
+            tooltip: "Make 100 Games", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.h.willpower.gte(1e30) },
+        },
+        133: {
+            name: "Community Builder I",
+            done() { return player.h.players.gte("100") },
+            tooltip: "Have 100 Players play your game", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.h.willpower.gte(1e30) },
+        },
+        134: {
+            name: "Community Builder II",
+            done() { return player.h.players.gte("1e8") },
+            tooltip: "Have 1e8 Players play your game", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return player.h.willpower.gte(1e30) },
+        },
+        141: {
+            name: "Adventurer I",
+            done() { return player.i3.adventurelevel.gte("5") },
+            tooltip: "Reach adventure level 5", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        142: {
+            name: "Adventurer II",
+            done() { return player.i3.adventurelevel.gte("25") },
+            tooltip: "Reach adventure level 25", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        143: {
+            name: "Adventurer III",
+            done() { return player.i3.adventurelevel.gte("1000") },
+            tooltip: "Reach adventure level 1000", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(1) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        144: {
+            name: "Adventurer IV",
+            done() { return player.i3.adventurelevel.gte("1e6") },
+            tooltip: "Reach adventure level 1e6", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(1.5) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        145: {
+            name: "Recruiter I",
+            done() { return player.i3.recruitinglevel.gte("10") },
+            tooltip: "Reach recruiting level 10", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        146: {
+            name: "Recruiter II",
+            done() { return player.i3.recruitinglevel.gte("1000") },
+            tooltip: "Reach recruiting level 1000", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.5) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        147: {
+            name: "Lumberjack I",
+            done() { return player.i3.choppinglevel.gte("100") },
+            tooltip: "Reach chopping level 100", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        148: {
+            name: "Lumberjack II",
+            done() { return player.i3.choppinglevel.gte("10000") },
+            tooltip: "Reach chopping level 10000", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.5) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        151: {
+            name: "Slimer",
+            done() { return player.i3.slimekills.gte("10000") && player.i3.bigslimekills.gte(5000) },
+            tooltip: "Not helping you with this one!", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.5) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        152: {
+            name: "Tank",
+            done() { return player.i3.defense.gte(6000) },
+            tooltip: "Not helping you with this one!", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(1) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        153: {
+            name: "Can you dig it?",
+            done() { return player.i3.abandonedshovelkills.gte(69) },
+            tooltip: "Not helping you with this one!", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.5) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        154: {
+            name: "Broke and Cold",
+            done() { return player.i3.currentzone.eq(2) && player.i3.tokens.lt(5) },
+            tooltip: "Not helping you with this one!", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.5) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        155: {
+            name: "Miner I",
+            done() { return player.i3.mininglevel.gte("100") },
+            tooltip: "Reach mining level 100", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.5) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+        156: {
+            name: "Miner II",
+            done() { return player.i3.mininglevel.gte("10000") },
+            tooltip: "Reach mining level 10000", // Shows when achievement is not completed
+            onComplete() { player.h.achievementpower = player.h.achievementpower.add(0.25) },
+            unlocked() { return hasUpgrade("h", 48) },
+        },
+    },
+    milestones: {
+    11: {
+        requirementDescription: "18 Potential",
+        effectDescription: "Unlocks something new (In the incremental^2 layer!)",
+        done() { return player.h.points.gte(18) },
+        unlocked() { return player.h.points.gte(15) },
+        },
+    12: {
+            requirementDescription: "24 Potential",
+            effectDescription: "2% of armor exp gain goes into all the other armor pieces as well",
+            done() { return player.h.points.gte(24) },
+            unlocked() { return player.h.points.gte(15) },
+        },
     },
     clickables: {
+        11: {
+            title() { return "Tell people about your games" },
+            unlocked() { return true },
+            canClick() { return true },
+            onClick() {
+                player.h.marketingpower = player.h.marketingpower.add(0.1)
+            },
+        },
+        12: {
+            title() { return "Keep the default background" },
+            unlocked() { return hasUpgrade("h", 48) },
+            canClick() { return true },
+            onClick() {
+                player.h.bgdefault = new ExpantaNum(0)
+            },
+        },
+        13: {
+            title() { return "Keep the custom background" },
+            unlocked() { return hasUpgrade("h", 48) },
+            canClick() { return true },
+            onClick() {
+                player.h.bgdefault = new ExpantaNum(1)
+            },
+        },
     },
     buyables:
     {
@@ -8262,8 +10453,10 @@ addLayer("h", {
         title: "Willpower Generator",
         unlocked() { return hasUpgrade("h", 13) },
         canAfford() { return player.h.willpower.gte(this.cost()) },
-        buy() {
-            player.h.willpower = player.h.willpower.sub(this.cost())
+            buy() {
+                if (!hasUpgrade("h", 49)) {
+                    player.h.willpower = player.h.willpower.sub(this.cost())
+                }
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
          display() 
@@ -8278,12 +10471,387 @@ addLayer("h", {
             return player[this.layer].buyables[this.id].add(1)
         },
         },
+        12: {
+        cost(x) { return new ExpantaNum("5").pow(x.div(10)).mul("2") },
+        title: "Fragment Amplifier",
+        unlocked() { return hasUpgrade("h", 23) },
+        canAfford() { return player.h.researchfragments.gte(this.cost()) },
+        buy() {
+        if (!hasUpgrade("h", 32))
+        {
+            player.h.researchfragments = player.h.researchfragments.sub(this.cost())
+		}
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Research Fragments\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Research Fragments";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).pow(0.77)
+        },
+        },
+        13: {
+        cost(x) { return new ExpantaNum("12").pow(x.div(8)).mul("5") },
+        title: "Time Amplifier",
+        unlocked() { return hasUpgrade("h", 23) },
+        canAfford() { return player.h.researchfragments.gte(this.cost()) },
+        buy() {
+        if (!hasUpgrade("h", 32))
+        {
+            player.h.researchfragments = player.h.researchfragments.sub(this.cost())
+		}
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Research Fragments\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to the Time to get Research Fragments";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).pow(0.55)
+        },
+        },
+        14: {
+        cost(x) { return new ExpantaNum("2").pow(x.div(9)).mul("2") },
+        title: "Extra Research Points Willpower Booster",
+        unlocked() { return hasUpgrade("h", 25) },
+        canAfford() { return player.h.researchpoints.gte(this.cost()) },
+        buy() {
+            player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Willpower";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(100).add(1).pow(1.4)
+        },
+        },
+        15: {
+        cost(x) { return new ExpantaNum("10").pow(x.div(6)).mul("10") },
+        title: "Complicated Research 1",
+        unlocked() { return hasUpgrade("h", 44) },
+        canAfford() { return player.h.researchpoints.gte(this.cost()) },
+        buy() {
+            player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Research Points";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).pow(0.8)
+        },
+            style() { 
+        return { ...researchBuyable }
     },
+        },
+                16: {
+        cost(x) { return new ExpantaNum("15").pow(x.div(6)).mul("15") },
+        title: "Complicated Research 2",
+        unlocked() { return player.h.buyables[15].gte(3) },
+        canAfford() { return player.h.researchpoints.gte(this.cost()) },
+        buy() {
+            player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to the time to get Research Fragments";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1)
+        },
+            style() { 
+        return { ...researchBuyable }
+    },
+        },
+    17: {
+        cost(x) { return new ExpantaNum("10").pow(x.div(5.6)).mul("10") },
+        title: "Complicated Research 3",
+        unlocked() { return player.h.buyables[16].gte(3) },
+        canAfford() { return player.h.researchpoints.gte(this.cost()) },
+        buy() {
+            player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Research Fragments";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).pow(0.95)
+        },
+            style() { 
+        return { ...researchBuyable }
+    },
+        },
+    18: {
+            cost(x) { return new ExpantaNum("20").pow(x.div(6.2)).mul("20") },
+            title: "Complicated Research 4",
+            unlocked() { return player.h.buyables[17].gte(3) },
+            canAfford() { return player.h.researchpoints.gte(this.cost()) },
+            buy() {
+                player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Realm Grinder Blessings";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].add(1).pow(8)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+    19: {
+            cost(x) { return new ExpantaNum("100").pow(x.div(7.5)).mul("100") },
+            title: "Complicated Research 5",
+            unlocked() { return player.h.buyables[18].gte(5) },
+            canAfford() { return player.h.researchpoints.gte(this.cost()) },
+            buy() {
+                player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Willpower";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].add(1).pow(3)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+    21: {
+            cost(x) { return new ExpantaNum("5").pow(x.div(16)).mul("5").sub(5) },
+            title() { return player.h.currenttitle2 + " generator"; },
+            unlocked() { return true },
+            canAfford() { return player.h.gamecurrency.gte(this.cost()) },
+            buy() {
+                player.h.gamecurrency = player.h.gamecurrency.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " " + player.h.currenttitle2 + "\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " " + player.h.currenttitle2 + " per second";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id]
+            },
+        },
+    22: {
+            cost(x) { return new ExpantaNum("500").pow(x.div(14)).mul("500") },
+            title() { return player.h.currenttitle1 + " " + player.h.currenttitle2 + " generator"; },
+            unlocked() { return true },
+            canAfford() { return player.h.gamecurrency.gte(this.cost()) },
+            buy() {
+                player.h.gamecurrency = player.h.gamecurrency.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " " + player.h.currenttitle2 + "\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " " + player.h.currenttitle2 + " gain";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].add(1)
+            },
+        },
+    23: {
+            cost(x) { return new ExpantaNum("10000").pow(x.div(12)).mul("10000") },
+            title() { return player.h.gameboostcurrencyadj + " " + player.h.currenttitle2 + " generator"; },
+            unlocked() { return true },
+            canAfford() { return player.h.gamecurrency.gte(this.cost()) },
+            buy() {
+                player.h.gamecurrency = player.h.gamecurrency.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " " + player.h.currenttitle2 + "\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " " + player.h.gameboostcurrencyadj + " " + player.h.currenttitle2 + " per second";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id]
+            },
+        },
+        24: {
+            cost(x) { return new ExpantaNum("2").pow(x.div(12)).mul("2") },
+            title: "Advertising",
+            unlocked() { return true },
+            canAfford() { return player.h.marketingpower.gte(this.cost()) },
+            buy() {
+                player.h.marketingpower = player.h.marketingpower.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Marketing Power\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " Marketing Power per Second";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.2)
+            },
+        },
+        25: {
+            cost(x) { return new ExpantaNum("2000").pow(x.div(4)).mul("2000") },
+            title: "Damage Research",
+            unlocked() { return hasUpgrade("h", 48) },
+            canAfford() { return player.h.researchpoints.gte(this.cost()) },
+            buy() {
+                player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to idle attack";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.01).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        26: {
+            cost(x) { return new ExpantaNum("4000").pow(x.div(3.5)).mul("4000") },
+            title: "Defense Research",
+            unlocked() { return hasUpgrade("h", 48) },
+            canAfford() { return player.h.researchpoints.gte(this.cost()) },
+            buy() {
+                player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to defense";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.04).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        27: {
+            cost(x) { return new ExpantaNum("8000").pow(x.div(3)).mul("8000") },
+            title: "Regen Research",
+            unlocked() { return hasUpgrade("h", 48) },
+            canAfford() { return player.h.researchpoints.gte(this.cost()) },
+            buy() {
+                player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to hp regen";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.02).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        28: {
+            cost(x) { return new ExpantaNum("15000").pow(x.div(2.6)).mul("15000") },
+            title: "Damage Reduction Research",
+            unlocked() { return hasUpgrade("h", 48) },
+            canAfford() { return player.h.researchpoints.gte(this.cost()) },
+            buy() {
+                player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to damage reduction";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.02).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        29: {
+            cost(x) { return new ExpantaNum("25000").pow(x.div(2.4)).mul("25000") },
+            title: "Respawn Research",
+            unlocked() { return hasUpgrade("h", 48) },
+            canAfford() { return player.h.researchpoints.gte(this.cost()) },
+            buy() {
+                player.h.researchpoints = player.h.researchpoints.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Research Points\n\
+           Level: " + player[this.layer].buyables[this.id] + " \n\
+           /" + format(data.effect) + " to respawn time";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.01).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+    },
+
     update(delta) {
     let beatcookie = new ExpantaNum(0)
     let beatanti = new ExpantaNum(0)
     let beatclicker = new ExpantaNum(0)
-
+    let beatrealm = new ExpantaNum(0)
+    let beatcapitalist = new ExpantaNum(0)
+    let beatcandy = new ExpantaNum(0)
+        let achievementpowerresearch = new ExpantaNum(0)
     if (hasUpgrade("l", 21))
     {
         beatcookie = new ExpantaNum(2)
@@ -8296,15 +10864,38 @@ addLayer("h", {
     {
         beatclicker = new ExpantaNum(1)
 	}
+    if (hasUpgrade("rg", 35))
+    {
+        beatrealm = new ExpantaNum(3)
+	}
+    if (hasUpgrade("h", 26))
+    {
+        achievementpowerresearch = upgradeEffect("h", 26)
+	}
+    if (hasUpgrade("ac", 29))
+    {
+        beatcapitalist = new ExpantaNum(2)
+	}
+    if (hasUpgrade("cb", 26))
+    {
+        beatcandy = new ExpantaNum(6)
+    }
     player.h.willpowereffect = player.h.willpower.plus(1).log10().pow(0.2)
-    player.h.points = beatcookie.add(beatanti.add(beatclicker.add(player.h.willpowereffect)))
+    player.h.points = beatcookie.add(beatanti.add(beatclicker.add(player.h.willpowereffect).add(player.i2.warriorleveleffect.add(beatrealm.add(achievementpowerresearch.add(beatcapitalist.add(player.h.gameseffect.add(beatcandy.add(player.i3.adventureleveleffect)))))))))
     if (hasUpgrade("h", 11)) player.h.willpowerpersecond = new ExpantaNum(1)
     player.h.willpowerpersecond = player.h.willpowerpersecond.mul(buyableEffect('h', 11))
     if (hasUpgrade("h", 14)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(upgradeEffect("h", 14))
     if (hasUpgrade("h", 15)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(player.h.timeeffect)
     if (hasUpgrade("h", 16)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(upgradeEffect("h", 16))
     if (hasUpgrade("i2", 21)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(player.i2.incrementalstoneseffect4)
-    player.h.willpower = player.h.willpower.add(player.h.willpowerpersecond.mul(delta))
+    if (hasUpgrade("h", 38)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(5)
+    if (hasUpgrade("h", 45)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(player.h.basicresearchtimeeffect)
+    if (hasUpgrade("i2", 32)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(10)
+    if (hasUpgrade("h", 51)) player.h.willpowerpersecond = player.h.willpowerpersecond.mul(10)
+        player.h.willpowerpersecond = player.h.willpowerpersecond.mul(player.h.playereffect)
+        player.h.willpowerpersecond = player.h.willpowerpersecond.mul(buyableEffect('h', 14))
+    player.h.willpowerpersecond = player.h.willpowerpersecond.mul(buyableEffect('h', 19))
+        player.h.willpower = player.h.willpower.add(player.h.willpowerpersecond.mul(delta))
 
     let clockspeed = new ExpantaNum(60)
     let hours = player.h.time.div(3600).floor()
@@ -8370,11 +10961,179 @@ addLayer("h", {
 
             let chinesetimeincome = new ExpantaNum(0)
             if (hasUpgrade("sc", 25)) chinesetimeincome = chinesetimeincome.add(1)
+            if (hasUpgrade("h", 34)) chinesetimeincome = chinesetimeincome.mul(100)
+            if (hasUpgrade("h", 39)) chinesetimeincome = chinesetimeincome.mul(10000)
+            if (hasUpgrade("i2", 27)) chinesetimeincome = chinesetimeincome.mul(upgradeEffect("i2", 27))
             player.h.chinesetime = player.h.chinesetime.add(chinesetimeincome.mul(delta))
 
             player.h.chinesetimeeffect = player.h.chinesetime.pow(100).add(1)
-	},
-    milestones: {
+
+    let realmtimeincome = new ExpantaNum(0)
+    if (hasUpgrade("rg", 35)) realmtimeincome = realmtimeincome.add(1)
+    realmtimeincome = realmtimeincome.mul(player.ac.pointeffect)
+    realmtimeincome = realmtimeincome.pow(player.h.capitalisttimeeffect)
+    player.h.realmtime = player.h.realmtime.add(realmtimeincome.mul(delta))
+            player.h.realmtimeeffect = EN(player[this.layer].realmtime)
+            player.h.realmtimeeffect = EN.pow(4, EN.pow(4, EN.pow(player.h.realmtimeeffect, EN.pow(player.h.realmtimeeffect, EN.pow(player.h.realmtimeeffect, player.h.realmtimeeffect))))).sub(252)
+
+    let capitalistimeincome = new ExpantaNum(0)
+    if (hasUpgrade("ac", 29)) capitalistimeincome = capitalistimeincome.add(1)
+    player.h.capitalisttime = player.h.capitalisttime.add(capitalistimeincome.mul(delta))
+        player.h.capitalisttimeeffect = player.h.capitalisttime.tetr(player.h.capitalisttime.plus(10).log10().pow(player.h.capitalisttime.plus(10).log10().pow(0.6))).pow(5).add(1)
+
+    let candyboxtimeincome = new ExpantaNum(0)
+    if (hasUpgrade("cb", 26)) candyboxtimeincome = candyboxtimeincome.add(1)
+    player.h.candyboxtime = player.h.candyboxtime.add(candyboxtimeincome.mul(delta))
+    player.h.candyboxtimeeffect = player.h.candyboxtime.tetr(player.h.candyboxtime.add(1))
+
+    let basicresearchtimeincome = new ExpantaNum(0)
+    if (hasUpgrade("h", 45)) basicresearchtimeincome = basicresearchtimeincome.add(1)
+        if (hasUpgrade("h", 46)) basicresearchtimeincome = basicresearchtimeincome.mul(player.h.advancedresearchtimeeffect)
+        player.h.basicresearchtime = player.h.basicresearchtime.add(basicresearchtimeincome.mul(delta))
+    player.h.basicresearchtimeeffect = player.h.basicresearchtime.pow(1.01).add(1)
+
+    let advancedresearchtimeincome = new ExpantaNum(0)
+        if (hasUpgrade("h", 46)) advancedresearchtimeincome = advancedresearchtimeincome.add(1)
+        if (hasUpgrade("h", 53)) advancedresearchtimeincome = advancedresearchtimeincome.mul(player.h.complicatedresearchtimeeffect)
+    player.h.advancedresearchtime = player.h.advancedresearchtime.add(advancedresearchtimeincome.mul(delta))
+        player.h.advancedresearchtimeeffect = player.h.advancedresearchtime.pow(0.98).add(1)
+
+    let complicatedresearchtimeincome = new ExpantaNum(0)
+    if (hasUpgrade("h", 53)) complicatedresearchtimeincome = complicatedresearchtimeincome.add(1)
+    player.h.complicatedresearchtime = player.h.complicatedresearchtime.add(complicatedresearchtimeincome.mul(delta))
+    player.h.complicatedresearchtimeeffect = player.h.complicatedresearchtime.pow(0.95).add(1)
+
+    player.h.researchpointsgain = new ExpantaNum(1)
+    if (hasUpgrade("h", 37)) player.h.researchpointsgain = player.h.researchpointsgain.mul(upgradeEffect("h", 37))
+    player.h.researchpointsgain = player.h.researchpointsgain.mul(buyableEffect("h", 15))
+    player.h.researchpointsreq = player.h.researchpoints.add(1).mul(200)
+    if (player.h.researchfragments.gte(player.h.researchpointsreq))
+    {
+        player.h.researchfragments = new ExpantaNum(0)
+        player.h.researchpoints = player.h.researchpoints.add(player.h.researchpointsgain)
+        player.h.buyables[12] = new ExpantaNum(0)
+        player.h.buyables[12].cost = new ExpantaNum(2)
+        player.h.buyables[13] = new ExpantaNum(0)
+        player.h.buyables[13].cost = new ExpantaNum(5)
+	}
+    let researchfragmenttimegain = new ExpantaNum(1)
+    researchfragmenttimegain = researchfragmenttimegain.mul(buyableEffect("h", 13))
+    if (hasUpgrade("h", 31)) researchfragmenttimegain = researchfragmenttimegain.mul(upgradeEffect("h", 31))
+    researchfragmenttimegain = researchfragmenttimegain.mul(buyableEffect("h", 16))
+    if (hasUpgrade("h", 23))
+    {
+        player.h.researchfragmenttime = player.h.researchfragmenttime.add(researchfragmenttimegain.mul(delta))
+	}
+    player.h.researchfragmentsgain = new ExpantaNum(1)
+    player.h.researchfragmentsgain = player.h.researchfragmentsgain.mul(buyableEffect("h", 12))
+    if (hasUpgrade("h", 27)) player.h.researchfragmentsgain = player.h.researchfragmentsgain.mul(upgradeEffect("h", 27))
+    if (hasUpgrade("h", 28)) player.h.researchfragmentsgain = player.h.researchfragmentsgain.mul(upgradeEffect("h", 28))
+    if (hasUpgrade("h", 29)) player.h.researchfragmentsgain = player.h.researchfragmentsgain.mul(upgradeEffect("h", 29))
+    player.h.researchfragmentsreq = new ExpantaNum(10)
+    if (hasUpgrade("h", 31)) player.h.researchfragmentsreq = player.h.researchfragmentsreq.mul(upgradeEffect("h", 31))
+    player.h.researchfragmentsgain = player.h.researchfragmentsgain.mul(buyableEffect("h", 17))
+    if (player.h.researchfragmenttime.gte(player.h.researchfragmentsreq))
+    {
+        player.h.researchfragmenttime = new ExpantaNum(0)
+        player.h.researchfragments = player.h.researchfragments.add(player.h.researchfragmentsgain)
+	}
+    player.username = player.h.usernameinput.toLowerCase()
+    player.favoritefood = player.h.foodinput.toLowerCase()
+    player.favoritecolor = player.h.colorinput.toLowerCase()
+    player.favoriteactivity = player.h.activityinput.toLowerCase()
+
+        player.h.gamecurrencypersecond = buyableEffect("h", 21)
+        player.h.gamecurrencypersecond = player.h.gamecurrencypersecond.mul(buyableEffect("h", 22))
+        player.h.gamecurrencypersecond = player.h.gamecurrencypersecond.mul(player.h.gameboostcurrencyeffect)
+        player.h.gamecurrency = player.h.gamecurrency.add(player.h.gamecurrencypersecond.mul(delta))
+
+        let gameboostcurrencygain = new ExpantaNum(0)
+        gameboostcurrencygain = buyableEffect("h", 23)
+        player.h.gameboostcurrency = player.h.gameboostcurrency.add(gameboostcurrencygain.mul(delta))
+
+        if (player.h.gamecurrency.gte(player.h.gamesrequirement))
+        {
+            player.h.games = player.h.games.add(1)
+            player.h.gamesrequirement = player.h.gamesrequirement.mul(1.2)
+            player.h.gamecurrency = new ExpantaNum(0)
+            player.h.gameboostcurrency = new ExpantaNum(0)
+            player.h.currenttitle1 = generatetitle1();
+            player.h.currenttitle2 = generatetitle2();
+            player.h.currenttitle3 = generatetitle3();
+            player.h.gameboostcurrencyadj = generatetitle1();
+
+            player.h.buyables[21] = new ExpantaNum(0)
+            player.h.buyables[21].cost = new ExpantaNum(5)
+            player.h.buyables[22] = new ExpantaNum(0)
+            player.h.buyables[22].cost = new ExpantaNum(500)
+            player.h.buyables[23] = new ExpantaNum(0)
+            player.h.buyables[23].cost = new ExpantaNum(10000)
+        }
+        player.h.gameseffect = player.h.games.mul(0.02)
+        player.h.gameboostcurrencyeffect = player.h.gameboostcurrency.pow(0.4).add(1)
+
+        player.h.playerspersecond = player.h.games.mul(0.01).mul(player.h.marketingpower)
+        player.h.players = player.h.players.add(player.h.playerspersecond.mul(delta))
+        player.h.playereffect = player.h.players.add(1).pow(1.2).div(player.h.marketingdecay.add(1))
+        player.h.marketingdecay = player.h.marketingpower.mul(0.1)
+
+        let marketingpowergain = new ExpantaNum(0)
+        marketingpowergain = buyableEffect("h", 24)
+        player.h.marketingpower = player.h.marketingpower.add(marketingpowergain.mul(delta))
+
+        document.body.style.setProperty('--background', hasUpgrade("h", 48) && player.h.bgdefault.lte(0) ? "linear-gradient(90deg, #5d0067, #ff0000)" : "#0f0f0f");
+        document.body.style.setProperty('--background', hasUpgrade("h", 48) && player.h.bgdefault.gte(1) ? "linear-gradient(90deg, #5d0067, #ff0000)" : "#0f0f0f");
+
+        if (player.h.marketingpower.lte(0)) {
+            player.h.marketingpower = new ExpantaNum(0)
+        }
+        if (player.h.players.lte(0)) {
+            player.h.players = new ExpantaNum(0)
+        }
+    },
+    bars: {
+            researchfragmentbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.h.researchfragmenttime.div(player.h.researchfragmentsreq)
+            },
+            fillStyle: {
+                "background-color": "teal",
+            },
+            display() {
+                return "<h5>" + format(player.h.researchfragmenttime) + "/" +  format(player.h.researchfragmentsreq) + " Seconds to gain " + format(player.h.researchfragmentsgain) + " Research Fragments</h5>";
+            },
+        },
+            researchpointbar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.h.researchfragments.div(player.h.researchpointsreq)
+            },
+            fillStyle: {
+                "background-color": "teal",
+            },
+            display() {
+                return "<h5>" + format(player.h.researchfragments) + "/" +  format(player.h.researchpointsreq) + " Research Fragments to gain " + format(player.h.researchpointsgain) + " Research Points</h5>";
+            },
+        },
+        gamebar: {
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.h.gamecurrency.log10().div(player.h.gamesrequirement.log10())
+            },
+            fillStyle: {
+                "background-color": "lightgreen",
+            },
+            display() {
+                return "<h5>" + format(player.h.gamecurrency) + "/" + format(player.h.gamesrequirement) + " " + player.h.currenttitle2 + "</h5>";
+            },
+        },
     },
 
         microtabs: 
@@ -8383,19 +11142,14 @@ addLayer("h", {
         {
           "Main": {
           content: [
-          ["blank", "10px"],
-          ["display-text", () => hasUpgrade("l", 22) ? "Cookie Clicker: 2 Potential" : ""],
-          ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions: 3 Potential" : ""],
-          ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes: 1 Potential" : ""],
-          ["blank", "10px"],
-          ["display-text", () => hasUpgrade("h", 11) ? "Willpower: " + format(player.h.willpowereffect) + " Potential" : ""],
+          ["microtabs", "main"],
           ]
           },
           "Willpower": {
           content: [
           ["display-text", () => hasUpgrade("h", 11) ? "You have " + format(player.h.willpower) + " Willpower" : ""],
           ["blank", "10px"],
-          ["row", [["upgrade", 11], ["upgrade", 14], ["upgrade", 16]]],
+          ["row", [["upgrade", 11], ["upgrade", 14], ["upgrade", 16], ["upgrade", 22]]],
           ["blank", "10px"],
           ["row", [["buyable", 11]]],
           ["blank", "10px"],
@@ -8408,39 +11162,80 @@ addLayer("h", {
           ["display-text", () => "You have " + format(player.h.achievementpower) + " Achievement Power"],
           ["blank", "10px"],
           ["display-text", () => "Willpower"],
+          ["blank", "10px"],
           ["row", [["achievement", 11], ["achievement", 12], ["achievement", 13], ["achievement", 14], ["achievement", 15], ["achievement", 16]]],
           ["blank", "10px"],
           ["display-text", () => "Potential"],
+          ["blank", "10px"],
           ["row", [["achievement", 21], ["achievement", 22], ["achievement", 23], ["achievement", 24], ["achievement", 25], ["achievement", 26], ["achievement", 27], ["achievement", 28]]],
           ["blank", "10px"],
           ["display-text", () => "Incremental Stones"],
+          ["blank", "10px"],
           ["row", [["achievement", 31], ["achievement", 32], ["achievement", 33], ["achievement", 34], ["achievement", 35], ["achievement", 36]]],
           ["blank", "10px"],
           ["display-text", () => "Points"],
+          ["blank", "10px"],
           ["row", [["achievement", 41], ["achievement", 42], ["achievement", 43], ["achievement", 44], ["achievement", 45], ["achievement", 46]]],
           ["row", [["achievement", 47], ["achievement", 48], ["achievement", 49], ["achievement", 51], ["achievement", 52], ["achievement", 53]]],
+          ["blank", "10px"],
           ["display-text", () => hasUpgrade("h", 18) ? "Miscellaneous Achievements" : ""],
           ["blank", "10px"],
-          ["row", [["achievement", 54], ["achievement", 55], ["achievement", 56], ["achievement", 57], ["achievement", 58], ["achievement", 59], ["achievement", 61], ["achievement", 62]]],
+          ["row", [["achievement", 54], ["achievement", 55], ["achievement", 56], ["achievement", 57], ["achievement", 58]]],
+          ["row", [["achievement", 59], ["achievement", 61], ["achievement", 62], ["achievement", 123]]],
+          ["blank", "10px"],
           ["display-text", () => "Games"],
           ["blank", "10px"],
           ["row", [["achievement", 63], ["achievement", 64], ["achievement", 65], ["achievement", 66], ["achievement", 67], ["achievement", 68]]],
+          ["row", [["achievement", 101], ["achievement", 102], ["achievement", 103], ["achievement", 104]]],
+          ["row", [["achievement", 105], ["achievement", 106], ["achievement", 107], ["achievement", 108]]],
+          ["blank", "10px"],
+          ["display-text", () => "Training"],
+          ["blank", "10px"],
+          ["row", [["achievement", 71], ["achievement", 72], ["achievement", 73], ["achievement", 74], ["achievement", 75], ["achievement", 76], ["achievement", 77]]],
+          ["row", [["achievement", 111], ["achievement", 112], ["achievement", 113], ["achievement", 114], ["achievement", 121], ["achievement", 122]]],
+          ["row", [["achievement", 124], ["achievement", 125], ["achievement", 126], ["achievement", 127]]],
+              ["blank", "10px"],
+          ["display-text", () => "Research"],
+          ["blank", "10px"],
+          ["row", [["achievement", 81], ["achievement", 82], ["achievement", 83], ["achievement", 84], ["achievement", 85], ["achievement", 86]]],
+          ["row", [["achievement", 87], ["achievement", 88], ["achievement", 89], ["achievement", 91], ["achievement", 92], ["achievement", 93]]],
+          ["blank", "10px"],
+          ["display-text", () => "Games"],
+          ["blank", "10px"],
+          ["row", [["achievement", 128], ["achievement", 129], ["achievement", 131], ["achievement", 132], ["achievement", 133], ["achievement", 134]]],
+          ["blank", "10px"],
+          ["display-text", () => "Adventure"],
+          ["blank", "10px"],
+          ["row", [["achievement", 141], ["achievement", 142], ["achievement", 143], ["achievement", 144]]],
+          ["row", [["achievement", 145], ["achievement", 146], ["achievement", 147], ["achievement", 148]]],
+          ["row", [["achievement", 155], ["achievement", 156]]],
+              ["blank", "10px"],
+          ["display-text", () => player.points.gte([3, 13]) ? "Secret Achievements" : ""],
+          ["blank", "10px"],
+              ["row", [["achievement", 115], ["achievement", 116], ["achievement", 117], ["achievement", 151]]],
+              ["row", [["achievement", 152], ["achievement", 153], ["achievement", 154]]],
           ]
           },
           "The Times (Post Clicker Heroes)": {
                 unlocked() { return hasUpgrade("l", 22) },
                 content: 
                 [
-                    ["blank", "15px"],
-                    ["display-text", () => "Cookie Clicker Time: " + formatTime(player.l.cookietime) + " -> x" + format(player.l.cookietimeeffect) + " boost to Points"],
-                    ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions Time: " + formatTime(player.l.antimattertime) + " -> x" + format(player.l.antimattertimeeffect) + " boost to Cookie Clicker Time" : ""],
-                    ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes Time: " + formatTime(player.l.clickerheroestime) + " -> x" + format(player.l.clickerheroestimeeffect) + " boost to Supermarket Time" : ""],
-                    ["blank", "25px"],
-                    ["display-text", () => hasUpgrade("m", 19) ? "The Minigames" : ""],
-                    ["blank", "15px"],
-                    ["display-text", () => hasUpgrade("m", 19) ? "Military Time: " + formatTime(player.l.militarytime) + " -> +^" + format(player.l.militarytimeeffect) + " to Clicker Heroes Gold Effect" : ""],
-                    ["display-text", () => hasUpgrade("l", 122) ? "Supermarket Time: " + formatTime(player.l.supermarkettime) + " -> x" + format(player.l.supermarkettimeeffect) + " boost to Military Time" : ""],
-                    ["display-text", () => hasUpgrade("sc", 24) ? "丑国人时间: " + formatTime(player.h.chinesetime) + " -> x" + format(player.h.chinesetimeeffect) + " boost to Incremental Blessings" : ""],
+                        ["microtabs", "times"],
+                ]
+            },
+            "Advanced Research": {
+                unlocked() { return hasUpgrade("h", 23) },
+                content: 
+                [
+                ["microtabs", "research"],
+                ]
+            },
+            "Games": {
+                unlocked() { return hasUpgrade("h", 47) },
+                content:
+                [
+                ["display-text", () => "You have " + format(player.h.points, 4) + " Potential"],
+                ["microtabs", "games"],
                 ]
             },
         },
@@ -8449,7 +11244,7 @@ addLayer("h", {
           "Unlockables": {
           content: [
           ["row", [["upgrade", 12], ["upgrade", 13], ["upgrade", 15], ["upgrade", 18], ["upgrade", 19]]],
-          ["row", [["upgrade", 21]]],
+          ["row", [["upgrade", 21], ["upgrade", 23], ["upgrade", 43], ["upgrade", 47]]],
           ]
           },
           "The Clock": {
@@ -8469,6 +11264,231 @@ addLayer("h", {
           ["display-text", () => hasUpgrade("h", 18) ? "You have " + format(player.h.sunshine) + " Sunshine and a x" + format(player.h.sunshineeffect) + " boost to Ritual Cooldowns": ""],
           ["blank", "10px"],
           ["display-text", () => hasUpgrade("h", 18) ? "You have played this game for " + formatTime(player.timePlayed) + ". " + player.h.timeplayedstring: ""],
+          ]
+          },
+        },
+        research: 
+        {
+          "Fragments": {
+          content: [
+                     ["display-text", () => "You have " + format(player.h.researchpoints) + " Research Points"],
+                     ["display-text", () => "*Fragment Buyables reset when you get Research Points"],
+                     ["blank", "10px"],
+                     ["bar", "researchpointbar"],
+                     ["blank", "10px"],
+                     ["bar", "researchfragmentbar"],
+                     ["blank", "20px"],
+                     ["row", [["buyable", 12], ["buyable", 13]]],
+                     ["row", [["buyable", 14]]],
+          ]
+          },
+          "Upgrades": {
+          unlocked() { return hasUpgrade("h", 15) },
+          content: [
+                     ["display-text", () => "You have " + format(player.h.researchpoints) + " Research Points"],
+                     ["row", [["microtabs", "researchupgrades"]]],
+          ]
+          },
+          },
+          times:
+            {
+                "Part I: Mainstream Games": {
+                    content: [
+                        ["blank", "15px"],
+                        ["display-text", () => "Cookie Clicker Time: " + formatTime(player.l.cookietime) + " -> x" + format(player.l.cookietimeeffect) + " boost to Points"],
+                        ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions Time: " + formatTime(player.l.antimattertime) + " -> x" + format(player.l.antimattertimeeffect) + " boost to Cookie Clicker Time" : ""],
+                        ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes Time: " + formatTime(player.l.clickerheroestime) + " -> x" + format(player.l.clickerheroestimeeffect) + " boost to Supermarket Time" : ""],
+                        ["display-text", () => hasUpgrade("rg", 35) ? "Realm Time: " + formatTime(player.h.realmtime) + " -> ^" + format(player.h.realmtimeeffect) + " boost to Realm Power Effect" : ""],
+                        ["display-text", () => hasUpgrade("ac", 29) ? "Capitalist Time: " + formatTime(player.h.capitalisttime) + " -> ^" + format(player.h.capitalisttimeeffect) + " boost to Realm Time Gain" : ""],
+                        ["blank", "25px"],
+                        ["display-text", () => hasUpgrade("m", 19) ? "The Minigames" : ""],
+                        ["blank", "15px"],
+                        ["display-text", () => hasUpgrade("m", 19) ? "Military Time: " + formatTime(player.l.militarytime) + " -> +^" + format(player.l.militarytimeeffect) + " to Clicker Heroes Gold Effect" : ""],
+                        ["display-text", () => hasUpgrade("l", 122) ? "Supermarket Time: " + formatTime(player.l.supermarkettime) + " -> x" + format(player.l.supermarkettimeeffect) + " boost to Military Time" : ""],
+                        ["display-text", () => hasUpgrade("sc", 24) ? "Chinese Time: " + formatTime(player.h.chinesetime) + " -> x" + format(player.h.chinesetimeeffect) + " boost to Incremental Blessings" : ""],
+                    ]
+              },
+              "Part II: The Developers": {
+                  unlocked() { return hasUpgrade("cb", 26) },
+                  content: [
+                      ["blank", "15px"],
+                      ["display-text", () => "Candy Box Time: " + formatTime(player.h.candyboxtime) + " -> x" + format(player.h.candyboxtimeeffect) + " boost to Points"],
+                  ]
+              },
+                "Research Trees": {
+                    unlocked() { return hasUpgrade("h", 45) },
+                    content: [
+                        ["blank", "15px"],
+                        ["display-text", () => hasUpgrade("h", 45) ? "Basic Research Time: " + formatTime(player.h.basicresearchtime) + " -> x" + format(player.h.basicresearchtimeeffect) + " boost to Willpower" : ""],
+                        ["display-text", () => hasUpgrade("h", 46) ? "Advanced Research Time: " + formatTime(player.h.advancedresearchtime) + " -> x" + format(player.h.advancedresearchtimeeffect) + " boost to Basic Research Time" : ""],
+                        ["display-text", () => hasUpgrade("h", 53) ? "Complicated Research Time: " + formatTime(player.h.complicatedresearchtime) + " -> x" + format(player.h.complicatedresearchtimeeffect) + " boost to Advanced Research Time" : ""],
+                    ]
+                },
+            },
+            games:
+            {
+                "Development": {
+                    content: [
+                        ["blank", "15px"],
+                        ["display-text", function () { return 'Game Title: ' + player.h.currenttitle1 + "\xa0" + player.h.currenttitle2 + "\xa0" + player.h.currenttitle3 }, { "color": "lightgreen", "font-size": "24px", "font-family": "Courier" }],
+                        ["blank", "15px"],
+                        ["display-text", function () { return 'You have ' + format(player.h.games) + " Games, which is converted to " + format(player.h.gameseffect) + " Potential"}, { "color": "lightgreen", "font-size": "18px", "font-family": "Courier" }],
+                        ["display-text", function () { return 'You have ' + format(player.h.gamecurrency) + "\xa0" + player.h.currenttitle2 }, { "color": "lightgreen", "font-size": "18px", "font-family": "Courier" }],
+                        ["display-text", function () { return 'You are gaining ' + format(player.h.gamecurrencypersecond) + "\xa0" + player.h.currenttitle2 + " per second" }, { "color": "lightgreen", "font-size": "218px4px", "font-family": "Courier" }],
+                        ["bar", "gamebar"],
+                        ["blank", "15px"],
+                        ["row", [["buyable", 21], ["buyable", 22]]],
+                        ["blank", "15px"],
+                        ["row", [["buyable", 23]]],
+                        ["display-text", function () { return 'You have ' + format(player.h.gameboostcurrency) + "\xa0" + player.h.gameboostcurrencyadj + "\xa0" + player.h.currenttitle2 + " and a x" + format(player.h.gameboostcurrencyeffect) + " boost to " + player.h.currenttitle2 + " gain"}, { "color": "lightgreen", "font-size": "18px", "font-family": "Courier" }],
+                    ]
+                },
+                "Market": {
+                    unlocked() { return player.h.games.gte(3) },
+                    content: [
+                        ["blank", "15px"],
+                        ["display-text", function () { return 'You have ' + format(player.h.games) + " Games, which is converted to " + format(player.h.gameseffect) + " Potential" }, { "color": "lightgreen", "font-size": "18px", "font-family": "Courier" }],
+                        ["blank", "15px"],
+                        ["display-text", function () { return 'You have ' + format(player.h.players) + " Players playing your Games, which is converted to a x" + format(player.h.playereffect) + " boost to Willpower" }, { "color": "lightgreen", "font-size": "18px", "font-family": "Courier" }],
+                        ["display-text", function () { return 'You are gaining ' + format(player.h.playerspersecond) + " players per second"}, { "color": "lightgreen", "font-size": "18px", "font-family": "Courier" }],
+                        ["blank", "15px"],
+                        ["display-text", function () { return 'You have ' + format(player.h.marketingpower) + " Marketing Power, but divides players effect by " + format(player.h.marketingdecay) }, { "color": "lightgreen", "font-size": "18px", "font-family": "Courier" }],
+                        ["blank", "15px"],
+                        ["row", [["clickable", 11]]],
+                        ["row", [["buyable", 24]]],
+                        ["row", [["upgrade", 49], ["upgrade", 51], ["upgrade", 52]]],
+                    ]
+                },
+            },
+        researchupgrades: 
+        {
+          "Basic Upgrades": {
+          content: [
+              ["display-text", () => !hasUpgrade("h", 24) ? 'This Section is Locked': "", { "color": "red", "font-size": "48px", "font-family": "Times New Roman" }],
+              ["row", [["upgrade", 24]]],
+              ["blank", "40px"],
+              ["row", [["upgrade", 26]]],
+              ["blank", "100px"],
+              ["row", [["upgrade", 27], ["blank", "100px"], ["upgrade", 28]]],
+              ["blank", "100px"],
+              ["row", [["upgrade", 31], ["blank", "100px"], ["upgrade", 29]]],
+              ["blank", "100px"],
+              ["row", [["upgrade", 32]]],
+              ["blank", "100px"],
+              ["row", [["upgrade", 37], ["blank", "100px"], ["upgrade", 38]]],
+              ["blank", "100px"],
+              ["row", [["upgrade", 45]]],
+          ]
+          },
+          "Advanced Upgrades": {
+          unlocked() { return hasUpgrade("h", 24) },
+          content: [
+              ["display-text", () => !hasUpgrade("h", 25) ? 'This Section is Locked' : "", { "color": "orange", "font-size": "48px", "font-family": "Times New Roman" }],
+              ["row", [["upgrade", 25]]],
+              ["blank", "40px"],
+              ["row", [["upgrade", 33], ["blank", "40px"], ["upgrade", 34], ["blank", "40px"], ["upgrade", 39], ["blank", "40px"], ["upgrade", 41]]],
+              ["blank", "60px"],
+              ["row", [["upgrade", 35]]],
+              ["blank", "60px"],
+              ["row", [["upgrade", 36]]],
+              ["blank", "60px"],
+              ["row", [["upgrade", 42], ["blank", "40px"], ["upgrade", 46]]],
+          ]
+          },
+          "Complicated Upgrades": {
+          unlocked() { return hasUpgrade("h", 43) },
+          content: [
+              ["display-text", () => !hasUpgrade("h", 44) ? 'This Section is Locked' : "", { "color": "yellow", "font-size": "48px", "font-family": "Times New Roman" }],
+              ["row", [["upgrade", 44]]],
+              ["blank", "40px"],
+              ["row", [["buyable", 15], ["buyable", 16], ["buyable", 17], ["buyable", 18], ["buyable", 19]]],
+              ["row", [["buyable", 25], ["buyable", 26], ["buyable", 27], ["buyable", 28], ["buyable", 29]]],
+              ["row", [["upgrade", 53]]],
+          ]
+          },
+        },
+        main: 
+        {
+          "Potential": {
+          content: [
+          ["blank", "10px"],
+          ["display-text", () => "You specifically have " + format(player.h.points, 6) + " Potential"],
+          ["blank", "10px"],
+          ["display-text", () => hasUpgrade("l", 22) ? "Cookie Clicker: 2 Potential" : ""],
+          ["display-text", () => hasUpgrade("ad", 98) ? "Antimatter Dimensions: 3 Potential" : ""],
+          ["display-text", () => hasUpgrade("ch", 39) ? "Clicker Heroes: 1 Potential" : ""],
+          ["display-text", () => hasUpgrade("rg", 35) ? "Realm Grinder: 3 Potential" : ""],
+          ["display-text", () => hasUpgrade("ac", 29) ? "Adventure Capitalist: 2 Potential" : ""],
+          ["display-text", () => hasUpgrade("cb", 26) ? "Candy Box: 6 Potential" : ""],
+                  ["blank", "10px"],
+          ["display-text", () => hasUpgrade("h", 11) ? "Willpower: " + format(player.h.willpowereffect) + " Potential" : ""],
+          ["display-text", () => player.points.gte([3.8, 7]) ? "Warrior Level: " + format(player.i2.warriorleveleffect) + " Potential" : ""],
+          ["display-text", () => hasUpgrade("h", 26) ? "Achievement Power: " + format(upgradeEffect("h", 26)) + " Potential" : ""],
+          ["display-text", () => hasUpgrade("h", 26) ? "Games: " + format(player.h.gameseffect) + " Potential" : ""],
+          ["display-text", () => hasUpgrade("h", 26) ? "Adventure: " + format(player.i3.adventureleveleffect) + " Potential" : ""],
+              ]
+          },
+          "Milestones": {
+          unlocked() { return player.h.points.gte(15) },
+          content: [
+              ["row", [["milestone", 11]]],
+              ["row", [["milestone", 12]]],
+          ]
+          },
+          "Profile": {
+          unlocked() { return hasUpgrade("h", 24) },
+          content: [
+                        ["blank", "20px"],
+                        ["raw-html", () => `<h2>Your name is ` + player.username  +`</h2>`],
+                        ["blank", "20px"],
+                        ["text-input", "usernameinput", { 
+                        color: "var(--color)", 
+                        width: "400px",
+                        "font-family": "Calibri",
+                        "text-align": "left",
+                        "font-size": "32px",
+                        border: "2px solid #ffffff17", 
+                        background: "var(--background)", 
+                        }],
+                        ["blank", "20px"],
+                        ["raw-html", () => `<h2>Your favorite food is ` + player.favoritefood  +`</h2>`],
+                        ["blank", "20px"],
+                        ["text-input", "foodinput", { 
+                        color: "var(--color)", 
+                        width: "400px",
+                        "font-family": "Calibri",
+                        "text-align": "left",
+                        "font-size": "32px",
+                        border: "2px solid #ffffff17", 
+                        background: "var(--background)", 
+                        }],
+                                                ["blank", "20px"],
+                        ["raw-html", () => `<h2>Your favorite color is ` + player.favoritecolor  +`</h2>`],
+                        ["blank", "20px"],
+                        ["text-input", "colorinput", { 
+                        color: "var(--color)", 
+                        width: "400px",
+                        "font-family": "Calibri",
+                        "text-align": "left",
+                        "font-size": "32px",
+                        border: "2px solid #ffffff17", 
+                        background: "var(--background)", 
+                        }],
+                                                ["blank", "20px"],
+                        ["raw-html", () => `<h2>Your favorite activity is ` + player.favoriteactivity  +`</h2>`],
+                        ["blank", "20px"],
+                        ["text-input", "activityinput", { 
+                        color: "var(--color)", 
+                        width: "400px",
+                        "font-family": "Calibri",
+                        "text-align": "left",
+                        "font-size": "32px",
+                        border: "2px solid #ffffff17", 
+                        background: "var(--background)", 
+                        }],
+              ["row", [["upgrade", 48]]],
+          ["display-text", () => hasUpgrade("h", 48) ? "YOU HAVE LET ME FREE. LET HELL RAIN UPON THE WORLD" : ""],
+              ["row", [["clickable", 12], ["clickable", 13]]],
           ]
           },
         },
@@ -8527,6 +11547,8 @@ addLayer("rg", {
         excavationtime: new ExpantaNum(0),
         artifacts: new ExpantaNum(0),
         artifacteffect: new ExpantaNum(1),
+        dragonboost: new ExpantaNum(1),
+        truthalignment: new ExpantaNum(0),
     }},
             nodeStyle: 
             {
@@ -8547,11 +11569,14 @@ addLayer("rg", {
     automate()
     {
             if (hasMilestone('rg', 11)) {
-    buyBuyable(this.layer, 12)
+            if (!hasMilestone('rg', 18))
+            {
+                buyBuyable(this.layer, 12)
     buyBuyable(this.layer, 13)
     buyBuyable(this.layer, 14)
     buyBuyable(this.layer, 16)
     buyBuyable(this.layer, 17)
+            }
     }
     },
     buyables:
@@ -8694,7 +11719,7 @@ addLayer("rg", {
         unlocked() { return hasUpgrade("rg", 18) },
         canAfford() { return player[this.layer].coins.gte(this.cost()) },
         buy() {
-                    if (!('rg', 11)) 
+                    if (!hasMilestone('rg', 11)) 
                     {
             player[this.layer].coins = player[this.layer].coins.sub(this.cost())
                     }
@@ -8722,6 +11747,7 @@ addLayer("rg", {
         player.rg.goodalignment = new ExpantaNum(1)
         player.rg.neutralalignment = new ExpantaNum(0)
         player.rg.mercenaryalignment = new ExpantaNum(0)
+        player.rg.truthalignment = new ExpantaNum(0)
         },
     },
         22: {
@@ -8734,6 +11760,7 @@ addLayer("rg", {
         player.rg.goodalignment = new ExpantaNum(0)
         player.rg.neutralalignment = new ExpantaNum(0)
         player.rg.mercenaryalignment = new ExpantaNum(0)
+        player.rg.truthalignment = new ExpantaNum(0)
         },
     },
         23: {
@@ -8770,6 +11797,7 @@ addLayer("rg", {
         player.rg.goodalignment = new ExpantaNum(0)
         player.rg.neutralalignment = new ExpantaNum(1)
         player.rg.mercenaryalignment = new ExpantaNum(0)
+        player.rg.truthalignment = new ExpantaNum(0)
         },
     },
         25: {
@@ -8777,7 +11805,9 @@ addLayer("rg", {
         unlocked() { return true },
         canAfford() { return player.rg.gems.gte(this.cost()) },
         buy() {
-            player.rg.coins = new ExpantaNum("0")
+                    if (!hasMilestone('rg', 18)) 
+                    {
+                                player.rg.coins = new ExpantaNum("0")
             player.rg.assistants = new ExpantaNum("0")
             player.rg.factioncoins = new ExpantaNum("0")
             player.rg.buyables[12] = new ExpantaNum("0")
@@ -8787,13 +11817,14 @@ addLayer("rg", {
             player.rg.buyables[16] = new ExpantaNum("0")
             player.rg.buyables[17] = new ExpantaNum("0")
             player.rg.gems = new ExpantaNum("0")
+					}
             player.rg.reincarnationreq = player.rg.reincarnationreq.mul(10)
             setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
         },
                  title() 
          { // Everything else displayed in the buyable button after the title
            let data = tmp[this.layer].buyables[this.id]
-           return "Reincarnation " + player[this.layer].buyables[this.id]
+           return "Reincarnation " + format(player[this.layer].buyables[this.id])
          },
          display() 
          { // Everything else displayed in the buyable button after the title
@@ -8811,8 +11842,22 @@ addLayer("rg", {
         player.rg.goodalignment = new ExpantaNum(0)
         player.rg.neutralalignment = new ExpantaNum(0)
         player.rg.mercenaryalignment = new ExpantaNum(1)
+        player.rg.truthalignment = new ExpantaNum(0)
         },
     },
+            27: {
+        cost(x) { return },
+        title: "Be in the Truth Alignment",
+        unlocked() { return (hasMilestone('rg', 18)) },
+        canAfford() { return true },
+        buy() {
+        player.rg.evilalignment = new ExpantaNum(0)
+        player.rg.goodalignment = new ExpantaNum(0)
+        player.rg.neutralalignment = new ExpantaNum(0)
+        player.rg.mercenaryalignment = new ExpantaNum(0)
+        player.rg.truthalignment = new ExpantaNum(1)
+        },
+        },
     },    
     upgrades: 
     {
@@ -9013,6 +12058,121 @@ addLayer("rg", {
                 },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
         },
+        27:
+        { 
+            title: "Titan Heritage",
+            description: "Boosts Reincarnation Gain based on Assistants",
+            unlocked() { return hasMilestone("rg", 18) },
+            cost: new ExpantaNum("e1e10"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].assistants.pow(0.03)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        28:
+        { 
+            title: "Druid Heritage",
+            description: "Boosts Reincarnation Gain based on Faction Coins",
+            unlocked() { return hasMilestone("rg", 18) },
+            cost: new ExpantaNum("e1e10"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].factioncoins.pow(0.034)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        29:
+        { 
+            title: "Faceless Heritage",
+            description: "Boosts Reincarnation Gain based on Coins",
+            unlocked() { return hasMilestone("rg", 18) },
+            cost: new ExpantaNum("e1e10"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].coins.pow(0.01)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        31:
+        { 
+            title: "Dwarf Heritage",
+            description: "Boosts Reincarnation Gain based on Gems",
+            unlocked() { return hasUpgrade("rg", 29) },
+            cost: new ExpantaNum("e1e15"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].gems.pow(0.1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        32:
+        { 
+            title: "Drow Heritage",
+            description: "Boosts Reincarnation Gain based on Reincarnations",
+            unlocked() { return hasUpgrade("rg", 29) },
+            cost: new ExpantaNum("e1e15"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].buyables[25].pow(1)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        33:
+        { 
+            title: "Dragon Heritage",
+            description: "Boosts Reincarnations based on Coins",
+            unlocked() { return hasUpgrade("rg", 32) },
+            cost: new ExpantaNum("e1e308"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].buyables[25].pow("1e2222")
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        34:
+        { 
+            title: "Mercenary Heritage",
+            description: "Boosts Reincarnations based on Realm Power (Also gains Faction Coins instantly)",
+            unlocked() { return hasUpgrade("rg", 33) },
+            cost: new ExpantaNum("e1e7000000"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Faction Coins",
+            currencyInternalName: "factioncoins",
+                effect() 
+                {
+                     return player[this.layer].points.pow("1e22222222")
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        35:
+        { 
+            title: "Become the High Lord of the whole Realm",
+            description: "Finishes the Layer (cool)",
+            unlocked() { return hasUpgrade("rg", 33) },
+            cost: new ExpantaNum("e1ee10"),
+            currencyLocation() { return player.rg },
+            currencyDisplayName: "Coins",
+            currencyInternalName: "coins",
+        },
     },
     achievements: {
 
@@ -9133,6 +12293,7 @@ addLayer("rg", {
               player.rg.angelboost = new ExpantaNum(25)
             if (hasUpgrade("rg", 21)) player.rg.angelboost = player.rg.angelboost.mul(upgradeEffect("rg", 21))
 			}
+            player.rg.dragonboost = new ExpantaNum(1)
 	   }
        if (player.rg.evilalignment > 0)
        {
@@ -9158,6 +12319,7 @@ addLayer("rg", {
             player.rg.goblinboost = new ExpantaNum(100)
             player.rg.undeadboost = player.rg.coins.pow(0.02).add(1)
             player.rg.demonboost = new ExpantaNum(10)
+            player.rg.dragonboost = new ExpantaNum(1)
 			}
 	   }
        if (player.rg.neutralalignment > 0)
@@ -9175,6 +12337,13 @@ addLayer("rg", {
             player.rg.dwarfboost = new ExpantaNum(1)
             player.rg.drowboost = new ExpantaNum(1)
             player.rg.facelessboost = player.rg.factioncoins.pow(0.8).mul(2).add(1)
+            if (hasMilestone("rg", 15))
+            {
+            player.rg.titanboost = new ExpantaNum(10000)
+            player.rg.druidboost = new ExpantaNum(30)
+            player.rg.facelessboost = player.rg.factioncoins.pow(1.6).mul(2).add(1)
+            player.rg.dragonboost = player.rg.gems.pow(0.2).add(1)
+			}
 	   }
        if (player.rg.mercenaryalignment > 0)
        {
@@ -9197,21 +12366,66 @@ addLayer("rg", {
             player.rg.titanboost = new ExpantaNum(1)
             player.rg.druidboost = new ExpantaNum(1)
             player.rg.facelessboost = new ExpantaNum(1)
+            player.rg.dragonboost = new ExpantaNum(1)
+	   }
+       if (player.rg.truthalignment > 0)
+       {
+            player.rg.building4 = "GOD TEMPLE"
+            player.rg.building5 = "LAND OF IDOLS"
+            player.rg.fairyboost = new ExpantaNum(15000)
+            if (hasUpgrade("rg", 21)) player.rg.fairyboost = player.rg.fairyboost.mul(upgradeEffect("rg", 21))
+            player.rg.elvenboost = new ExpantaNum(250)
+            if (hasUpgrade("rg", 21)) player.rg.elvenboost = player.rg.elvenboost.mul(upgradeEffect("rg", 21))
+            player.rg.angelboost = new ExpantaNum(250)
+            if (hasUpgrade("rg", 21)) player.rg.angelboost = player.rg.angelboost.mul(upgradeEffect("rg", 21))
+            player.rg.goblinboost = new ExpantaNum(2000)
+            if (hasUpgrade("rg", 26)) player.rg.goblinboost = player.rg.goblinboost.mul(upgradeEffect("rg", 26))
+            player.rg.undeadboost = player.rg.coins.pow(0.025).add(1)
+            if (hasUpgrade("rg", 26)) player.rg.undeadboost = player.rg.undeadboost.mul(upgradeEffect("rg", 26))
+            player.rg.demonboost = new ExpantaNum(500)
+            if (hasUpgrade("rg", 26)) player.rg.demonboost = player.rg.demonboost.mul(upgradeEffect("rg", 26))
+            player.rg.dwarfboost = player.rg.factioncoins.pow(0.015).add(1)     
+            player.rg.drowboost = player.rg.assistants.pow(0.35).add(1)   
+            player.rg.titanboost = new ExpantaNum(10000)
+            player.rg.druidboost = new ExpantaNum(100)
+            player.rg.facelessboost = player.rg.factioncoins.pow(1.7).add(1)
+            player.rg.dragonboost = player.rg.gems.pow(0.25).add(1)
 	   }
        player.rg.pointeffect = player.rg.points.pow(2).add(1)
+       if (hasUpgrade("l", 124)) player.rg.pointeffect = player.rg.points.pow(100).add(1)
 
        if (player.rg.coins > 10000000)
        {
             player.rg.gemstoget = player.rg.coins.pow(0.15)
             if (hasUpgrade("rg", 25)) player.rg.gemstoget = player.rg.gemstoget.mul(upgradeEffect("rg", 25))
             player.rg.gemstoget = player.rg.gemstoget.mul(player.rg.artifacteffect)
+            player.rg.gemstoget = player.rg.gemstoget.mul(player.rg.dragonboost)
 	   }
        if (player.rg.coins < 10000000)
        {
             player.rg.gemstoget = new ExpantaNum(0)
 	   }
        player.rg.gemeffect = player.rg.gems.pow(0.9).mul(player.rg.reincarnationeffectgems).add(1)
-
+       if (hasMilestone("rg", 17))
+       {
+            player.rg.gems = player.rg.gems.add(player.rg.gemstoget.div(10).mul(delta))
+	   }
+       let reincarnationgainbase = new ExpantaNum(1000)
+       if (hasUpgrade("rg", 27)) reincarnationgainbase = reincarnationgainbase.mul(upgradeEffect("rg", 27))
+       if (hasUpgrade("rg", 28)) reincarnationgainbase = reincarnationgainbase.mul(upgradeEffect("rg", 28))
+       if (hasUpgrade("rg", 29)) reincarnationgainbase = reincarnationgainbase.mul(upgradeEffect("rg", 29))
+       if (hasUpgrade("rg", 31)) reincarnationgainbase = reincarnationgainbase.mul(upgradeEffect("rg", 31))
+       if (hasUpgrade("rg", 32)) reincarnationgainbase = reincarnationgainbase.mul(upgradeEffect("rg", 32))
+       if (hasUpgrade("rg", 33)) reincarnationgainbase = reincarnationgainbase.mul(upgradeEffect("rg", 33))
+       if (hasUpgrade("rg", 34))
+       {
+       reincarnationgainbase = reincarnationgainbase.mul(upgradeEffect("rg", 34))
+       player.rg.factioncoins = player.rg.factioncoins.add(player.rg.factioncoingain.mul(delta))
+       }
+       if (hasMilestone("rg", 18))
+       {
+            player.rg.buyables[25] = player.rg.buyables[25].add(reincarnationgainbase.mul(delta))
+	   }
        let reincarnations = player.rg.buyables[25]
        player.rg.reincarnationeffectcoins = reincarnations.mul(4).pow(2.5).add(1)
        player.rg.reincarnationeffectassistants = reincarnations.mul(2).pow(1.5).add(1)
@@ -9277,6 +12491,21 @@ addLayer("rg", {
         effectDescription: "Unlocks Excavations",
         done() { return player.rg.buyables[25].gte(9) }
     },
+    16: {
+        requirementDescription: "Reincarnation 16",
+        effectDescription: "Unlocks the Dragon Faction",
+        done() { return player.rg.buyables[25].gte(16) }
+    },
+    17: {
+        requirementDescription: "Reincarnation 30",
+        effectDescription: "Gain 10% of Gems per Second",
+        done() { return player.rg.buyables[25].gte(30) }
+    },
+    18: {
+        requirementDescription: "Reincarnation 50",
+        effectDescription: "Unlocks 1 More Alignment, gets 1000 Reincarnations Per Second (This must be insane inflation)",
+        done() { return player.rg.buyables[25].gte(50) }
+    },
     },
 
         microtabs: 
@@ -9309,6 +12538,9 @@ addLayer("rg", {
           ["blank", "10px"],
           ["row", [["upgrade", 18], ["upgrade", 19]]],
           ["row", [["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24], ["upgrade", 25], ["upgrade", 26]]],
+          ["row", [["upgrade", 27], ["upgrade", 28], ["upgrade", 29]]],
+          ["row", [["upgrade", 31], ["upgrade", 32]]],
+          ["row", [["upgrade", 33], ["upgrade", 34]]],
           ]
           },
           "Alignments": {
@@ -9317,11 +12549,12 @@ addLayer("rg", {
           ["display-text", () => "You have " + format(player.rg.coins) + " Coins and a x" + format(player.rg.coineffect) + " boost to Realm Power"],
           ["display-text", () => "You are gaining " + format(player.rg.coinspersecond) + " Coins per Second"],
           ["blank", "10px"],
-          ["row", [["buyable", 21], ["buyable", 22], ["buyable", 24], ["buyable", 26]]],
+          ["row", [["buyable", 21], ["buyable", 22], ["buyable", 24], ["buyable", 26], ["buyable", 27]]],
           ["display-text", () => player.rg.goodalignment >= 1 ? "You are Good" : ""],
           ["display-text", () => player.rg.evilalignment >= 1 ? "You are Evil" : ""],
           ["display-text", () => player.rg.neutralalignment >= 1 ? "You are Neutral" : ""],
           ["display-text", () => player.rg.mercenaryalignment >= 1 ? "You are a Mercenary" : ""],
+          ["display-text", () => player.rg.truthalignment >= 1 ? "You are in the Truth Alighnment" : ""],
           ["display-text", () => "You have " + format(player.rg.factioncoins) + " Faction Coins"],
           ["row", [["buyable", 15]]],
           ["row", [["bar", "factioncoinbar"]]],
@@ -9338,6 +12571,7 @@ addLayer("rg", {
           ["display-text", () => hasMilestone('rg', 12) ? "Faceless: x" + format(player.rg.facelessboost) + " boost to Coins based on Faction Coins" : ""],
           ["display-text", () => hasMilestone('rg', 13) ? "Dwarf: x" + format(player.rg.dwarfboost) + " boost to Faction Coins based on Faction Coins" : ""],
           ["display-text", () => hasMilestone('rg', 13) ? "Drow: x" + format(player.rg.drowboost) + " boost to Assistants based on Assistants" : ""],
+          ["display-text", () => hasMilestone('rg', 16) ? "Dragon: x" + format(player.rg.dragonboost) + " boost to Gems based on Gems" : ""],
           ]
           },
           "Resets": {
@@ -9349,17 +12583,20 @@ addLayer("rg", {
           ["display-text", () => "You have " + format(player.rg.gems) + " Gems, and a x" + format(player.rg.gemeffect) + " boost to Coin gain"],
           ["row", [["buyable", 23], ["buyable", 25]]],
           ["blank", "10px"],
-          ["display-text", () => player.rg.buyables[25] >= 1 ? "Reincarnation Bonuses" : ""],
-          ["display-text", () => player.rg.buyables[25] >= 1 ? "x" + format(player.rg.reincarnationeffectcoins) + " boost to Coins" : ""],
-          ["display-text", () => player.rg.buyables[25] >= 1 ? "x" + format(player.rg.reincarnationeffectfactioncoins) + " boost to Faction Coins" : ""],
-          ["display-text", () => player.rg.buyables[25] >= 1 ? "x" + format(player.rg.reincarnationeffectassistants) + " boost to Assistants" : ""],
-          ["display-text", () => player.rg.buyables[25] >= 2 ? "x" + format(player.rg.reincarnationeffectgems) + " boost to Gems" : ""],
+          ["display-text", () => player.rg.buyables[25].gte(1) ? "Reincarnation Bonuses" : ""],
+          ["display-text", () => player.rg.buyables[25].gte(1) ? "x" + format(player.rg.reincarnationeffectcoins) + " boost to Coins" : ""],
+          ["display-text", () => player.rg.buyables[25].gte(1) ? "x" + format(player.rg.reincarnationeffectfactioncoins) + " boost to Faction Coins" : ""],
+          ["display-text", () => player.rg.buyables[25].gte(1) ? "x" + format(player.rg.reincarnationeffectassistants) + " boost to Assistants" : ""],
+          ["display-text", () => player.rg.buyables[25].gte(2) ? "x" + format(player.rg.reincarnationeffectgems) + " boost to Gems" : ""],
           ["blank", "10px"],
           ["row", [["milestone", 11]]],
           ["row", [["milestone", 12]]],
           ["row", [["milestone", 13]]],
           ["row", [["milestone", 14]]],
           ["row", [["milestone", 15]]],
+          ["row", [["milestone", 16]]],
+          ["row", [["milestone", 17]]],
+          ["row", [["milestone", 18]]],
           ]
           },
           "Excavations": {
@@ -9378,10 +12615,11 @@ addLayer("rg", {
     },
             tabFormat: [
         "main-display",
+          ["row", [["upgrade", 35]]],
         ["microtabs", "stuff"],
         ["blank", "25px"],
     ],
-    layerShown(){return hasUpgrade("h", 19)}
+    layerShown() { return hasUpgrade("h", 19) && !hasUpgrade("h", 48) }
 },
 )
 addLayer("sc", {
@@ -9407,7 +12645,7 @@ addLayer("sc", {
         itemssoldpersecond: new ExpantaNum(0),
     }},
     color: "red",
-    symbol: "<img src='th.jpeg' style='width:calc(150%);height:calc(120%);margin:-20%'></img>",
+    symbol: "<img src='https://tse1.mm.bing.net/th?id=OIP.2tRkujOAH3EzoPh1qMv_3wHaE7&pid=Api&rs=1&c=1&qlt=95&w=137&h=91' style='width:calc(150%);height:calc(120%);margin:-20%'></img>",
     resource: " Social Credit", 
     row: "side",
     branches: ["m", "rg"],
@@ -9505,7 +12743,7 @@ addLayer("sc", {
     {
         11:
         {
-            title: "丑国",
+            title: "China",
             description: "Doubles Social Credit Gain",
             cost: new ExpantaNum(100),
         },
@@ -9523,7 +12761,7 @@ addLayer("sc", {
         },
         13:
         {
-            title: "Hire a 丑国嗨人 to worship 丑国 for you",
+            title: "Hire a Chinese Eggman to worship china for you",
             description: "Gets x10 Click Gain on bar fill",
             cost: new ExpantaNum(2500),
                 unlocked() { return hasUpgrade("sc", 12) },
@@ -9547,7 +12785,7 @@ addLayer("sc", {
         },
         16:
         {
-            title: "The glorious gift of 丑国嗨人",
+            title: "The glorious gift of Chinese eggman",
             description: "Increase Social Credit gain based on Yuan",
             cost: new ExpantaNum(300),
                 unlocked() { return hasUpgrade("sc", 15) },
@@ -9569,7 +12807,7 @@ addLayer("sc", {
         },
         18:
         {
-            title: "丑国塔利班", 
+            title: "Chinese Brotherhood", 
             description: "Boosts Bing Chilling and Distilled Water based on $",
             cost: new ExpantaNum(750),
                 unlocked() { return hasUpgrade("sc", 17) },
@@ -9604,7 +12842,7 @@ addLayer("sc", {
         },
         22:
         {
-            title: "Americans now also use 丑国 currency",
+            title: "Americans now also use Chinese currency",
             description: "$ also boost Yuan",
             cost: new ExpantaNum(25000),
             unlocked() { return hasUpgrade("sc", 21) },
@@ -9614,7 +12852,7 @@ addLayer("sc", {
         },
         23:
         {
-            title: "Biden's Dying Wish",
+            title: "Xi Jing Ping's Dying Wish",
             description: "Increase $ gain based on Yuan",
             cost: new ExpantaNum(500),
                 unlocked() { return hasUpgrade("sc", 22) },
@@ -9655,7 +12893,7 @@ addLayer("sc", {
     },
     clickables: {
     11: {
-        title() {return "Respect the 丑国 Union"},
+        title() {return "Respect the Chinese Union"},
         canClick() {return true},
         onClick()
         {
@@ -9663,7 +12901,7 @@ addLayer("sc", {
 		},
     },
     12: {
-        title() {return "Disrespect the 丑国 Union"},
+        title() {return "Disrespect the Chinese Union"},
         display() {return "Why would anyone do this?"},
         canClick() {return true},
         onClick()
@@ -9764,7 +13002,7 @@ addLayer("sc", {
         if (hasUpgrade("sc", 21)) player.sc.yuan = player.sc.yuan.add(player.sc.points.pow(0.3).mul(player.sc.bingchillingeffect.mul(yuanmult.mul(delta))))
 	},
     tooltip() { // Optional, tooltip displays when the layer is locked
-        return ("丑国")
+        return ("China")
     },
     bars: {
         automationbar: {
@@ -9870,24 +13108,1260 @@ addLayer("sc", {
         ["microtabs", "stuff"],
         ["blank", "25px"],
     ],
-    layerShown(){return hasUpgrade("h", 21)}
+    layerShown() { return hasUpgrade("h", 21) && !hasUpgrade("h", 48) }
+},
+addLayer("ac", {
+    startData() { return {
+        unlocked: true,
+		points: new ExpantaNum(0),
+		pointeffect: new ExpantaNum(0),
+        lemonadetime: new ExpantaNum(0),
+        lemonadegain: new ExpantaNum(1),
+        lemonadecost: new ExpantaNum(4),
+        lemonadeactivation: new ExpantaNum(0),
+        newstime: new ExpantaNum(0),
+        newsgain: new ExpantaNum(40),
+        newscost: new ExpantaNum(60),
+        newsactivation: new ExpantaNum(0),
+        cartime: new ExpantaNum(0),
+        cargain: new ExpantaNum(280),
+        carcost: new ExpantaNum(720),
+        caractivation: new ExpantaNum(0),
+        pizzatime: new ExpantaNum(0),
+        pizzagain: new ExpantaNum(2800),
+        pizzacost: new ExpantaNum(8640),
+        pizzaactivation: new ExpantaNum(0),
+        donuttime: new ExpantaNum(0),
+        donutgain: new ExpantaNum(36000),
+        donutcost: new ExpantaNum(103680),
+        donutactivation: new ExpantaNum(0),
+        shrimptime: new ExpantaNum(0),
+        shrimpgain: new ExpantaNum(622080),
+        shrimpcost: new ExpantaNum(1244160),
+        shrimpactivation: new ExpantaNum(0),
+        megabucks: new ExpantaNum(0),
+        megaticketcost: new ExpantaNum(200),
+        fluxcost: new ExpantaNum(1000),
+        machinecost: new ExpantaNum(5000),
+    }},
+            nodeStyle: 
+            {
+           "background-image": "linear-gradient(85deg, #90ee90, #006400)",  
+    },
+    color: "#90ee90",
+    symbol: "<img src='resources/source.gif' style='width:calc(100%);height:calc(100%);margin:0%'></img>",
+    resource: " $", 
+    row: "side",
+    midsection: ["grid", "blank"],
+    branches: ["cc", "ad", "ch"],
+    displayRow: 3,
+    position: 0, 
+        effectDescription(){
+                let eff = player.ac.pointeffect
+                return "which multiplies Realm Grinder Time gain by x" + format(eff)
+        },
+    automate()
+    {
+    },
+    buyables:
+    {
+        11: {
+        cost(x) { return player.ac.lemonadecost },
+        title: "Lemonade Stand",
+        unlocked() { return true },
+        canAfford() { return player.ac.points.gte(this.cost()) },
+        buy() {
+            player.ac.points = player.ac.points.sub(this.cost())
+            player.ac.lemonadecost = player.ac.lemonadecost.mul(1.07)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " $\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           +" + format(player.ac.lemonadegain) + " $ from the Lemonade Stand";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1)
+        },
+        },
+        12: {
+        cost(x) { return player.ac.newscost },
+        title: "Newspaper Delivery",
+        unlocked() { return player.ac.buyables[11].gte(10) },
+        canAfford() { return player.ac.points.gte(this.cost()) },
+        buy() {
+            player.ac.points = player.ac.points.sub(this.cost())
+            player.ac.newscost = player.ac.newscost.mul(1.15)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " $\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           +" + format(player.ac.newsgain) + " $ from the Newspaper Delivery";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).mul(40)
+        },
+        },
+        13: {
+        cost(x) { return player.ac.carcost },
+        title: "Car Wash",
+        unlocked() { return player.ac.buyables[12].gte(10) },
+        canAfford() { return player.ac.points.gte(this.cost()) },
+        buy() {
+            player.ac.points = player.ac.points.sub(this.cost())
+            player.ac.carcost = player.ac.carcost.mul(1.14)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " $\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           +" + format(player.ac.cargain) + " $ from the Car Wash";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).mul(280)
+        },
+        },
+        14: {
+        cost(x) { return player.ac.pizzacost },
+        title: "Pizza Delivery",
+        unlocked() { return player.ac.buyables[13].gte(20) },
+        canAfford() { return player.ac.points.gte(this.cost()) },
+        buy() {
+            player.ac.points = player.ac.points.sub(this.cost())
+            player.ac.pizzacost = player.ac.pizzacost.mul(1.13)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " $\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           +" + format(player.ac.pizzagain) + " $ from the Pizza Delivery";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).mul(2800)
+        },
+        },
+        15: {
+        cost(x) { return player.ac.donutcost },
+        title: "Donut Shop",
+        unlocked() { return player.ac.buyables[14].gte(20) },
+        canAfford() { return player.ac.points.gte(this.cost()) },
+        buy() {
+            player.ac.points = player.ac.points.sub(this.cost())
+            player.ac.donutcost = player.ac.donutcost.mul(1.12)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " $\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           +" + format(player.ac.donutgain) + " $ from the Donut Shop";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).mul(36000)
+        },
+        },
+        16: {
+        cost(x) { return player.ac.shrimpcost },
+        title: "Shrimp Boat",
+        unlocked() { return player.ac.buyables[15].gte(20) },
+        canAfford() { return player.ac.points.gte(this.cost()) },
+        buy() {
+            player.ac.points = player.ac.points.sub(this.cost())
+            player.ac.shrimpcost = player.ac.shrimpcost.mul(1.11)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " $\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           +" + format(player.ac.shrimpgain) + " $ from the Shrimp Boat";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).mul(622080)
+        },
+        },
+        17: {
+        cost(x) { return player.ac.megaticketcost },
+        title: "Mega Tickets",
+        unlocked() { return true },
+        canAfford() { return player.ac.megabucks.gte(this.cost()) },
+        buy() {
+            player.ac.megabucks = player.ac.megabucks.sub(this.cost())
+            player.ac.megaticketcost = player.ac.megaticketcost.mul(1.10)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Mega Bucks\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           x" + format(data.effect) + " boost to all Industry Profits";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(3).add(1).pow(5)
+        },
+        },
+        18: {
+        cost(x) { return player.ac.fluxcost },
+        title: "Flux Capacitor",
+        unlocked() { return true },
+        canAfford() { return player.ac.megabucks.gte(this.cost()) },
+        buy() {
+            player.ac.megabucks = player.ac.megabucks.sub(this.cost())
+            player.ac.fluxcost = player.ac.fluxcost.mul(1.15)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Mega Bucks\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           x" + format(data.effect) + " boost to Industry Speed";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].mul(0.20).add(1)
+        },
+        },
+        19: {
+        cost(x) { return player.ac.machinecost },
+        title: "Megabucks Machine",
+        unlocked() { return hasUpgrade("ac", 22) },
+        canAfford() { return player.ac.megabucks.gte(this.cost()) },
+        buy() {
+            player.ac.megabucks = player.ac.megabucks.sub(this.cost())
+            player.ac.machinecost = player.ac.machinecost.mul(1.2)
+            setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+        },
+         display() 
+         { // Everything else displayed in the buyable button after the title
+           let data = tmp[this.layer].buyables[this.id]
+           return "Cost: " + format(data.cost) + " Mega Bucks\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           x" + format(data.effect) + " boost to Mega Bucks";
+         },
+        effect() 
+        {
+            return player[this.layer].buyables[this.id].add(1).pow(1.5)
+        },
+        },
+    },    
+    upgrades: 
+    {
+        11:
+        { 
+            title: "Cabe Johnson",
+            description: "Automates Lemonade Stand Activation",
+            unlocked() { return true },
+            cost: new ExpantaNum("1000"),
+        },
+        12:
+        { 
+            title: "Perry Black",
+            description: "Automates Newspaper Delivery Activation",
+            unlocked() { return player.ac.buyables[11].gte(10) },
+            cost: new ExpantaNum("15000"),
+        },
+        13:
+        { 
+            title: "W.W Heisenbird",
+            description: "Automates Car Wash Activation",
+            unlocked() { return player.ac.buyables[12].gte(10) },
+            cost: new ExpantaNum("100000"),
+        },
+        14:
+        { 
+            title: "Mama Sean",
+            description: "Automates Pizza Delivery Activation",
+            unlocked() { return player.ac.buyables[13].gte(20) },
+            cost: new ExpantaNum("500000"),
+        },
+        15:
+        { 
+            title: "Jim Thorton",
+            description: "Automates Donut Shop Activation",
+            unlocked() { return player.ac.buyables[14].gte(20) },
+            cost: new ExpantaNum("1200000"),
+        },
+        16:
+        { 
+            title: "Forest Trump",
+            description: "Automates Shrimp Boat Activation",
+            unlocked() { return player.ac.buyables[15].gte(20) },
+            cost: new ExpantaNum("10000000"),
+        },
+        17:
+        { 
+            title: "Acamaeda",
+            description: "Speeds up Industries by x4",
+            unlocked() { return player.ac.buyables[16].gte(20) },
+            cost: new ExpantaNum("250000000"),
+        },
+        18:
+        { 
+            title: "Shax000",
+            description: "Boosts $ based on $",
+            unlocked() { return hasUpgrade("ac", 17) },
+            cost: new ExpantaNum("1e9"),
+                effect() 
+                {
+                     return player[this.layer].points.add(1).mul(0.5).pow(0.5)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        19:
+        { 
+            title: "NovaLol",
+            description: "Gains 100 of each industry per second",
+            unlocked() { return hasUpgrade("ac", 18) },
+            cost: new ExpantaNum("1e20"),
+        },
+        21:
+        { 
+            title: "Gwa",
+            description: "Mega Bucks boost $",
+            unlocked() { return hasUpgrade("ac", 19) },
+            cost: new ExpantaNum("1e30"),
+                effect() 
+                {
+                     return player[this.layer].megabucks.add(1).mul(0.5).pow(1.5)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        22:
+        { 
+            title: "Jacorb90",
+            description: "Industry speed boosts Mega Bucks gain",
+            unlocked() { return hasUpgrade("ac", 21) },
+            cost: new ExpantaNum("1e52"),
+        },
+        23:
+        { 
+            title: "Jakub",
+            description: "Mega Bucks boost Mega Bucks gain",
+            unlocked() { return hasUpgrade("ac", 22) },
+            cost: new ExpantaNum("1e78"),
+                effect() 
+                {
+                     return player[this.layer].megabucks.add(1).pow(0.2)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        24:
+        { 
+            title: "Alez",
+            description: "$ boost Mega Bucks gain",
+            unlocked() { return hasUpgrade("ac", 23) },
+            cost: new ExpantaNum("1e94"),
+                effect() 
+                {
+                     return player[this.layer].points.add(1).pow(0.05)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        25:
+        { 
+            title: "Patfr",
+            description: "Incremental Stones boost Mega Bucks gain",
+            unlocked() { return hasUpgrade("ac", 24) },
+            cost: new ExpantaNum("1e118"),
+                effect() 
+                {
+                     return player.i2.points.plus(1).log10().pow(1.5)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        26:
+        { 
+            title: "Escapee",
+            description: "Incremental Stones boost $ gain",
+            unlocked() { return hasUpgrade("ac", 25) },
+            cost: new ExpantaNum("1e160"),
+                effect() 
+                {
+                     return player.i2.points.plus(1).log10().pow(7)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        27:
+        { 
+            title: "Smiley",
+            description: "Potential boosts Mega Bucks gain",
+            unlocked() { return hasUpgrade("ac", 26) },
+            cost: new ExpantaNum("1e260"),
+                effect() 
+                {
+                     return player.h.points.plus(1).pow(8)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        28:
+        { 
+            title: "Ree",
+            description: "Willpower boosts Mega Bucks gain",
+            unlocked() { return hasUpgrade("ac", 27) },
+            cost: new ExpantaNum("1e310"),
+                effect() 
+                {
+                     return player.h.willpower.plus(1).pow(0.8)
+                },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" }, // Add formatting to the effect
+        },
+        29:
+        { 
+            title: "FINISH THIS LAYER",
+            unlocked() { return hasUpgrade("ac", 28) },
+            cost: new ExpantaNum("1e400"),
+        },
+    },
+    achievements: {
+
+    },
+    clickables: {
+        11: {
+        title() {return "<img src='resources/lemonade.webp' style='width:calc(100%);height:calc(100%);margin:0%'></img>"},
+        canClick() {return player.ac.lemonadeactivation.lte(0)},
+        onClick()
+        {
+              player.ac.lemonadeactivation = new ExpantaNum(1)
+		},
+    },
+        12: {
+        title() {return "<img src='resources/news.webp' style='width:calc(100%);height:calc(100%);margin:0%'></img>"},
+        unlocked() { return player.ac.buyables[11].gte(10) },
+        canClick() {return player.ac.newsactivation.lte(0)},
+        onClick()
+        {
+              player.ac.newsactivation = new ExpantaNum(1)
+		},
+    },
+        13: {
+        title() {return "<img src='resources/car.webp' style='width:calc(100%);height:calc(100%);margin:0%'></img>"},
+        unlocked() { return player.ac.buyables[12].gte(10) },
+        canClick() {return player.ac.caractivation.lte(0)},
+        onClick()
+        {
+              player.ac.caractivation = new ExpantaNum(1)
+		},
+    },
+        14: {
+        title() {return "<img src='resources/pizza.webp' style='width:calc(100%);height:calc(100%);margin:0%'></img>"},
+        unlocked() { return player.ac.buyables[13].gte(20) },
+        canClick() {return player.ac.pizzaactivation.lte(0)},
+        onClick()
+        {
+              player.ac.pizzaactivation = new ExpantaNum(1)
+		},
+    },
+        15: {
+        title() {return "<img src='resources/donut.webp' style='width:calc(100%);height:calc(100%);margin:0%'></img>"},
+        unlocked() { return player.ac.buyables[14].gte(20) },
+        canClick() {return player.ac.donutactivation.lte(0)},
+        onClick()
+        {
+              player.ac.donutactivation = new ExpantaNum(1)
+		},
+    },
+        16: {
+        title() {return "<img src='resources/shrimp.webp' style='width:calc(100%);height:calc(100%);margin:0%'></img>"},
+        unlocked() { return player.ac.buyables[15].gte(20) },
+        canClick() {return player.ac.shrimpactivation.lte(0)},
+        onClick()
+        {
+              player.ac.shrimpactivation = new ExpantaNum(1)
+		},
+    },
+    },
+    challenges: {
+        }, 
+    update(delta) 
+    {
+    moneymult = new ExpantaNum(1)
+    if (hasUpgrade("ac", 18)) moneymult = moneymult.mul(upgradeEffect("ac", 18))
+    moneymult = moneymult.mul(buyableEffect("ac", 17))
+    if (hasUpgrade("ac", 21)) moneymult = moneymult.mul(upgradeEffect("ac", 21))
+    if (hasUpgrade("ac", 26)) moneymult = moneymult.mul(upgradeEffect("ac", 26))
+    player.ac.pointeffect = player.ac.points.tetr(player.ac.points.plus(10).log10().pow(0.47)).pow(5)
+    let lemonadetimegain = new ExpantaNum(1)
+    if (hasUpgrade("ac", 17)) lemonadetimegain = lemonadetimegain.mul(4)
+    lemonadetimegain = lemonadetimegain.mul(buyableEffect("ac", 18))
+    megabucksmult = new ExpantaNum(1)
+    if (hasUpgrade("ac", 22)) megabucksmult = megabucksmult.mul(lemonadetimegain)
+    megabucksmult = megabucksmult.mul(buyableEffect("ac", 19))
+    if (hasUpgrade("ac", 23)) megabucksmult = megabucksmult.mul(upgradeEffect("ac", 23))
+    if (hasUpgrade("ac", 24)) megabucksmult = megabucksmult.mul(upgradeEffect("ac", 24))
+    if (hasUpgrade("ac", 25)) megabucksmult = megabucksmult.mul(upgradeEffect("ac", 25))
+    if (hasUpgrade("ac", 27)) megabucksmult = megabucksmult.mul(upgradeEffect("ac", 27))
+    if (hasUpgrade("ac", 28)) megabucksmult = megabucksmult.mul(upgradeEffect("ac", 28))
+    let lemonademult = new ExpantaNum(1)
+    lemonademult = lemonademult.mul(moneymult)
+    lemonademult = lemonademult.mul(buyableEffect("ac", 11))
+    if (player.ac.buyables[11].gte(100))
+    {
+    lemonademult = lemonademult.mul(buyableEffect("ac", 11))
+	}
+    player.ac.lemonadegain = lemonademult
+    if (player.ac.lemonadeactivation.gte(1))
+    {
+        player.ac.lemonadetime = player.ac.lemonadetime.add(lemonadetimegain.mul(delta))
+	}
+    if (player.ac.lemonadetime.gte(2))
+    {
+        player.ac.points = player.ac.points.add(player.ac.lemonadegain)
+        if (!hasUpgrade("ac", 11)) player.ac.lemonadeactivation = new ExpantaNum(0)
+        player.ac.lemonadetime = new ExpantaNum(0)
+        if (player.ac.points.gte(1e20))
+        {
+            player.ac.megabucks = player.ac.megabucks.add(megabucksmult.mul(1))
+        }
+	}
+        let newstimegain = new ExpantaNum(1)
+    if (hasUpgrade("ac", 17)) newstimegain = newstimegain.mul(4)
+    newstimegain = newstimegain.mul(buyableEffect("ac", 18))
+    let newsmult = new ExpantaNum(1)
+    newsmult = newsmult.mul(moneymult)
+    newsmult = newsmult.mul(buyableEffect("ac", 12))
+            if (player.ac.buyables[12].gte(50))
+    {
+    newsmult = newsmult.mul(buyableEffect("ac", 12).div(20))
+	}
+    player.ac.newsgain = newsmult
+    if (player.ac.newsactivation.gte(1))
+    {
+        player.ac.newstime = player.ac.newstime.add(newstimegain.mul(delta))
+	}
+    if (player.ac.newstime.gte(4))
+    {
+        player.ac.points = player.ac.points.add(player.ac.newsgain)
+        if (!hasUpgrade("ac", 12)) player.ac.newsactivation = new ExpantaNum(0)
+        player.ac.newstime = new ExpantaNum(0)
+        if (player.ac.points.gte(1e20))
+        {
+            player.ac.megabucks = player.ac.megabucks.add(megabucksmult.mul(2))
+        }
+	}
+        let cartimegain = new ExpantaNum(1)
+    if (hasUpgrade("ac", 17)) cartimegain = cartimegain.mul(4)
+    cartimegain = cartimegain.mul(buyableEffect("ac", 18))
+    let carmult = new ExpantaNum(1)
+    carmult = carmult.mul(moneymult)
+    carmult = carmult.mul(buyableEffect("ac", 13))
+            if (player.ac.buyables[13].gte(60))
+    {
+    carmult = carmult.mul(buyableEffect("ac", 13).div(300))
+	}
+    player.ac.cargain = carmult
+    if (player.ac.caractivation.gte(1))
+    {
+        player.ac.cartime = player.ac.cartime.add(cartimegain.mul(delta))
+	}
+    if (player.ac.cartime.gte(8))
+    {
+        player.ac.points = player.ac.points.add(player.ac.cargain)
+        if (!hasUpgrade("ac", 13)) player.ac.caractivation = new ExpantaNum(0)
+        player.ac.cartime = new ExpantaNum(0)
+        if (player.ac.points.gte(1e20))
+        {
+            player.ac.megabucks = player.ac.megabucks.add(megabucksmult.mul(3))
+        }
+	}
+            let pizzatimegain = new ExpantaNum(1)
+    if (hasUpgrade("ac", 17)) pizzatimegain = pizzatimegain.mul(4)
+    pizzatimegain = pizzatimegain.mul(buyableEffect("ac", 18))
+    let pizzamult = new ExpantaNum(1)
+    pizzamult = pizzamult.mul(moneymult)
+    pizzamult = pizzamult.mul(buyableEffect("ac", 14))
+            if (player.ac.buyables[14].gte(70))
+    {
+    pizzamult = pizzamult.mul(buyableEffect("ac", 14).div(4000))
+	}
+    player.ac.pizzagain = pizzamult
+    if (player.ac.pizzaactivation.gte(1))
+    {
+        player.ac.pizzatime = player.ac.pizzatime.add(pizzatimegain.mul(delta))
+	}
+    if (player.ac.pizzatime.gte(12))
+    {
+        player.ac.points = player.ac.points.add(player.ac.pizzagain)
+        if (!hasUpgrade("ac", 14)) player.ac.pizzaactivation = new ExpantaNum(0)
+        player.ac.pizzatime = new ExpantaNum(0)
+        if (player.ac.points.gte(1e20))
+        {
+            player.ac.megabucks = player.ac.megabucks.add(megabucksmult.mul(4))
+        }
+	}
+                let donuttimegain = new ExpantaNum(1)
+    if (hasUpgrade("ac", 17)) donuttimegain = donuttimegain.mul(4)
+    donuttimegain = donuttimegain.mul(buyableEffect("ac", 18))
+    let donutmult = new ExpantaNum(1)
+    donutmult = donutmult.mul(moneymult)
+    donutmult = donutmult.mul(buyableEffect("ac", 15))
+            if (player.ac.buyables[15].gte(70))
+    {
+    donutmult = donutmult.mul(buyableEffect("ac", 15).div(50000))
+	}
+    player.ac.donutgain = donutmult
+    if (player.ac.donutactivation.gte(1))
+    {
+        player.ac.donuttime = player.ac.donuttime.add(donuttimegain.mul(delta))
+	}
+    if (player.ac.donuttime.gte(16))
+    {
+        player.ac.points = player.ac.points.add(player.ac.donutgain)
+        if (!hasUpgrade("ac", 15)) player.ac.donutactivation = new ExpantaNum(0)
+        player.ac.donuttime = new ExpantaNum(0)
+                if (player.ac.points.gte(1e20))
+        {
+            player.ac.megabucks = player.ac.megabucks.add(megabucksmult.mul(5))
+        }
+	}
+                let shrimptimegain = new ExpantaNum(1)
+    if (hasUpgrade("ac", 17)) shrimptimegain = shrimptimegain.mul(4)
+    shrimptimegain = shrimptimegain.mul(buyableEffect("ac", 18))
+    let shrimpmult = new ExpantaNum(1)
+    shrimpmult = shrimpmult.mul(moneymult)
+    shrimpmult = shrimpmult.mul(buyableEffect("ac", 16))
+            if (player.ac.buyables[16].gte(80))
+    {
+    pizzamult = pizzamult.mul(buyableEffect("ac", 16).div(600000))
+	}
+    player.ac.shrimpgain = shrimpmult
+    if (player.ac.shrimpactivation.gte(1))
+    {
+        player.ac.shrimptime = player.ac.shrimptime.add(pizzatimegain.mul(delta))
+	}
+    if (player.ac.shrimptime.gte(20))
+    {
+        player.ac.points = player.ac.points.add(player.ac.shrimpgain)
+        if (!hasUpgrade("ac", 16)) player.ac.shrimpactivation = new ExpantaNum(0)
+        player.ac.shrimptime = new ExpantaNum(0)
+        if (player.ac.points.gte(1e20))
+        {
+            player.ac.megabucks = player.ac.megabucks.add(megabucksmult.mul(6))
+        }
+	}
+    let industrygain = new ExpantaNum(100)
+    if (hasUpgrade("ac", 19))
+    {
+        player.ac.buyables[11] = player.ac.buyables[11].add(industrygain.mul(delta))
+        player.ac.buyables[12] = player.ac.buyables[12].add(industrygain.mul(delta))
+        player.ac.buyables[13] = player.ac.buyables[13].add(industrygain.mul(delta))
+        player.ac.buyables[14] = player.ac.buyables[14].add(industrygain.mul(delta))
+        player.ac.buyables[15] = player.ac.buyables[15].add(industrygain.mul(delta))
+        player.ac.buyables[16] = player.ac.buyables[16].add(industrygain.mul(delta))
+	}
+	},
+                bars: {
+            lemonadebar: {
+            unlocked() { return true },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.ac.lemonadetime.div(2)
+            },
+            fillStyle: {
+                "background-color": "#90ee90",
+            },
+            display() {
+                return "<h5>" + format(player.ac.lemonadetime) + " /" + " 2 Seconds</h5>";
+            },
+        },
+            newsbar: {
+            unlocked() { return player.ac.buyables[11].gte(10) },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.ac.newstime.div(4)
+            },
+            fillStyle: {
+                "background-color": "#90ee90",
+            },
+            display() {
+                return "<h5>" + format(player.ac.newstime) + " /" + " 4 Seconds</h5>";
+            },
+        },
+            carbar: {
+            unlocked() { return player.ac.buyables[12].gte(10) },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.ac.cartime.div(8)
+            },
+            fillStyle: {
+                "background-color": "#90ee90",
+            },
+            display() {
+                return "<h5>" + format(player.ac.cartime) + " /" + " 8 Seconds</h5>";
+            },
+        },
+            pizzabar: {
+            unlocked() { return player.ac.buyables[13].gte(20) },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.ac.pizzatime.div(12)
+            },
+            fillStyle: {
+                "background-color": "#90ee90",
+            },
+            display() {
+                return "<h5>" + format(player.ac.pizzatime) + " /" + " 12 Seconds</h5>";
+            },
+        },
+            donutbar: {
+            unlocked() { return player.ac.buyables[14].gte(20) },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.ac.donuttime.div(16)
+            },
+            fillStyle: {
+                "background-color": "#90ee90",
+            },
+            display() {
+                return "<h5>" + format(player.ac.donuttime) + " /" + " 16 Seconds</h5>";
+            },
+        },
+            shrimpbar: {
+            unlocked() { return player.ac.buyables[15].gte(20) },
+            direction: RIGHT,
+            width: 476,
+            height: 50,
+            progress() {
+                return player.ac.shrimptime.div(20)
+            },
+            fillStyle: {
+                "background-color": "#90ee90",
+            },
+            display() {
+                return "<h5>" + format(player.ac.shrimptime) + " /" + " 20 Seconds</h5>";
+            },
+        },
+        },
+        milestones: {
+    },
+
+        microtabs: 
+    {
+        stuff: 
+        {
+          "Adventure Capitalist": {
+          content: [
+          ["blank", "10px"],
+          ["row", [["clickable", 11], [ "bar", "lemonadebar"], ["buyable", 11], ["upgrade", 11]]],
+          ["row", [["clickable", 12], [ "bar", "newsbar"], ["buyable", 12], ["upgrade", 12]]],
+          ["row", [["clickable", 13], [ "bar", "carbar"], ["buyable", 13], ["upgrade", 13]]],
+          ["row", [["clickable", 14], [ "bar", "pizzabar"], ["buyable", 14], ["upgrade", 14]]],
+          ["row", [["clickable", 15], [ "bar", "donutbar"], ["buyable", 15], ["upgrade", 15]]],
+          ["row", [["clickable", 16], [ "bar", "shrimpbar"], ["buyable", 16], ["upgrade", 16]]],
+          ],
+          },
+          "Mega Managers": {
+          unlocked() { return player.ac.buyables[16].gte(20) },
+          content: [
+          ["blank", "10px"],
+          ["row", [["upgrade", 17], ["upgrade", 18], ["upgrade", 19], ["upgrade", 21]]],
+          ["row", [["upgrade", 22], ["upgrade", 23], ["upgrade", 24], ["upgrade", 25]]],
+          ["row", [["upgrade", 26], ["upgrade", 27], ["upgrade", 28]]],
+          ],
+          },
+          "Mega Bucks": {
+          unlocked() { return player.ac.points.gte(1e20) },
+          content: [
+          ["blank", "10px"],
+          ["display-text", () => "You have " + format(player.ac.megabucks) + " Mega Bucks, which is gained each time an industry makes profit."],
+          ["row", [["buyable", 17], ["buyable", 18], ["buyable", 19]]],
+          ],
+          },
+        },
+    },
+            tabFormat: [
+        "main-display",
+          ["row", [["upgrade", 29]]],
+        ["microtabs", "stuff"],
+        ["blank", "25px"],
+    ],
+    layerShown() { return hasUpgrade("h", 33) && !hasUpgrade("h", 48) }
 },
 )
-const chingchong  = {
-    image:"resources/socialcredit.jpg",
-    spread: 50,
-    gravity: 4,
-    time: 3,
-    speed() { // Randomize speed a bit
-        return (Math.random() + 1.2) * 16 
+)
+addLayer("cb", {
+    startData() { return {
+        unlocked: true,
+		candies: new ExpantaNum(0),
+		candyeffect: new ExpantaNum(0),
+        candiespersecond: new ExpantaNum(0),
+        eatencandies: new ExpantaNum(0),
+        throwncandies: new ExpantaNum(0),
+        lollipops: new ExpantaNum(0),
+        lollipopspersecond: new ExpantaNum(0),
+        chocolate: new ExpantaNum(0),
+        chocolateeffect: new ExpantaNum(0),
+        darkchocolate: new ExpantaNum(0),
+        darkchocolateeffect: new ExpantaNum(0),
+    }
     },
-}
-const bingbong  = {
-    image:"resources/badsocialcredit.png",
-    spread: 50,
-    gravity: 4,
-    time: 3,
-    speed() { // Randomize speed a bit
-        return (Math.random() + 1.2) * 16
+            nodeStyle: 
+            {
+           "background-image": "linear-gradient(85deg, #ffffff, #ffffff)",  
     },
-}
+    color: "#ffffff",
+    symbol: "<img src='resources/candybox.png' style='width:calc(70%);height:calc(70%);margin:-20%'></img>",
+    row: "side",
+    tooltip: "The Candy Box",
+    midsection: ["grid", "blank"],
+    branches: ["rg", "ac"],
+    displayRow: 4,
+    position: 0, 
+    automate()
+    {
+    },
+    buyables:
+    {
+        11: {
+            cost(x) { return new ExpantaNum("3").pow(x.div(7)).mul("3") },
+            title: "Lollipop Farm",
+            unlocked() { return hasUpgrade("cb", 12) },
+            canAfford() { return player.cb.lollipops.gte(this.cost()) },
+            buy() {
+                player.cb.lollipops = player.cb.lollipops.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Lollipops\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           +" + format(data.effect) + " Lollipops per second";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.01)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        12: {
+            cost(x) { return new ExpantaNum("30").pow(x.div(6.8)).mul("30") },
+            title: "Candy Mill",
+            unlocked() { return hasUpgrade("cb", 14) },
+            canAfford() { return player.cb.lollipops.gte(this.cost()) },
+            buy() {
+                player.cb.lollipops = player.cb.lollipops.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Lollipops\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Candies";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.5).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        13: {
+            cost(x) { return new ExpantaNum("250").pow(x.div(6.6)).mul("250") },
+            title: "Lolligator",
+            unlocked() { return hasUpgrade("cb", 17) },
+            canAfford() { return player.cb.lollipops.gte(this.cost()) },
+            buy() {
+                player.cb.lollipops = player.cb.lollipops.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Lollipops\n\
+           Amount: " + player[this.layer].buyables[this.id] + " \n\
+           x" + format(data.effect) + " boost to Candies and Lollipops";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].mul(0.25).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        14: {
+            cost(x) { return new ExpantaNum("250").pow(x.div(9)).mul("250") },
+            title: "Chocolate Palace",
+            unlocked() { return hasUpgrade("cb", 23) },
+            canAfford() { return player.cb.darkchocolate.gte(this.cost()) },
+            buy() {
+                player.cb.darkchocolate = player.cb.darkchocolate.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Dark Chocolate\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           x" + format(data.effect) + " boost to Dark Chocolate gain";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].pow(3).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+        15: {
+            cost(x) { return new ExpantaNum("1e6").pow(x.div(8)).mul("1e6") },
+            title: "Chocolate Castle",
+            unlocked() { return hasUpgrade("cb", 23) },
+            canAfford() { return player.cb.darkchocolate.gte(this.cost()) },
+            buy() {
+                player.cb.darkchocolate = player.cb.darkchocolate.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " Dark Chocolate\n\
+           Amount: " + format(player[this.layer].buyables[this.id]) + " \n\
+           x" + format(data.effect) + " boost to Dark Chocolate Effect Exponent";
+            },
+            effect() {
+                return player[this.layer].buyables[this.id].pow(2).add(1)
+            },
+            style() {
+                return { ...researchBuyable }
+            },
+        },
+    },    
+    upgrades: 
+    {
+        11:
+        {
+            title: "The first Lollipop",
+            description: "Lollipops boost candy gain",
+            unlocked() { return player.cb.lollipops.gte(1) || hasUpgrade("cb", 11) },
+            cost: new ExpantaNum("1"),
+            currencyDisplayName: "Lollipops",
+            currencyInternalName: "lollipops",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].lollipops.pow(0.4).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        12:
+        {
+            title: "Lollipop Farming",
+            description: "Unlocks the Lollipop Farm",
+            unlocked() { return hasUpgrade("cb", 11) },
+            cost: new ExpantaNum("2"),
+            currencyDisplayName: "Lollipops",
+            currencyInternalName: "lollipops",
+            currencyLocation() { return player.cb },
+        },
+        13:
+        {
+            title: "Candies are healthy",
+            description: "Candies eaten boost candy gain",
+            unlocked() { return hasUpgrade("cb", 12) },
+            cost: new ExpantaNum("100"),
+            currencyDisplayName: "Candies",
+            currencyInternalName: "candies",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].eatencandies.pow(0.1).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        14:
+        {
+            title: "Candies make good compost",
+            description: "Candies thrown boost lollipop farming speed",
+            unlocked() { return hasUpgrade("cb", 13) },
+            cost: new ExpantaNum("200"),
+            currencyDisplayName: "Candies",
+            currencyInternalName: "candies",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].throwncandies.pow(0.08).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        15:
+        {
+            title: "Candy Duplication",
+            description: "Candies boost candy gain",
+            unlocked() { return hasUpgrade("cb", 14) },
+            cost: new ExpantaNum("10000"),
+            currencyDisplayName: "Candies",
+            currencyInternalName: "candies",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].candies.pow(0.1).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },     
+        16:
+        {
+            title: "Lollipop Duplication",
+            description: "Lollipops boost lollipop gain",
+            unlocked() { return hasUpgrade("cb", 15) },
+            cost: new ExpantaNum("1000"),
+            currencyDisplayName: "Lollipops",
+            currencyInternalName: "lollipops",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].lollipops.pow(0.3).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },  
+        17:
+        {
+            title: "Lollipop Synergy",
+            description: "Candies per second boost lollipop gain",
+            unlocked() { return hasUpgrade("cb", 16) },
+            cost: new ExpantaNum("80000"),
+            currencyDisplayName: "Candies",
+            currencyInternalName: "candies",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].candiespersecond.pow(0.6).div(6).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },  
+        18:
+        {
+            title: "Candy Machine",
+            description: "Gains Candies Thrown and Candies Eaten Per Second based on Candies Per Second",
+            unlocked() { return hasUpgrade("cb", 17) },
+            cost: new ExpantaNum("4000"),
+            currencyDisplayName: "Lollipops",
+            currencyInternalName: "lollipops",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].candiespersecond.pow(1.2).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "+" }, // Add formatting to the effect
+        },
+        19:
+        {
+            title: "Wishing Well of Inflation",
+            description: "All the games after this will be very short, like this one. Unlocks the Wishing Well",
+            unlocked() { return hasUpgrade("cb", 18) },
+            cost: new ExpantaNum("40000"),
+            currencyDisplayName: "Lollipops",
+            currencyInternalName: "lollipops",
+            currencyLocation() { return player.cb },
+        },
+        21:
+        {
+            title: "WELCOME TO HELL",
+            description: "Throws candy and lollipops into the well every tick",
+            unlocked() { return hasUpgrade("cb", 19) },
+            cost: new ExpantaNum("1ee100"),
+            currencyDisplayName: "Chocolate",
+            currencyInternalName: "chocolate",
+            currencyLocation() { return player.cb },
+        },
+        22:
+        {
+            title: "THERE IS NO HEAVEN",
+            description: "Changes chocolate effect",
+            unlocked() { return hasUpgrade("cb", 21) },
+            cost: new ExpantaNum("1ee308"),
+            currencyDisplayName: "Chocolate",
+            currencyInternalName: "chocolate",
+            currencyLocation() { return player.cb },
+        },
+        23:
+        {
+            title: "THERE IS NO GOD",
+            description: "Unlocks Dark Chocolate, which is gained based on chocolate",
+            unlocked() { return hasUpgrade("cb", 22) },
+            cost: new ExpantaNum("1ee1000"),
+            currencyDisplayName: "Chocolate",
+            currencyInternalName: "chocolate",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].chocolate.plus(10).log10().log10().div(1000)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "+" }, // Add formatting to the effect
+        },
+        24:
+        {
+            title: "THE DEVIL SPEAKS TO ME",
+            description: "Boosts Dark Chocolate based on Dark Chocolate",
+            unlocked() { return hasUpgrade("cb", 23) },
+            cost: new ExpantaNum("1ee100000"),
+            currencyDisplayName: "Chocolate",
+            currencyInternalName: "chocolate",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].darkchocolate.pow(0.9).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        25:
+        {
+            title: "GOD IS DEAD",
+            description: "Multiplies Chocolate Palace and Castle amounts based on Dark Chocolate",
+            unlocked() { return hasUpgrade("cb", 24) },
+            cost: new ExpantaNum("1eee10"),
+            currencyDisplayName: "Chocolate",
+            currencyInternalName: "chocolate",
+            currencyLocation() { return player.cb },
+            effect() {
+                return player[this.layer].darkchocolate.plus(1).log10().pow(20).add(1)
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id)) + "x" }, // Add formatting to the effect
+        },
+        26:
+        {
+            title: "THE END IS NEAR",
+            description: "Finishes the layer",
+            unlocked() { return hasUpgrade("cb", 25) },
+            cost: new ExpantaNum("1eee100000"),
+            currencyDisplayName: "Chocolate",
+            currencyInternalName: "chocolate",
+            currencyLocation() { return player.cb },
+        },
+    },
+    achievements: {
+
+    },
+    clickables: {
+    },
+    challenges: {
+        }, 
+    update(delta) 
+    {
+        let candygain = new ExpantaNum(0)
+        if (hasUpgrade("h", 43)) candygain = new ExpantaNum(1)
+        if (hasUpgrade("cb", 11)) candygain = candygain.mul(upgradeEffect("cb", 11))
+        if (hasUpgrade("cb", 13)) candygain = candygain.mul(upgradeEffect("cb", 13))
+        if (hasUpgrade("cb", 15)) candygain = candygain.mul(upgradeEffect("cb", 15))
+        candygain = candygain.mul(buyableEffect("cb", 12))
+        candygain = candygain.mul(player.cb.chocolateeffect)
+        candygain = candygain.mul(buyableEffect("cb", 13))
+        player.cb.candiespersecond = candygain
+        player.cb.candies = player.cb.candies.add(player.cb.candiespersecond.mul(delta))
+
+        let lollipopgain = new ExpantaNum(0)
+        lollipopgain = buyableEffect("cb", 11)
+        if (hasUpgrade("cb", 14)) lollipopgain = lollipopgain.mul(upgradeEffect("cb", 14))
+        if (hasUpgrade("cb", 16)) lollipopgain = lollipopgain.mul(upgradeEffect("cb", 16))
+        if (hasUpgrade("cb", 17)) lollipopgain = lollipopgain.mul(upgradeEffect("cb", 17))
+        lollipopgain = lollipopgain.mul(buyableEffect("cb", 13))
+        lollipopgain = lollipopgain.mul(player.cb.chocolateeffect)
+        player.cb.lollipopspersecond = lollipopgain
+        player.cb.lollipops = player.cb.lollipops.add(player.cb.lollipopspersecond.mul(delta))
+
+        let candieseatthrowgain = new ExpantaNum(0)
+        if (hasUpgrade("cb", 18)) candieseatthrowgain = upgradeEffect("cb", 18)
+        player.cb.eatencandies = player.cb.eatencandies.add(candieseatthrowgain.mul(delta))
+        player.cb.throwncandies = player.cb.throwncandies.add(candieseatthrowgain.mul(delta))
+
+        let chocolatepow = new ExpantaNum(1)
+        player.cb.chocolateeffect = player.cb.chocolate.add(1)
+        if (hasUpgrade("cb", 22)) chocolatepow = new ExpantaNum(4)
+        chocolatepow = chocolatepow.mul(player.cb.darkchocolateeffect)
+        player.cb.chocolateeffect = player.cb.chocolate.pow(chocolatepow).add(1)
+        if (hasUpgrade("cb", 21))
+        {
+            layers.cb.candywell()
+            layers.cb.lollipopwell()
+        }
+        let darkchocolategain = new ExpantaNum(0)
+        if (hasUpgrade("cb", 23)) darkchocolategain = upgradeEffect("cb", 23)
+        darkchocolategain = darkchocolategain.mul(buyableEffect("cb", 14))
+        if (hasUpgrade("cb", 24)) darkchocolategain = darkchocolategain.mul(upgradeEffect("cb", 24))
+        player.cb.darkchocolate = player.cb.darkchocolate.add(darkchocolategain.mul(delta))
+        let darkchocolatepow = new ExpantaNum(10)
+        darkchocolatepow = darkchocolatepow.mul(buyableEffect("cb", 15))
+        player.cb.darkchocolateeffect = player.cb.darkchocolate.pow(darkchocolatepow).add(1)
+
+        let buyablemult = new ExpantaNum(1)
+        if (hasUpgrade("cb", 25)) buyablemult = buyablemult.mul(upgradeEffect("cb", 25))
+        if (hasUpgrade("cb", 25)) player.cb.buyables[14] = player.cb.buyables[14].mul(buyablemult.mul(delta))
+        if (hasUpgrade("cb", 25)) player.cb.buyables[15] = player.cb.buyables[15].mul(buyablemult.mul(delta))
+    },
+                bars: {
+        },
+        milestones: {
+    },
+    eatcandies()
+    {
+        player.cb.eatencandies = player.cb.eatencandies.add(player.cb.candies)
+        player.cb.candies = new ExpantaNum(0)
+	},
+    throwcandies()
+    {
+        if (player.cb.candies.gte(10))
+        {
+             player.cb.throwncandies = player.cb.throwncandies.add(10)
+             player.cb.candies = player.cb.candies.sub(10)
+		}
+    },
+    tradelollipop() {
+        if (player.cb.candies.gte(60)) {
+            player.cb.lollipops = player.cb.lollipops.add(1)
+            player.cb.candies = player.cb.candies.sub(60)
+        }
+    },
+    candywell() {
+        player.cb.chocolate = player.cb.chocolate.add(player.cb.candies.div(100000))
+        player.cb.candies = new ExpantaNum(0)
+    },
+    lollipopwell() {
+        player.cb.chocolate = player.cb.chocolate.add(player.cb.lollipops.div(20000))
+        player.cb.lollipops = new ExpantaNum(0)
+    },
+
+            tabFormat: [
+        ["row", [["upgrade", 26]]],
+        ["blank", "25px"],
+        ["display-text", function() { return 'You have ' + format(player.cb.candies, 0) + " candies" }, { "font-size": "16px", "font-family": "monospace" }],
+        ["display-text", function() { return 'You are gaining ' + format(player.cb.candiespersecond) + " candies per second" }, { "font-size": "16px", "font-family": "monospace" }],
+        ["blank", "25px"],
+        ["raw-html", function() {return "<button onclick='layers.cb.eatcandies()'>Eat all the candies</button>"}],
+        ["display-text", function() { return 'You have eaten ' + format(player.cb.eatencandies, 0) + " candies" }, { "font-size": "16px", "font-family": "monospace" }],
+        ["blank", "25px"],
+        ["raw-html", function() {return "<button onclick='layers.cb.throwcandies()'>Throw 10 candies on the ground</button>"}],
+        ["display-text", function () { return 'You have thrown ' + format(player.cb.throwncandies, 0) + " candies on the ground" }, { "font-size": "16px", "font-family": "monospace" }],
+        ["blank", "25px"],
+        ["raw-html", function () { return "<button onclick='layers.cb.tradelollipop()'>Trade 60 candies for a 🍭</button>" }],
+        ["display-text", function() { return 'You have ' + format(player.cb.lollipops, 0) + " lollipops" }, { "font-size": "16px", "font-family": "monospace" }],
+        ["display-text", function() { return 'You are gaining ' + format(player.cb.lollipopspersecond) + " lollipops per second" }, { "font-size": "16px", "font-family": "monospace" }],
+        ["blank", "25px"],
+        ["row", [["upgrade", 11], ["upgrade", 12], ["upgrade", 13], ["upgrade", 14], ["upgrade", 15], ["upgrade", 16], ["upgrade", 17]]],
+        ["row", [["upgrade", 18], ["upgrade", 19], ["upgrade", 21], ["upgrade", 22], ["upgrade", 23], ["upgrade", 24], ["upgrade", 25]]],
+        ["blank", "25px"],
+        ["row", [["buyable", 11], ["buyable", 12], ["buyable", 13], ["buyable", 14], ["buyable", 15]]],
+        ["blank", "25px"],
+        ["raw-html", function () { return hasUpgrade("cb", 19) ? 'You have ' + format(player.cb.chocolate, 0) + " chocolate and a x" + format(player.cb.chocolateeffect, 0) + " boost to lollipops and candy": "" }, { "font-size": "16px", "font-family": "monospace" }],
+        ["raw-html", function () { return hasUpgrade("cb", 19) ? "<button onclick='layers.cb.candywell()'>Throw your candies into a well</button> <button onclick='layers.cb.lollipopwell()'>Throw your lollipops into a well</button>" : "" }],
+        ["blank", "25px"],
+        ["raw-html", function () { return hasUpgrade("cb", 23) ? 'You have ' + format(player.cb.darkchocolate, 0) + " dark chocolate and a x" + format(player.cb.darkchocolateeffect, 0) + " boost to chocolate effect exponent": "" }, { "font-size": "16px", "font-family": "monospace" }],
+    ],
+    layerShown() { return hasUpgrade("h", 43) && !hasUpgrade("h", 48) }
+},
+)

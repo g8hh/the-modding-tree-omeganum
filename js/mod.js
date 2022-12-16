@@ -1,5 +1,5 @@
 let modInfo = {
-	name: "增量开发树 - The Incremental Dev Tree",
+	name: "The Incremental Dev Tree",
 	id: "ictree",
 	author: "Icecreamdude",
 	pointsName: "points",
@@ -13,12 +13,52 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.3.2",
-	name: "Realm Grinder Update 3: Factions, Reincarnations and More!",
+	num: "2.0",
+	name: "Adventure Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<br/>
+			<br/>
+				<h3>v2.0</h3><br/>
+		- Added the Adventure feature in i3<br/>
+		- Added 3 zones<br/>
+		- Added 8 mobs<br/>
+		- Added 3 skills<br/>
+		- Bumped endgame to around 1F10000 Points / 27 Potential.<br/>
+		- The ARG is mandatory to progress after this update<br/>
+		- I am going to work on a new mod, so expect this game to have much less updates.<br/>
+		<br/>
+				<h3>v1.6</h3><br/>
+		- Finished the Candy Box Layer<br/>
+		- Added a new training<br/>
+		- Added more content in the games tab<br/>
+		- Bumped endgame to around 1F1000 Points / 25 Potential.<br/>
+		- The ARG is mandatory to progress after this update<br/>
+		<br/>
+				<h3>v1.5.1</h3><br/>
+		- New CSS designs<br/>
+		- Added some content to the Candy Box Layer<br/>
+		- Added a new research upgrade tab<br/>
+		- Added a new feature, games (in the hub layer)<br/>
+		- Bumped endgame to around 1F30 Points / 19 Potential.<br/>
+		- I will be on vacation, so there won't be an update in a while<br/>
+		<br/>
+				<h3>v1.5</h3><br/>
+		- Finished the Adventure Capitalist Layer<br/>
+		- Added Equipment<br/>
+		- Bumped endgame to around 1F30 Points / 18 Potential.<br/>
+		<br/>
+				<h3>v1.4.1</h3><br/>
+		- Added some content in the Adventure Capitalist Layer<br/>
+		- Added a Intelligence Training<br/>
+		- Bugfixes, QoL and added stuff to the ARG :) (Go check out the options tab)<br/>
+		- Bumped endgame to around 1F15 Points / 15 Potential.<br/>
+		<br/>
+	<h3>v1.4</h3><br/>
+		- Added the rest of the content in the Realm Grinder layer<br/>
+		- Added a new feature, Training! It like NGU idle but not. It plays a big role in lore.<br/>
+		- Added another feature, Advanced Research! Check this one out for yourself!<br/>
+		- Bumped endgame to around 4F13 Points / 15 Potential.<br/>
 		<br/>
 	<h3>v1.3.2</h3><br/>
 		- Added more content in the Realm Grinder layer, you will see for yourself!<br/>
@@ -62,7 +102,7 @@ let winText = `Congratulations! You have reached the end and beaten this game, b
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "convertsocialcredit"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "convertsocialcredit", "convertforgepoints", "eatcandies", "throwcandies", "tradelollipop", "candywell", "lollipopwell", "fightenemy"]
 
 function getStartPoints(){
     return new ExpantaNum(modInfo.initialStartPoints)
@@ -99,12 +139,18 @@ function getPointGen() {
 	if (hasUpgrade('cc', 213)) gain = gain.times(upgradeEffect('cc', 213))
 	if (hasUpgrade('l', 25)) gain = gain.times(upgradeEffect('l', 25))
 	gain = gain.times(player.l.cookietimeeffect)
+	gain = gain.times(player.h.candyboxtimeeffect)
 	return gain
 	showNavTab("tree-tab")
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+username: "",
+favoritefood: "",
+favoritecolor: "",
+favoriteactivity: "",
+argidentity: EN(0),
 }}
 
 // Display extra things at the top of the page

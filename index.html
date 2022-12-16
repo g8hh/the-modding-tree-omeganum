@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <head>
-<meta charset="utf-8" />
+	<meta charset="utf-8" />
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<link rel="stylesheet" type="text/css" href="popup.css" />
 
@@ -12,10 +12,13 @@
 	<script src="js/technical/layerSupport.js"></script>
 	<script src="js/tree.js"></script>
 	<script src="js/layers.js"></script>
+	<script src="js/adventure.js"></script>
 	<script src="js/mod.js"></script>
+	<script src="js/words.js"></script>
+	<script src="js/gamewords.js"></script>
 	<script src="js/technical/temp.js"></script>
 	<script src="js/technical/displays.js"></script>
-	
+
 	<script src="js/game.js"></script>
 	<script src="js/utils.js"></script>
 	<script src="js/utils/easyAccess.js"></script>
@@ -32,8 +35,8 @@
 
 
 <body onload="load()" onmousemove="updateMouse(event)">
-<script src="chs.js"></script>
-<script src="//g8hh.com/zh/core.js"></script>
+	<script src="chs.js"></script>
+	<script src="core.js"></script>
 	<div id="app">
 		<canvas id="treeCanvas" class="canvas" v-if="!(gameEnded && !player.keepGoing)"></canvas>
 
@@ -48,7 +51,7 @@
 			<h3>Please check the Discord to see if there are new content updates!</h3><br><br>
 			<div v-if="!player.timePlayedReset">It took you {{formatTime(player.timePlayed)}} to beat the game.</div>
 			<br>
-			<button class="longUpg can" onclick="hardReset(true)">Play Again</button>&nbsp;&nbsp;&nbsp;&nbsp;<button
+			<button class="longUpg can" onclick="hardReset(true)">Play Again (Reccomended you should not do this)</button>&nbsp;&nbsp;&nbsp;&nbsp;<button
 				class="longUpg can" onclick="keepGoing()">Keep Going</button>
 			<br><br><br>
 			<span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink"
@@ -77,13 +80,21 @@
 				<img onclick="window.open((modInfo.discordLink ? modInfo.discordLink : 'https://discord.gg/F3xveHV'),'mywindow')"
 					src="discord.png" target="_blank"></img>
 				<ul id="discord-links">
-					<li v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink"
-							target="_blank">{{modInfo.discordName}}</a><br></li>
-					<li><a class="link" href="https://discord.gg/F3xveHV" target="_blank"
-							v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree
-							Discord</a><br></li>
-					<li><a class="link" href="http://discord.gg/wwQfgPa" target="_blank"
-							v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a></li>
+					<li v-if="modInfo.discordLink">
+						<a class="link" v-bind:href="modInfo.discordLink"
+						   target="_blank">{{modInfo.discordName}}</a><br>
+					</li>
+					<li>
+						<a class="link" href="https://discord.gg/F3xveHV" target="_blank"
+						   v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">
+							The Modding Tree
+							Discord (This is the only way to get there)
+						</a><br>
+					</li>
+					<li>
+						<a class="link" href="http://discord.gg/wwQfgPa" target="_blank"
+						   v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a>
+					</li>
 				</ul>
 			</div>
 			<overlay-head v-if="!(gameEnded && !player.keepGoing)"></overlay-head>
@@ -103,6 +114,7 @@
 			<bg :layer="player.navTab == 'none' ? player.tab : player.navTab" ></bg>
 		</div>
 
+		
 		<!-- Popups -->
 		<div class="popup-container">
 			<transition-group name="fade">
@@ -129,21 +141,21 @@
 
 		</div>
 	</div>
-</body>
 <!--客服 开始-->
 <script src="//g8hh.com/static/js/jquery.min.js"></script>
 <link rel="stylesheet" href="//g8hh.com/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
 <script src="//g8hh.com/static/js/kf.js"></script>
 <!-- 客服 结束 -->
 <!--站长统计-->
-    <div style="display: none">
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?dbb7ff142f4d4b68546c93b9cd6e9328";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-    </div>
+<div style="display: none">
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?dbb7ff142f4d4b68546c93b9cd6e9328";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+        </div>
+</body>

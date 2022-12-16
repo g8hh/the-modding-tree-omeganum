@@ -1,7 +1,7 @@
 * {
 	transition-duration: 0.5s;
 	text-align: center;
-	font-family: "Inconsolata", monospace;
+	font-family: "Roboto", monospace;
 	font-weight: bold;
 	table-align: center;
 	margin: auto;
@@ -61,7 +61,7 @@ td {
 
 h1, h2, h3, b, input {
 	display: inline;
-	font-family: "Lucida Console", "Courier New", monospace
+	font-family: "Roboto Mono", monospace;
 }
 
 
@@ -74,7 +74,7 @@ h1, h2, h3, b, input {
 	border-radius: 50%;
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
 	font-size: 40px;
-	font-family: "Lucida Console", "Courier New", monospace;
+	font-family: "Roboto Mono", monospace;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
 	padding: 0;
@@ -90,7 +90,7 @@ h1, h2, h3, b, input {
 	border-radius: 33%;
 	box-shadow: var(--hqProperty2a), var(--hqProperty2b);
 	font-size: 40px;
-	font-family: "Lucida Console", "Courier New", monospace;
+	font-family: "Roboto Mono", monospace;
 	color: rgba(0, 0, 0, 0.5);
 	text-shadow: var(--hqProperty3);
 	padding: 0;
@@ -186,7 +186,7 @@ h1, h2, h3, b, input {
 
 .barBorder {
 	border: 2px solid;
-	border-radius: 10px;
+	border-radius: 8px;
 	border-color: var(--color);
 	overflow: hidden;
 	-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
@@ -224,7 +224,6 @@ h1, h2, h3, b, input {
 	cursor: pointer;
 	padding: 5px 20px;
 	margin: 5px;
-	border-radius: 10px;
 	border: 2px solid;
 	color: var(--color);
 
@@ -238,7 +237,7 @@ h1, h2, h3, b, input {
 .reset {
 	height: 120px;
 	width: 180px;
-	border-radius: 25%;
+	border-radius: 5%;
 	border: 4px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 }
@@ -246,7 +245,7 @@ h1, h2, h3, b, input {
 .upg {
 	min-height: 120px;
 	width: 120px;
-	border-radius: 25%;
+	border-radius: 5%;
 	border: 2px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 	font-size: 10px;
@@ -256,7 +255,6 @@ h1, h2, h3, b, input {
 .achievement {
 	height: 90px;
 	width: 90px;
-	border-radius: 25%;
 	border: 2px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 	font-size: 10px;
@@ -271,8 +269,8 @@ h1, h2, h3, b, input {
 .buyable {
 	height: 200px;
 	width: 200px;
-	border-radius: 25%;
 	border: 2px solid;
+	border-radius: 5%;
 	border-color: rgba(0, 0, 0, 0.125);
 	font-size: 10px;
 	position:relative;
@@ -683,7 +681,7 @@ button > * {
     cursor: pointer;
     border: none;
     padding: 2px;
-    border-radius: 8px 8px 0 0;
+    border-radius: 2px 2px 0 0;
 }
 
 .story-toggle {

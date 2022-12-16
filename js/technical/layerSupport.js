@@ -285,7 +285,7 @@ addLayer("info-tab", {
 
 addLayer("options-tab", {
     tabFormat: ["options-tab"],
-    row: "otherside"
+    row: "otherside",
 })
 
 addLayer("changelog-tab", {
